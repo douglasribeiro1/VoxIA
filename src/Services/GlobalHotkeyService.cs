@@ -104,29 +104,41 @@ namespace VoxIA.Services
         [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
 
-        private static bool IsKeyPhysicallyDown(int vKey)
+        private static bool IsKeyOrEventDown(int vKey, int currentVkCode, bool isKeyDown, bool isKeyUp)
         {
+            if (currentVkCode == vKey)
+            {
+                if (isKeyUp) return false;
+                if (isKeyDown) return true;
+            }
             return (GetAsyncKeyState(vKey) & 0x8000) != 0;
         }
 
-        private static bool IsCtrlPhysicallyDown()
+        private static bool IsCtrlDown(int currentVkCode, bool isKeyDown, bool isKeyUp)
         {
-            return IsKeyPhysicallyDown(VK_LCONTROL) || IsKeyPhysicallyDown(VK_RCONTROL) || IsKeyPhysicallyDown(VK_CONTROL);
+            return IsKeyOrEventDown(VK_LCONTROL, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_RCONTROL, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_CONTROL, currentVkCode, isKeyDown, isKeyUp);
         }
 
-        private static bool IsWinPhysicallyDown()
+        private static bool IsWinDown(int currentVkCode, bool isKeyDown, bool isKeyUp)
         {
-            return IsKeyPhysicallyDown(VK_LWIN) || IsKeyPhysicallyDown(VK_RWIN);
+            return IsKeyOrEventDown(VK_LWIN, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_RWIN, currentVkCode, isKeyDown, isKeyUp);
         }
 
-        private static bool IsAltPhysicallyDown()
+        private static bool IsAltDown(int currentVkCode, bool isKeyDown, bool isKeyUp)
         {
-            return IsKeyPhysicallyDown(VK_LMENU) || IsKeyPhysicallyDown(VK_RMENU) || IsKeyPhysicallyDown(VK_MENU);
+            return IsKeyOrEventDown(VK_LMENU, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_RMENU, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_MENU, currentVkCode, isKeyDown, isKeyUp);
         }
 
-        private static bool IsShiftPhysicallyDown()
+        private static bool IsShiftDown(int currentVkCode, bool isKeyDown, bool isKeyUp)
         {
-            return IsKeyPhysicallyDown(VK_LSHIFT) || IsKeyPhysicallyDown(VK_RSHIFT) || IsKeyPhysicallyDown(VK_SHIFT);
+            return IsKeyOrEventDown(VK_LSHIFT, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_RSHIFT, currentVkCode, isKeyDown, isKeyUp) ||
+                   IsKeyOrEventDown(VK_SHIFT, currentVkCode, isKeyDown, isKeyUp);
         }
 
         public static void Start()
@@ -230,7 +242,7 @@ namespace VoxIA.Services
                 }
 
                 // Check for Dictionary Quick Add Hotkey: Ctrl + Shift + W (W = Word) or Ctrl + Shift + D
-                if (isKeyDown && (vkCode == VK_W || vkCode == VK_D) && IsCtrlPhysicallyDown() && IsShiftPhysicallyDown())
+                if (isKeyDown && (vkCode == VK_W || vkCode == VK_D) && IsCtrlDown(vkCode, isKeyDown, isKeyUp) && IsShiftDown(vkCode, isKeyDown, isKeyUp))
                 {
                     double msSinceLast = (DateTime.Now - _lastDictTriggerTime).TotalMilliseconds;
                     if (msSinceLast > 400)
@@ -242,24 +254,24 @@ namespace VoxIA.Services
                             if (handlerDict != null) handlerDict();
                         });
                     }
-                    return (IntPtr)1; // Suppress key typing so editor isn't affected
+                    return (IntPtr)1; // Suppress only the letter key typing so editor isn't affected
                 }
 
-                // Hotkey Match Logic based on real-time hardware key state
+                // Hotkey Match Logic based on real-time hardware key state + current event
                 var s = SettingsService.Current;
                 bool matchNow = false;
 
                 if (s.HotkeyVirtualKey == 0) // Default: Ctrl + Win combination
                 {
-                    matchNow = IsCtrlPhysicallyDown() && IsWinPhysicallyDown();
+                    matchNow = IsCtrlDown(vkCode, isKeyDown, isKeyUp) && IsWinDown(vkCode, isKeyDown, isKeyUp);
                 }
                 else
                 {
-                    bool ctrlOk = !s.HotkeyUseCtrl || IsCtrlPhysicallyDown();
-                    bool winOk = !s.HotkeyUseWin || IsWinPhysicallyDown();
-                    bool altOk = !s.HotkeyUseAlt || IsAltPhysicallyDown();
-                    bool shiftOk = !s.HotkeyUseShift || IsShiftPhysicallyDown();
-                    bool keyOk = IsKeyPhysicallyDown(s.HotkeyVirtualKey);
+                    bool ctrlOk = !s.HotkeyUseCtrl || IsCtrlDown(vkCode, isKeyDown, isKeyUp);
+                    bool winOk = !s.HotkeyUseWin || IsWinDown(vkCode, isKeyDown, isKeyUp);
+                    bool altOk = !s.HotkeyUseAlt || IsAltDown(vkCode, isKeyDown, isKeyUp);
+                    bool shiftOk = !s.HotkeyUseShift || IsShiftDown(vkCode, isKeyDown, isKeyUp);
+                    bool keyOk = IsKeyOrEventDown(s.HotkeyVirtualKey, vkCode, isKeyDown, isKeyUp);
 
                     matchNow = ctrlOk && winOk && altOk && shiftOk && keyOk;
                 }
@@ -281,17 +293,11 @@ namespace VoxIA.Services
                             });
                         }
                     }
-
-                    // Suppress Win key from launching Windows Start menu when combined with Ctrl
-                    if (vkCode == VK_LWIN || vkCode == VK_RWIN)
-                    {
-                        return (IntPtr)1;
-                    }
                 }
                 else
                 {
-                    // If combo was previously active and now any key is released
-                    if (_comboActive && isKeyUp)
+                    // If combo was previously active and now any key in the combination is released
+                    if (_comboActive)
                     {
                         _comboActive = false;
                         DispatchToUI(() =>

@@ -10,9 +10,6 @@ namespace VoxIA
 {
     public class VoxIAContext : ApplicationContext
     {
-        [DllImport("user32.dll")]
-        private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
-
         private NotifyIcon _notifyIcon;
         private ContextMenuStrip _trayMenu;
         private ToolStripMenuItem _menuRecord;
@@ -142,6 +139,8 @@ namespace VoxIA
 
         private void OnHotkeyReleased()
         {
+            TextInsertionService.ReleaseAllModifiers();
+
             var s = SettingsService.Current;
             if (s.PushToTalkMode && _audioRecorder.IsRecording)
             {
@@ -151,6 +150,8 @@ namespace VoxIA
 
         private void OnCancelPressed()
         {
+            TextInsertionService.ReleaseAllModifiers();
+
             if (_audioRecorder.IsRecording)
             {
                 _audioRecorder.CancelRecording();
@@ -167,23 +168,13 @@ namespace VoxIA
 
             try
             {
-                // 1. Explicitly release modifier keys so target application sees a pure Ctrl + C
-                keybd_event(0x10, 0, 0x0002, UIntPtr.Zero); // Shift UP
-                keybd_event(0x12, 0, 0x0002, UIntPtr.Zero); // Alt UP
-                keybd_event(0x5B, 0, 0x0002, UIntPtr.Zero); // Win UP
-                System.Threading.Thread.Sleep(25);
-
-                // 2. Clear clipboard temporarily to detect newly selected content
+                // 1. Clear clipboard temporarily to detect newly selected content
                 ClipboardService.SetText("");
                 System.Threading.Thread.Sleep(20);
 
-                // 3. Send clean Ctrl + C keystroke
-                keybd_event(0x11, 0, 0, UIntPtr.Zero);        // Ctrl down
-                keybd_event(0x43, 0, 0, UIntPtr.Zero);        // C down
-                keybd_event(0x43, 0, 0x0002, UIntPtr.Zero); // C up
-                keybd_event(0x11, 0, 0x0002, UIntPtr.Zero); // Ctrl up
-
-                System.Threading.Thread.Sleep(80);
+                // 2. Perform clean atomic Ctrl + C keystroke
+                TextInsertionService.SimulateCopyKeystroke();
+                System.Threading.Thread.Sleep(60);
 
                 string newlyCopied = ClipboardService.GetText();
                 if (!string.IsNullOrWhiteSpace(newlyCopied))

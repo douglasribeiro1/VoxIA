@@ -108,7 +108,7 @@ namespace VoxIA.Services
                 int currentPid = Process.GetCurrentProcess().Id;
                 IMMDeviceEnumerator enumerator = (IMMDeviceEnumerator)new MMDeviceEnumeratorComObject();
 
-                int[] dataFlows = new int[] { eRender, eCapture };
+                int[] dataFlows = new int[] { eRender };
 
                 foreach (int flow in dataFlows)
                 {
