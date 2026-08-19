@@ -24,9 +24,7 @@ namespace VoxIA.Services
                 throw new InvalidOperationException("Groq API key is missing. Please configure your API key in Settings.");
             }
 
-            string model = !string.IsNullOrEmpty(modelOverride) ? modelOverride : SettingsService.Current.CorrectionModel;
-            if (string.IsNullOrEmpty(model) || (model != "openai/gpt-oss-120b" && model != "llama-3.3-70b-versatile" && model != "openai/gpt-oss-20b"))
-                model = "openai/gpt-oss-120b";
+            string model = "openai/gpt-oss-120b";
 
             string systemPrompt = GetSystemPrompt(SettingsService.Current.SelectedPromptPreset, SettingsService.Current.CustomPromptText);
 

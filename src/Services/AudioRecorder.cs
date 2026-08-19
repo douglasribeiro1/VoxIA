@@ -119,11 +119,11 @@ namespace VoxIA.Services
             try
             {
                 string audioId = Guid.NewGuid().ToString("N");
-                _currentFilePath = Path.Combine(AppPathService.AudioQueueDirectory, string.Format("rec_{0}.flac", audioId));
+                _currentFilePath = Path.Combine(AppPathService.AudioQueueDirectory, string.Format("rec_{0}.m4a", audioId));
                 _recordedAudioStream = new MemoryStream();
 
-                // Standard 16kHz 16-bit Mono PCM format (Cleanest format for Whisper)
-                uint sampleRate = 16000;
+                // Standard 44.1kHz 16-bit Mono PCM format (Studio quality for native M4A/AAC & Whisper)
+                uint sampleRate = 44100;
                 ushort channels = 1;
                 ushort bitsPerSample = 16;
                 ushort blockAlign = (ushort)(channels * (bitsPerSample / 8));
@@ -198,7 +198,7 @@ namespace VoxIA.Services
                     throw new InvalidOperationException(string.Format("Failed to start audio recording stream (waveInStart error {0}).", result));
                 }
 
-                Logger.LogInfo(string.Format("WaveIn PCM audio recording started ({0}Hz Mono): {1}", _format.nSamplesPerSec, _currentFilePath));
+                Logger.LogInfo(string.Format("Native M4A/AAC audio recording started ({0}Hz Mono): {1}", _format.nSamplesPerSec, _currentFilePath));
                 return _currentFilePath;
             }
             catch (Exception ex)

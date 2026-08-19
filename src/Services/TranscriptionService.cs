@@ -24,9 +24,7 @@ namespace VoxIA.Services
                 throw new FileNotFoundException(string.Format("Audio file not found: {0}", audioFilePath));
             }
 
-            string model = !string.IsNullOrEmpty(modelOverride) ? modelOverride : SettingsService.Current.WhisperModel;
-            if (string.IsNullOrEmpty(model))
-                model = "whisper-large-v3";
+            string model = "whisper-large-v3";
 
             Logger.LogInfo(string.Format("Initiating Groq Whisper transcription with model '{0}' for file: {1}", model, Path.GetFileName(audioFilePath)));
 

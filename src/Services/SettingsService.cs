@@ -65,7 +65,7 @@ namespace VoxIA.Services
 
         public AppSettings()
         {
-            WhisperModel = "whisper-large-v3-turbo";
+            WhisperModel = "whisper-large-v3";
             CorrectionModel = "openai/gpt-oss-120b";
             SelectedPromptPreset = "Geral / Ortografia";
             CustomPromptText = "";
@@ -255,19 +255,8 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
                 _currentSettings.ActivePromptId = _currentSettings.PromptProfiles[0].Id;
             }
 
-            if (string.IsNullOrEmpty(_currentSettings.WhisperModel) || (_currentSettings.WhisperModel != "whisper-large-v3" && _currentSettings.WhisperModel != "whisper-large-v3-turbo"))
-            {
-                _currentSettings.WhisperModel = "whisper-large-v3-turbo";
-            }
-
-            if (string.IsNullOrEmpty(_currentSettings.CorrectionModel) || 
-                (_currentSettings.CorrectionModel != "openai/gpt-oss-120b" && 
-                 _currentSettings.CorrectionModel != "llama-3.3-70b-versatile" && 
-                 _currentSettings.CorrectionModel != "openai/gpt-oss-20b"))
-            {
-                _currentSettings.CorrectionModel = "openai/gpt-oss-120b";
-            }
-
+            _currentSettings.WhisperModel = "whisper-large-v3";
+            _currentSettings.CorrectionModel = "openai/gpt-oss-120b";
             _currentSettings.PortableMode = AppPathService.IsPortableMode;
         }
 
@@ -277,18 +266,8 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
             {
                 if (_currentSettings == null) return;
 
-                if (string.IsNullOrEmpty(_currentSettings.WhisperModel) || (_currentSettings.WhisperModel != "whisper-large-v3" && _currentSettings.WhisperModel != "whisper-large-v3-turbo"))
-                {
-                    _currentSettings.WhisperModel = "whisper-large-v3-turbo";
-                }
-
-                if (string.IsNullOrEmpty(_currentSettings.CorrectionModel) || 
-                    (_currentSettings.CorrectionModel != "openai/gpt-oss-120b" && 
-                     _currentSettings.CorrectionModel != "llama-3.3-70b-versatile" && 
-                     _currentSettings.CorrectionModel != "openai/gpt-oss-20b"))
-                {
-                    _currentSettings.CorrectionModel = "openai/gpt-oss-120b";
-                }
+                _currentSettings.WhisperModel = "whisper-large-v3";
+                _currentSettings.CorrectionModel = "openai/gpt-oss-120b";
 
                 var serializer = new JavaScriptSerializer();
                 string json = serializer.Serialize(_currentSettings);

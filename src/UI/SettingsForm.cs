@@ -10,8 +10,6 @@ namespace VoxIA.UI
     public class SettingsForm : Form
     {
         private TextBox _txtApiKey;
-        private ComboBox _cboWhisperModel;
-        private ComboBox _cboCorrectionModel;
 
         // Prompt Profile UI Controls
         private ComboBox _cboPromptProfiles;
@@ -70,35 +68,18 @@ namespace VoxIA.UI
             };
 
             // ==========================================
-            // TAB 1: API & MODELOS
+            // TAB 1: API & CONEXÃO
             // ==========================================
-            TabPage tabApi = new TabPage("API & Modelos") { BackColor = Color.White };
+            TabPage tabApi = new TabPage("Chave API") { BackColor = Color.White };
             
             Label lblKey = new Label { Text = "Groq API Key:", Location = new Point(15, 15), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
             _txtApiKey = new TextBox { Location = new Point(15, 35), Width = 495, UseSystemPasswordChar = true };
             Label lblKeyHint = new Label { Text = "Obtenha gratuitamente em console.groq.com (armazenada de forma criptografada)", Location = new Point(15, 60), ForeColor = Color.Gray, AutoSize = true };
 
-            // WHISPER MODEL SELECTOR
-            Label lblWhisper = new Label { Text = "Modelo de Transcrição de Áudio (Whisper):", Location = new Point(15, 95), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            _cboWhisperModel = new ComboBox { Location = new Point(15, 118), Width = 495, DropDownStyle = ComboBoxStyle.DropDownList };
-            _cboWhisperModel.Items.AddRange(new object[] {
-                "whisper-large-v3-turbo (Whisper Large v3 Turbo — Padrão Recomendado)",
-                "whisper-large-v3 (Whisper Large v3 — Alta Precisão)"
-            });
-
-            // TEXT LLM MODEL SELECTOR
-            Label lblLLM = new Label { Text = "Modelo de Linguagem / Correção (LLM):", Location = new Point(15, 160), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            _cboCorrectionModel = new ComboBox { Location = new Point(15, 183), Width = 495, DropDownStyle = ComboBoxStyle.DropDownList };
-            _cboCorrectionModel.Items.AddRange(new object[] {
-                "openai/gpt-oss-120b (GPT OSS 120B — Padrão Recomendado / Máxima Qualidade)",
-                "llama-3.3-70b-versatile (Llama 3.3 70B — Meta)",
-                "openai/gpt-oss-20b (GPT OSS 20B — Ultrarrápido / Baixa Latência)"
-            });
-
             Panel pnlApiInfo = new Panel
             {
-                Location = new Point(15, 230),
-                Size = new Size(495, 100),
+                Location = new Point(15, 100),
+                Size = new Size(495, 120),
                 BackColor = Color.FromArgb(240, 246, 255),
                 BorderStyle = BorderStyle.FixedSingle
             };
@@ -107,24 +88,22 @@ namespace VoxIA.UI
                 Text = "⚡ Integração de Ultra-Alta Velocidade",
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(0, 102, 204),
-                Location = new Point(10, 8),
+                Location = new Point(10, 10),
                 AutoSize = true
             };
             Label lblApiInfoDesc = new Label
             {
-                Text = "O VoxIA utiliza os modelos acelerados por hardware LPU da Groq, oferecendo transcrição quase instantânea (até 200x tempo real) e correção ortográfica avançada com contexto de linguagem natural em português.",
+                Text = "O VoxIA utiliza os modelos de ponta acelerados por LPU da Groq (Whisper Large v3 para transcrição de alta fidelidade e GPT OSS 120B para pós-processamento ortográfico), proporcionando digitação instantânea e natural em português.",
                 Font = new Font("Segoe UI", 8.5F, FontStyle.Regular),
                 ForeColor = Color.FromArgb(33, 37, 41),
-                Location = new Point(10, 30),
-                Size = new Size(470, 60)
+                Location = new Point(10, 35),
+                Size = new Size(470, 75)
             };
             pnlApiInfo.Controls.Add(lblApiInfoTitle);
             pnlApiInfo.Controls.Add(lblApiInfoDesc);
 
             tabApi.Controls.AddRange(new Control[] { 
                 lblKey, _txtApiKey, lblKeyHint, 
-                lblWhisper, _cboWhisperModel, 
-                lblLLM, _cboCorrectionModel,
                 pnlApiInfo
             });
 
@@ -302,18 +281,6 @@ namespace VoxIA.UI
         {
             var s = SettingsService.Current;
             _txtApiKey.Text = SecureCredentialService.GetApiKey();
-
-            if (s.WhisperModel == "whisper-large-v3")
-                _cboWhisperModel.SelectedIndex = 1;
-            else
-                _cboWhisperModel.SelectedIndex = 0;
-
-            if (s.CorrectionModel == "llama-3.3-70b-versatile")
-                _cboCorrectionModel.SelectedIndex = 1;
-            else if (s.CorrectionModel == "openai/gpt-oss-20b")
-                _cboCorrectionModel.SelectedIndex = 2;
-            else
-                _cboCorrectionModel.SelectedIndex = 0;
 
             // Load Prompts list
             _localPrompts = new List<PromptProfile>();
@@ -589,17 +556,8 @@ RETORNE APENAS O TEXTO FINAL.",
             string apiKey = _txtApiKey.Text.Trim();
             SecureCredentialService.SaveApiKey(apiKey);
 
-            if (_cboWhisperModel.SelectedIndex == 1)
-                s.WhisperModel = "whisper-large-v3";
-            else
-                s.WhisperModel = "whisper-large-v3-turbo";
-
-            if (_cboCorrectionModel.SelectedIndex == 1)
-                s.CorrectionModel = "llama-3.3-70b-versatile";
-            else if (_cboCorrectionModel.SelectedIndex == 2)
-                s.CorrectionModel = "openai/gpt-oss-20b";
-            else
-                s.CorrectionModel = "openai/gpt-oss-120b";
+            s.WhisperModel = "whisper-large-v3";
+            s.CorrectionModel = "openai/gpt-oss-120b";
 
             // Save Prompts List
             s.PromptProfiles = _localPrompts;
