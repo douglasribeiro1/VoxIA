@@ -1,0 +1,1310 @@
+[2026-08-15 07:07:30] [INFO] Starting GroqFlow application...
+[2026-08-15 07:07:30] [INFO] Background RetryService started.
+[2026-08-15 07:07:30] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 07:07:30] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 07:12:40] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_44e29fea2fbd449fb5bbddfa75213b85.wav
+[2026-08-15 07:12:40] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:13:19] [INFO] Compressed ultralight audio recording stopped and saved (311344 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_44e29fea2fbd449fb5bbddfa75213b85.wav
+[2026-08-15 07:13:19] [INFO] Added recording to persistent queue. ID: 222e1ffd0f1648d09f60bd4e4ffd62c2
+[2026-08-15 07:13:19] [INFO] Processing queue item 222e1ffd0f1648d09f60bd4e4ffd62c2 (Attempt 1)...
+[2026-08-15 07:13:19] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_44e29fea2fbd449fb5bbddfa75213b85.wav
+[2026-08-15 07:13:21] [INFO] Groq Whisper transcription success (398 chars).
+[2026-08-15 07:13:21] [INFO] Whisper Raw Transcript: " Eu recebi um e-mail da Grok dizendo que os modelos NAMA serão descontinuados. O que eu quero? Eu quero que você veja quais são os últimos modelos QEM e GPTOs e me dê essas possibilidades de escolher um modelo para processamento do texto. E também quero que você volte a adicionar o Sper V3 Turbo, para que eu possa escolher qual modelo utilizar. Faça isso em todas as versões, inclusive no backup."
+[2026-08-15 07:13:21] [INFO] Sending raw transcript (398 chars) to Groq LLM ('llama-3.3-70b-versatile') for correction...
+[2026-08-15 07:13:21] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:13:21] [INFO] LLM Final Corrected Text: "Eu recebi um e-mail da Grok, dizendo que os modelos NAMA serão descontinuados. O que eu quero? Eu quero que você veja quais são os últimos modelos QEM e GPTOs e me dê essas possibilidades de escolher um modelo para processamento do texto. E também quero que você volte a adicionar o Sper V3 Turbo, para que eu possa escolher qual modelo utilizar. Faça isso em todas as versões, inclusive no backup."
+[2026-08-15 07:13:21] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:13:22] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:13:22] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_44e29fea2fbd449fb5bbddfa75213b85.wav
+[2026-08-15 07:13:22] [INFO] Queue item 222e1ffd0f1648d09f60bd4e4ffd62c2 fully completed and audio purged.
+[2026-08-15 07:19:51] [INFO] Starting GroqFlow application...
+[2026-08-15 07:19:51] [INFO] Background RetryService started.
+[2026-08-15 07:19:51] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 07:19:51] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 07:20:21] [INFO] Groq API key securely saved.
+[2026-08-15 07:20:21] [INFO] AutoStart registry key set.
+[2026-08-15 07:20:21] [INFO] Settings saved successfully.
+[2026-08-15 07:21:46] [INFO] Groq API key securely saved.
+[2026-08-15 07:21:46] [INFO] AutoStart registry key set.
+[2026-08-15 07:21:46] [INFO] Settings saved successfully.
+[2026-08-15 07:23:36] [INFO] Groq API key securely saved.
+[2026-08-15 07:23:36] [INFO] AutoStart registry key set.
+[2026-08-15 07:23:36] [INFO] Settings saved successfully.
+[2026-08-15 07:23:49] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_81009833978c4805944db7212301970b.wav
+[2026-08-15 07:23:49] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:23:58] [INFO] Compressed ultralight audio recording stopped and saved (71728 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_81009833978c4805944db7212301970b.wav
+[2026-08-15 07:23:58] [INFO] Added recording to persistent queue. ID: b189f45be5d64210bd7672ba84941ce5
+[2026-08-15 07:23:58] [INFO] Processing queue item b189f45be5d64210bd7672ba84941ce5 (Attempt 1)...
+[2026-08-15 07:23:58] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_81009833978c4805944db7212301970b.wav
+[2026-08-15 07:23:59] [INFO] Groq Whisper transcription success (75 chars).
+[2026-08-15 07:23:59] [INFO] Whisper Raw Transcript: " Estou agora aqui fazendo o teste com o Whisper Large Turbo e o GPT-OS 120B"
+[2026-08-15 07:23:59] [INFO] Sending raw transcript (75 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:24:00] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:24:00] [INFO] LLM Final Corrected Text: "Estou agora aqui fazendo o teste com o Whisper Large Turbo e o GPT-OS 120B."
+[2026-08-15 07:24:00] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:24:00] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:24:00] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_81009833978c4805944db7212301970b.wav
+[2026-08-15 07:24:00] [INFO] Queue item b189f45be5d64210bd7672ba84941ce5 fully completed and audio purged.
+[2026-08-15 07:24:03] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_938fe77608994028999c787f4895f809.wav
+[2026-08-15 07:24:03] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:24:08] [INFO] Compressed ultralight audio recording stopped and saved (35888 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_938fe77608994028999c787f4895f809.wav
+[2026-08-15 07:24:08] [INFO] Added recording to persistent queue. ID: ba7ea4672cbf4b1090a7127cb79eb164
+[2026-08-15 07:24:08] [INFO] Processing queue item ba7ea4672cbf4b1090a7127cb79eb164 (Attempt 1)...
+[2026-08-15 07:24:08] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_938fe77608994028999c787f4895f809.wav
+[2026-08-15 07:24:08] [INFO] Groq Whisper transcription success (44 chars).
+[2026-08-15 07:24:08] [INFO] Whisper Raw Transcript: " Parece estar perfeito Funcionando muito bem"
+[2026-08-15 07:24:08] [INFO] Sending raw transcript (44 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:24:09] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:24:09] [INFO] LLM Final Corrected Text: "Parece estar perfeito, funcionando muito bem."
+[2026-08-15 07:24:09] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:24:09] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:24:09] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_938fe77608994028999c787f4895f809.wav
+[2026-08-15 07:24:09] [INFO] Queue item ba7ea4672cbf4b1090a7127cb79eb164 fully completed and audio purged.
+[2026-08-15 07:24:18] [INFO] Groq API key securely saved.
+[2026-08-15 07:24:18] [INFO] AutoStart registry key set.
+[2026-08-15 07:24:18] [INFO] Settings saved successfully.
+[2026-08-15 07:24:20] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_26360495bada4c4d84501741c13e28d8.wav
+[2026-08-15 07:24:20] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:24:39] [INFO] Global Low-Level Keyboard Hook stopped.
+[2026-08-15 07:24:54] [INFO] Starting GroqFlow application...
+[2026-08-15 07:24:54] [INFO] Background RetryService started.
+[2026-08-15 07:24:54] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 07:24:54] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 07:25:07] [INFO] Groq API key securely saved.
+[2026-08-15 07:25:07] [INFO] AutoStart registry key set.
+[2026-08-15 07:25:07] [INFO] Settings saved successfully.
+[2026-08-15 07:25:08] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_31088967633c4fdba9d84077fd39f4f3.wav
+[2026-08-15 07:25:09] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:25:23] [INFO] Compressed ultralight audio recording stopped and saved (115760 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_31088967633c4fdba9d84077fd39f4f3.wav
+[2026-08-15 07:25:23] [INFO] Added recording to persistent queue. ID: fa2fbcc7e5704c888b9423749575dd6c
+[2026-08-15 07:25:23] [INFO] Processing queue item fa2fbcc7e5704c888b9423749575dd6c (Attempt 1)...
+[2026-08-15 07:25:23] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_31088967633c4fdba9d84077fd39f4f3.wav
+[2026-08-15 07:25:25] [INFO] Groq Whisper transcription success (199 chars).
+[2026-08-15 07:25:25] [INFO] Whisper Raw Transcript: " Quero fazer o teste agora com o modelo mais rápido disponível para ver a qualidade da transmissão. Quero ver se ele é rápido mesmo. Depois eu vou testar com frases médicas, aplicativos médicos, etc."
+[2026-08-15 07:25:25] [INFO] Sending raw transcript (199 chars) to Groq LLM ('openai/gpt-oss-20b') for correction...
+[2026-08-15 07:25:26] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:25:26] [INFO] LLM Final Corrected Text: "Quero fazer o teste agora com o modelo mais rápido disponível para ver a qualidade da transmissão. Quero ver se ele é rápido mesmo. Depois eu vou testar com frases médicas, aplicativos médicos, etc."
+[2026-08-15 07:25:26] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:25:28] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ca9603849062404195cd827db7218d49.wav
+[2026-08-15 07:25:28] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:25:28] [INFO] Compressed ultralight audio recording stopped and saved (1072 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ca9603849062404195cd827db7218d49.wav
+[2026-08-15 07:25:28] [INFO] Added recording to persistent queue. ID: e5c9dd5a41d54c01aa702a43be08960a
+[2026-08-15 07:25:28] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:25:28] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_31088967633c4fdba9d84077fd39f4f3.wav
+[2026-08-15 07:25:28] [INFO] Queue item fa2fbcc7e5704c888b9423749575dd6c fully completed and audio purged.
+[2026-08-15 07:25:29] [INFO] RetryService found 1 pending items. Triggering processing...
+[2026-08-15 07:25:29] [INFO] Processing queue item e5c9dd5a41d54c01aa702a43be08960a (Attempt 1)...
+[2026-08-15 07:25:29] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_ca9603849062404195cd827db7218d49.wav
+[2026-08-15 07:25:30] [INFO] Groq Whisper transcription success (5 chars).
+[2026-08-15 07:25:30] [INFO] Whisper Raw Transcript: " E aí"
+[2026-08-15 07:25:30] [INFO] Sending raw transcript (5 chars) to Groq LLM ('openai/gpt-oss-20b') for correction...
+[2026-08-15 07:25:31] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:25:31] [INFO] LLM Final Corrected Text: "E aí"
+[2026-08-15 07:25:31] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:25:31] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:25:31] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ca9603849062404195cd827db7218d49.wav
+[2026-08-15 07:25:31] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_950913ca509f478eaf61c184a8b80ff3.wav
+[2026-08-15 07:25:31] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:25:31] [INFO] Queue item e5c9dd5a41d54c01aa702a43be08960a fully completed and audio purged.
+[2026-08-15 07:25:52] [INFO] Compressed ultralight audio recording stopped and saved (169520 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_950913ca509f478eaf61c184a8b80ff3.wav
+[2026-08-15 07:25:52] [INFO] Added recording to persistent queue. ID: 05597ee1e0a249b2bf31ef0e634161f6
+[2026-08-15 07:25:52] [INFO] Processing queue item 05597ee1e0a249b2bf31ef0e634161f6 (Attempt 1)...
+[2026-08-15 07:25:52] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_950913ca509f478eaf61c184a8b80ff3.wav
+[2026-08-15 07:25:53] [INFO] Groq Whisper transcription success (30 chars).
+[2026-08-15 07:25:53] [INFO] Whisper Raw Transcript: " E aí E aí E aí E aí E aí E aí"
+[2026-08-15 07:25:53] [INFO] Sending raw transcript (30 chars) to Groq LLM ('openai/gpt-oss-20b') for correction...
+[2026-08-15 07:25:54] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:25:54] [INFO] LLM Final Corrected Text: "E aí, E aí, E aí, E aí, E aí, E aí."
+[2026-08-15 07:25:54] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:25:54] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:25:54] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_950913ca509f478eaf61c184a8b80ff3.wav
+[2026-08-15 07:25:54] [INFO] Queue item 05597ee1e0a249b2bf31ef0e634161f6 fully completed and audio purged.
+[2026-08-15 07:26:05] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fdd59855016c46499c6804bcbd914645.wav
+[2026-08-15 07:26:05] [INFO] Captured Target Context: Process='GroqFlow', Title='', HWnd=0x11040E
+[2026-08-15 07:27:00] [INFO] Compressed ultralight audio recording stopped and saved (444976 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fdd59855016c46499c6804bcbd914645.wav
+[2026-08-15 07:27:00] [INFO] Added recording to persistent queue. ID: c15067f72d7f43339e356fac19ccce6d
+[2026-08-15 07:27:00] [INFO] Processing queue item c15067f72d7f43339e356fac19ccce6d (Attempt 1)...
+[2026-08-15 07:27:00] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_fdd59855016c46499c6804bcbd914645.wav
+[2026-08-15 07:27:02] [INFO] Groq Whisper transcription success (546 chars).
+[2026-08-15 07:27:02] [INFO] Whisper Raw Transcript: " estão enfrentando um problema. Quando eu inicio a gravação e finalizo sem enviar nenhum áudio, ele traz textos aleatórios, como iaí, iaí, então traz obrigado, obrigada, ou traz legenda por e o nome de alguma pessoa. E isso é uma coisa que deixa o aplicativo com um aspecto bem amador e pode comprometer alguns textos. Então essa é uma função que eu gostaria de corrigir. Verifique se é possível. E me veja aí, por favor, por que isso acontece e como eu poderia corrigir isso. Antes de aplicar qualquer solução, me diga o que você pretende fazer."
+[2026-08-15 07:27:02] [INFO] Sending raw transcript (546 chars) to Groq LLM ('openai/gpt-oss-20b') for correction...
+[2026-08-15 07:27:03] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:27:03] [INFO] LLM Final Corrected Text: "Estão enfrentando um problema. Quando eu inicio a gravação e finalizo sem enviar nenhum áudio, ele traz textos aleatórios, como iaí, iaí, então traz obrigado, obrigada, ou traz legenda por e o nome de alguma pessoa. E isso é uma coisa que deixa o aplicativo com um aspecto bem amador e pode comprometer alguns textos. Então essa é uma função que eu gostaria de corrigir. Verifique se é possível. E me veja aí, por favor, por que isso acontece e como eu poderia corrigir isso. Antes de aplicar qualquer solução, me diga o que você pretende fazer."
+[2026-08-15 07:27:03] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:27:03] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:27:03] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fdd59855016c46499c6804bcbd914645.wav
+[2026-08-15 07:27:03] [INFO] Queue item c15067f72d7f43339e356fac19ccce6d fully completed and audio purged.
+[2026-08-15 07:27:22] [INFO] Global Low-Level Keyboard Hook stopped.
+[2026-08-15 07:27:42] [INFO] Starting GroqFlow application...
+[2026-08-15 07:27:42] [INFO] Background RetryService started.
+[2026-08-15 07:27:42] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 07:27:42] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 07:27:51] [INFO] Groq API key securely saved.
+[2026-08-15 07:27:51] [INFO] AutoStart registry key set.
+[2026-08-15 07:27:51] [INFO] Settings saved successfully.
+[2026-08-15 07:29:01] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ff76e02182fe4bf88c7e2623dfa13e5c.wav
+[2026-08-15 07:29:01] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:29:06] [INFO] Compressed ultralight audio recording stopped and saved (41008 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ff76e02182fe4bf88c7e2623dfa13e5c.wav
+[2026-08-15 07:29:06] [INFO] Added recording to persistent queue. ID: 34a9bc9552594795b9c3349e56e5c30a
+[2026-08-15 07:29:06] [INFO] Processing queue item 34a9bc9552594795b9c3349e56e5c30a (Attempt 1)...
+[2026-08-15 07:29:06] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_ff76e02182fe4bf88c7e2623dfa13e5c.wav
+[2026-08-15 07:29:07] [INFO] Groq Whisper transcription success (29 chars).
+[2026-08-15 07:29:07] [INFO] Whisper Raw Transcript: " Os que têm funcionado bem..."
+[2026-08-15 07:29:07] [INFO] Sending raw transcript (29 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:29:08] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:29:08] [INFO] LLM Final Corrected Text: "Os que têm funcionado bem..."
+[2026-08-15 07:29:08] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:29:08] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:29:08] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ff76e02182fe4bf88c7e2623dfa13e5c.wav
+[2026-08-15 07:29:08] [INFO] Queue item 34a9bc9552594795b9c3349e56e5c30a fully completed and audio purged.
+[2026-08-15 07:29:18] [INFO] Groq API key securely saved.
+[2026-08-15 07:29:18] [INFO] AutoStart registry key set.
+[2026-08-15 07:29:18] [INFO] Settings saved successfully.
+[2026-08-15 07:30:19] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b87ee2b40d5c407b91378bd0043e4000.wav
+[2026-08-15 07:30:19] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:30:47] [INFO] Compressed ultralight audio recording stopped and saved (229936 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b87ee2b40d5c407b91378bd0043e4000.wav
+[2026-08-15 07:30:47] [INFO] Added recording to persistent queue. ID: dc91b3743d4445af8989fb4c1c741ba9
+[2026-08-15 07:30:47] [INFO] Processing queue item dc91b3743d4445af8989fb4c1c741ba9 (Attempt 1)...
+[2026-08-15 07:30:47] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_b87ee2b40d5c407b91378bd0043e4000.wav
+[2026-08-15 07:30:49] [INFO] Groq Whisper transcription success (266 chars).
+[2026-08-15 07:30:49] [INFO] Whisper Raw Transcript: " Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large, como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar."
+[2026-08-15 07:30:49] [INFO] Sending raw transcript (266 chars) to Groq LLM ('qwen/qwen3.6-27b') for correction...
+[2026-08-15 07:30:54] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:30:54] [INFO] LLM Final Corrected Text: "<think>
+Here's a thinking process:
+
+1.  **Analyze User Input:**
+   - Input text: "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large, como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar."
+   - Language: Portuguese
+   - Task: Correct spelling, accentuation, capitalization, and punctuation strictly literally. No rewriting, no answering questions, no adding/removing words, no explanations.
+
+2.  **Identify Potential Issues in Input:**
+   - "GPT-OS 120B" -> Likely a typo for "GPT-4" or similar, but I must NOT change vocabulary or model names unless it's a clear orthographic error. "GPT-OS" might be a specific model name or a speech-to-text error for "GPT-4". However, the rule says "NUNCA REESCREVA A FRASE e NUNCA OMITA NENHUMA PALAVRA. NUNCA substitua palavras por sinônimos nem altere o vocabulário." I will keep "GPT-OS" as is, assuming it's a proper noun/model name dictated. Actually, "GPT-OS" might be a mishearing of "GPT-4", but I must stick to literal correction. I'll keep it.
+   - "QEM 3.6" -> Likely "Qwen 3.6" or similar, but again, I won't change it.
+   - "têm funcionado bem" -> Correct.
+   - "tanto com o Whisper Large, como com o Whisper Turbo." -> The comma before "como" is often considered incorrect in Portuguese when used with "tanto... como". It should be "tanto com o Whisper Large como com o Whisper Turbo." I will remove the comma.
+   - "Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo." -> Correct.
+   - "Então, pode tirar eles." -> Grammatically, "pode tirá-los" is more formal, but "pode tirar eles" is acceptable in spoken Portuguese. I'll keep it as is, maybe adjust punctuation if needed. It's fine.
+   - "Os da Nama e o GPT-OS 20B pode tirar." -> Subject-verb agreement: "Os da Nama e o GPT-OS 20B" is plural, so it should be "podem tirar" or "pode tirar" (if referring to the action). Actually, "pode tirar" is imperative/indicative 3rd person singular. In spoken Portuguese, it's common. I'll keep it literal. Maybe adjust to "podem ser tirados" if it were rewriting, but I can't rewrite. I'll leave it.
+   - Check accents: "têm" (correct), "descontinuados" (correct), "aplicativo" (correct), "Então" (correct), "pode" (correct), "tirar" (correct).
+   - Punctuation: The comma after "Então" is fine. The period at the end is fine.
+   - Let's check "tanto com o Whisper Large, como com o Whisper Turbo." -> Remove comma: "tanto com o Whisper Large como com o Whisper Turbo."
+   - Check capitalization: All proper nouns capitalized correctly.
+   - Check spelling: All words seem correctly spelled.
+   - One minor thing: "GPT-OS" might be a typo for "GPT-4", but I must not change vocabulary. I'll keep it.
+   - "QEM 3.6" -> Keep as is.
+   - "Nama" -> Keep as is.
+   - Final check of the text: "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar."
+
+   Wait, let's verify the comma rule: "tanto... como" does not take a comma. So removing it is correct.
+   Also, "pode tirar eles" -> In standard Portuguese, it's often written as "pode tirá-los", but since it's a direct transcription correction, I'll keep "pode tirar eles" as it's acceptable in informal contexts and changing it would be rewriting.
+   Actually, the prompt says "corrigir a ortografia, acentuação, capitalização e pontuação". I will strictly apply that.
+   Let's check if there are any other punctuation issues. The sentence structure is fine.
+   I will output exactly the corrected text.
+
+   Corrected version: "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar."
+
+   Wait, is there any other correction needed? "têm funcionado" is correct. "descontinuados" is correct. "aplicativo" is correct. "Então," is correct. "pode tirar eles." is correct. "Os da Nama e o GPT-OS 20B pode tirar." -> Subject is plural, verb is singular. In spoken Portuguese, this is common. I won't change it to avoid rewriting.
+   I'll just remove the comma before "como".
+   Let's double check the exact input: "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large, como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar."
+   Correction: Remove comma after "Large".
+   Result: "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar."
+
+   All rules followed. Output matches exactly. No extra text. Proceed. 
+   One thing: "GPT-OS" might be a speech-to-text error for "GPT-4", but I must not change vocabulary. I'll stick to the literal correction.
+   Final output matches the corrected string.✅
+   Output generation. 
+   Text: Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar.
+   Checks: 
+   - Spelling: OK
+   - Accents: OK
+   - Capitalization: OK
+   - Punctuation: Removed unnecessary comma before "como". Kept others.
+   - No rewriting, no answering, no extra text.
+   Ready. 
+   Output matches exactly.✅
+   *Self-Correction/Refinement during thought*: 
+   Wait, "tanto com o Whisper Large, como com o Whisper Turbo." -> The comma is indeed incorrect. I'll remove it.
+   "pode tirar eles" -> Could be "pode tirá-los", but I'll keep it as is per strict literal rule.
+   "Os da Nama e o GPT-OS 20B pode tirar." -> Same.
+   All good. Output matches. 
+   Proceeds. 
+   [Output Generation] -> "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large como com o Whisper Turbo. Os demais modelos ou vão ser descontinuados ou não têm funcionado bem e têm travado o aplicativo. Então, pode tirar eles. Os da Nama e o GPT-OS 20B pode tirar." (Note: I'll keep the exact wording, just fix the comma.) 
+   Actually, let's verify if "GPT-OS" should be "GPT-4". The prompt says "NUNCA substitua palavras por sinônimos nem altere o vocabulário." So I must keep "GPT-OS". 
+   Final check of the prompt: "SUA ÚNICA TAREFA: Corrigir a ortografia, acentuação, capitalização e pontuação da frase falada."
+   I will output exactly the corrected text. No extra words. All constraints met.✅
+   Output matches. 
+   [Done] 
+   *Output Generation* (matches the refined text)
+   "Os modelos GPT-OS 120B e QEM 3.6 têm funcionado bem, tanto com o Whisper Large como com o"
+[2026-08-15 07:30:54] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:30:54] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:30:54] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b87ee2b40d5c407b91378bd0043e4000.wav
+[2026-08-15 07:30:54] [INFO] Queue item dc91b3743d4445af8989fb4c1c741ba9 fully completed and audio purged.
+[2026-08-15 07:31:14] [INFO] Groq API key securely saved.
+[2026-08-15 07:31:14] [INFO] AutoStart registry key set.
+[2026-08-15 07:31:14] [INFO] Settings saved successfully.
+[2026-08-15 07:31:15] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b8b90939bcff4941bb77572897c9b7b2.wav
+[2026-08-15 07:31:15] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:31:20] [INFO] Compressed ultralight audio recording stopped and saved (36912 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b8b90939bcff4941bb77572897c9b7b2.wav
+[2026-08-15 07:31:20] [INFO] Added recording to persistent queue. ID: b3fe2e9cd43741718d8311b825f364dc
+[2026-08-15 07:31:20] [INFO] Processing queue item b3fe2e9cd43741718d8311b825f364dc (Attempt 1)...
+[2026-08-15 07:31:20] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_b8b90939bcff4941bb77572897c9b7b2.wav
+[2026-08-15 07:31:20] [INFO] Groq Whisper transcription success (41 chars).
+[2026-08-15 07:31:20] [INFO] Whisper Raw Transcript: " Então, esses modelos que você inseriu..."
+[2026-08-15 07:31:20] [INFO] Sending raw transcript (41 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:31:21] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:31:21] [INFO] LLM Final Corrected Text: "Então, esses modelos que você inseriu..."
+[2026-08-15 07:31:21] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:31:21] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:31:21] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b8b90939bcff4941bb77572897c9b7b2.wav
+[2026-08-15 07:31:21] [INFO] Queue item b3fe2e9cd43741718d8311b825f364dc fully completed and audio purged.
+[2026-08-15 07:31:29] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_f661b56db8194826a5dd6dc73c916efd.wav
+[2026-08-15 07:31:29] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:32:07] [INFO] Compressed ultralight audio recording stopped and saved (309808 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_f661b56db8194826a5dd6dc73c916efd.wav
+[2026-08-15 07:32:07] [INFO] Added recording to persistent queue. ID: 3d05a760b65243148fd02481d94a192a
+[2026-08-15 07:32:07] [INFO] Processing queue item 3d05a760b65243148fd02481d94a192a (Attempt 1)...
+[2026-08-15 07:32:07] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_f661b56db8194826a5dd6dc73c916efd.wav
+[2026-08-15 07:32:09] [INFO] Groq Whisper transcription success (331 chars).
+[2026-08-15 07:32:09] [INFO] Whisper Raw Transcript: " De todos esses modelos que você inseriu, o único que funcionou muito bem foi o GPT-OSS-120B. O QEM não transcreveu, ele me trouxe uma resposta. O GPT-OSS-20B travou o aplicativo e os da Lhama serão descontinuados. Os da Lhama você pode já excluir do aplicativo. O GPT-OSS-20B pode excluir também. O QEM eu gostaria que corrigisse."
+[2026-08-15 07:32:09] [INFO] Sending raw transcript (331 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:32:10] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:32:10] [INFO] LLM Final Corrected Text: "De todos esses modelos que você inseriu, o único que funcionou muito bem foi o GPT-OSS-120B. O QEM não transcreveu, ele me trouxe uma resposta. O GPT-OSS-20B travou o aplicativo e os da Lhama serão descontinuados. Os da Lhama você pode já excluir do aplicativo. O GPT-OSS-20B pode excluir também. O QEM eu gostaria que corrigisse."
+[2026-08-15 07:32:10] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:32:10] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:32:10] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_f661b56db8194826a5dd6dc73c916efd.wav
+[2026-08-15 07:32:10] [INFO] Queue item 3d05a760b65243148fd02481d94a192a fully completed and audio purged.
+[2026-08-15 07:34:32] [INFO] Starting GroqFlow application...
+[2026-08-15 07:34:32] [INFO] Background RetryService started.
+[2026-08-15 07:34:32] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 07:34:32] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 07:34:43] [INFO] Groq API key securely saved.
+[2026-08-15 07:34:43] [INFO] AutoStart registry key set.
+[2026-08-15 07:34:43] [INFO] Settings saved successfully.
+[2026-08-15 07:34:56] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_455e9722b5924715b1ce01f37c8648b7.wav
+[2026-08-15 07:34:57] [INFO] Captured Target Context: Process='msedge', Title='Untitled | Google AI Studio e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x90146
+[2026-08-15 07:35:09] [INFO] Compressed ultralight audio recording stopped and saved (101424 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_455e9722b5924715b1ce01f37c8648b7.wav
+[2026-08-15 07:35:09] [INFO] Added recording to persistent queue. ID: 819e674f49e148058276989ccd689a0c
+[2026-08-15 07:35:09] [INFO] Processing queue item 819e674f49e148058276989ccd689a0c (Attempt 1)...
+[2026-08-15 07:35:09] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_455e9722b5924715b1ce01f37c8648b7.wav
+[2026-08-15 07:35:10] [INFO] Groq Whisper transcription success (52 chars).
+[2026-08-15 07:35:10] [INFO] Whisper Raw Transcript: " Testando aqui a transcrição por voz no meu Android."
+[2026-08-15 07:35:10] [INFO] Sending raw transcript (52 chars) to Groq LLM ('qwen/qwen3.6-27b') for correction...
+[2026-08-15 07:35:11] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:35:11] [INFO] LLM Final Corrected Text: "Testando aqui a transcrição por voz no meu Android."
+[2026-08-15 07:35:11] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:35:11] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:35:11] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_455e9722b5924715b1ce01f37c8648b7.wav
+[2026-08-15 07:35:11] [INFO] Queue item 819e674f49e148058276989ccd689a0c fully completed and audio purged.
+[2026-08-15 07:35:16] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fedce60f7fbd43a6aba7da2f179e69b4.wav
+[2026-08-15 07:35:16] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:35:26] [INFO] Compressed ultralight audio recording stopped and saved (81968 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fedce60f7fbd43a6aba7da2f179e69b4.wav
+[2026-08-15 07:35:26] [INFO] Added recording to persistent queue. ID: 71ee6f6b40754912b1adbdfb0fdbf7c7
+[2026-08-15 07:35:26] [INFO] Processing queue item 71ee6f6b40754912b1adbdfb0fdbf7c7 (Attempt 1)...
+[2026-08-15 07:35:26] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_fedce60f7fbd43a6aba7da2f179e69b4.wav
+[2026-08-15 07:35:27] [INFO] Groq Whisper transcription success (134 chars).
+[2026-08-15 07:35:27] [INFO] Whisper Raw Transcript: " Agora parece que funcionou muito bem. Eu vou ficar usando por padrão o GPT mesmo. Mas eu sempre vou ter uma alternativa caso precise."
+[2026-08-15 07:35:27] [INFO] Sending raw transcript (134 chars) to Groq LLM ('qwen/qwen3.6-27b') for correction...
+[2026-08-15 07:35:29] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:35:29] [INFO] LLM Final Corrected Text: "Agora parece que funcionou muito bem. Eu vou ficar usando por padrão o GPT mesmo. Mas eu sempre vou ter uma alternativa caso precise."
+[2026-08-15 07:35:29] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:35:29] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:35:29] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fedce60f7fbd43a6aba7da2f179e69b4.wav
+[2026-08-15 07:35:29] [INFO] Queue item 71ee6f6b40754912b1adbdfb0fdbf7c7 fully completed and audio purged.
+[2026-08-15 07:35:39] [INFO] Groq API key securely saved.
+[2026-08-15 07:35:39] [INFO] AutoStart registry key set.
+[2026-08-15 07:35:39] [INFO] Settings saved successfully.
+[2026-08-15 07:35:41] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_8cd62e1d388845059c52cc95682747e8.wav
+[2026-08-15 07:35:41] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:35:50] [INFO] Compressed ultralight audio recording stopped and saved (71728 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_8cd62e1d388845059c52cc95682747e8.wav
+[2026-08-15 07:35:50] [INFO] Added recording to persistent queue. ID: 18bf7e479d264d9d920332fc035b62c7
+[2026-08-15 07:35:50] [INFO] Processing queue item 18bf7e479d264d9d920332fc035b62c7 (Attempt 1)...
+[2026-08-15 07:35:50] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_8cd62e1d388845059c52cc95682747e8.wav
+[2026-08-15 07:35:51] [INFO] Groq Whisper transcription success (72 chars).
+[2026-08-15 07:35:51] [INFO] Whisper Raw Transcript: " A combinação de U-Sperturbo com GPT-OSS-120B foi a que mais me agradou."
+[2026-08-15 07:35:51] [INFO] Sending raw transcript (72 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:35:52] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:35:52] [INFO] LLM Final Corrected Text: "A combinação de U‑Sperturbo com GPT‑OSS‑120B foi a que mais me agradou."
+[2026-08-15 07:35:52] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:35:52] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:35:52] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_8cd62e1d388845059c52cc95682747e8.wav
+[2026-08-15 07:35:52] [INFO] Queue item 18bf7e479d264d9d920332fc035b62c7 fully completed and audio purged.
+[2026-08-15 07:35:59] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_896dfe018b184751ad5f672d040a738e.wav
+[2026-08-15 07:35:59] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x306E0
+[2026-08-15 07:36:11] [INFO] Compressed ultralight audio recording stopped and saved (92208 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_896dfe018b184751ad5f672d040a738e.wav
+[2026-08-15 07:36:11] [INFO] Added recording to persistent queue. ID: 90bbad8544e84c9183d12b89399ab46c
+[2026-08-15 07:36:11] [INFO] Processing queue item 90bbad8544e84c9183d12b89399ab46c (Attempt 1)...
+[2026-08-15 07:36:11] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_896dfe018b184751ad5f672d040a738e.wav
+[2026-08-15 07:36:12] [INFO] Groq Whisper transcription success (113 chars).
+[2026-08-15 07:36:12] [INFO] Whisper Raw Transcript: " Agora tudo funcionou bem, mas eu ainda vou preferir ficar usando por padrão o Sperlarge V3 Turbo e GPT-OSS 120B."
+[2026-08-15 07:36:12] [INFO] Sending raw transcript (113 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 07:36:13] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 07:36:13] [INFO] LLM Final Corrected Text: "Agora tudo funcionou bem, mas eu ainda vou preferir ficar usando por padrão o Superlarge V3 Turbo e GPT‑OSS 120B."
+[2026-08-15 07:36:13] [INFO] Text copied to clipboard successfully.
+[2026-08-15 07:36:13] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 07:36:13] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_896dfe018b184751ad5f672d040a738e.wav
+[2026-08-15 07:36:13] [INFO] Queue item 90bbad8544e84c9183d12b89399ab46c fully completed and audio purged.
+[2026-08-15 07:37:26] [INFO] Starting GroqFlow application...
+[2026-08-15 07:37:26] [INFO] Background RetryService started.
+[2026-08-15 07:37:26] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 07:37:26] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 12:05:34] [INFO] Starting GroqFlow application...
+[2026-08-15 12:05:34] [INFO] Background RetryService started.
+[2026-08-15 12:05:34] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 12:05:34] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 12:07:00] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_7fb05637f62b447180c4e764d3be96ff.wav
+[2026-08-15 12:07:00] [INFO] Captured Target Context: Process='Antigravity', Title='Antigravity', HWnd=0x404FC
+[2026-08-15 12:08:01] [INFO] Compressed ultralight audio recording stopped and saved (491568 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_7fb05637f62b447180c4e764d3be96ff.wav
+[2026-08-15 12:08:01] [INFO] Added recording to persistent queue. ID: afb9452df56a48d5b64e47618a686488
+[2026-08-15 12:08:01] [INFO] Processing queue item afb9452df56a48d5b64e47618a686488 (Attempt 1)...
+[2026-08-15 12:08:01] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_7fb05637f62b447180c4e764d3be96ff.wav
+[2026-08-15 12:08:02] [INFO] Groq Whisper transcription success (644 chars).
+[2026-08-15 12:08:02] [INFO] Whisper Raw Transcript: " Seguinte, você deve lembrar de um programa que eu fiz para transcrição de voz em texto, utilizando a API do Brobe. O que eu quero agora? Eu quero criar um outro programa, mas mesmo um método, um programa totalmente portátil, de um arquivo único, que ele sirve como um assistente para a formatação de receitas médicas e o texto médico para evolução. Daí eu vou... Eu quero te fornecer logo a API do GROC para você colocar nesse aplicativo embutido, porque ele vai ser de um só meio. E eu quero te fornecer já os prompts que eu uso para ele fazer a formatação da receita. E eu quero que ele use o modelo GPT-OSS-120B. Você é capaz de fazer isso?"
+[2026-08-15 12:08:02] [INFO] Sending raw transcript (644 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 12:08:07] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 12:08:07] [INFO] LLM Final Corrected Text: "Seguinte, você deve lembrar de um programa que eu fiz para transcrição de voz em texto, utilizando a API do Brobe. O que eu quero agora? Eu quero criar um outro programa, mas mesmo um método, um programa totalmente portátil, de um arquivo único, que ele sirva como um assistente para a formatação de receitas médicas e o texto médico para evolução. Daí eu vou... Eu quero te fornecer logo a API do GROC para você colocar nesse aplicativo embutido, porque ele vai ser de um só meio. E eu quero te fornecer já os prompts que eu uso para ele fazer a formatação da receita. E eu quero que ele use o modelo GPT‑OSS‑120B. Você é capaz de fazer isso?"
+[2026-08-15 12:08:07] [INFO] Text copied to clipboard successfully.
+[2026-08-15 12:08:08] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 12:08:08] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_7fb05637f62b447180c4e764d3be96ff.wav
+[2026-08-15 12:08:08] [INFO] Queue item afb9452df56a48d5b64e47618a686488 fully completed and audio purged.
+[2026-08-15 12:08:58] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e1c2d833b6a74ea8ae8eb4f02b1797f1.wav
+[2026-08-15 12:08:58] [INFO] Captured Target Context: Process='msedge', Title='Assistente Médico Portátil - Pessoal — Microsoft​ Edge', HWnd=0x20354
+[2026-08-15 12:09:15] [INFO] Compressed ultralight audio recording stopped and saved (132656 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e1c2d833b6a74ea8ae8eb4f02b1797f1.wav
+[2026-08-15 12:09:15] [INFO] Added recording to persistent queue. ID: dc2d38a0f5b44890b595d0c8f18dbaa8
+[2026-08-15 12:09:15] [INFO] Processing queue item dc2d38a0f5b44890b595d0c8f18dbaa8 (Attempt 1)...
+[2026-08-15 12:09:15] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_e1c2d833b6a74ea8ae8eb4f02b1797f1.wav
+[2026-08-15 12:09:15] [INFO] Groq Whisper transcription success (140 chars).
+[2026-08-15 12:09:15] [INFO] Whisper Raw Transcript: " Em HTML não dá certo. Precisa ser que ele usa uma linguagem Python e depois ele codifica tudo em um aplicativo portátil com terminação EXE."
+[2026-08-15 12:09:15] [INFO] Sending raw transcript (140 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 12:09:17] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 12:09:17] [INFO] LLM Final Corrected Text: "Em HTML não dá certo. Precisa ser que ele usa uma linguagem Python e depois ele codifica tudo em um aplicativo portátil com terminação EXE."
+[2026-08-15 12:09:17] [INFO] Text copied to clipboard successfully.
+[2026-08-15 12:09:17] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 12:09:17] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e1c2d833b6a74ea8ae8eb4f02b1797f1.wav
+[2026-08-15 12:09:17] [INFO] Queue item dc2d38a0f5b44890b595d0c8f18dbaa8 fully completed and audio purged.
+[2026-08-15 12:09:53] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_50c66861352641aa875f886edd6ed85f.wav
+[2026-08-15 12:09:53] [INFO] Captured Target Context: Process='msedge', Title='Assistente Médico Portátil - Pessoal — Microsoft​ Edge', HWnd=0x20354
+[2026-08-15 12:10:18] [INFO] Compressed ultralight audio recording stopped and saved (199216 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_50c66861352641aa875f886edd6ed85f.wav
+[2026-08-15 12:10:18] [INFO] Added recording to persistent queue. ID: 72c594907ff34466b8b861292cfa8269
+[2026-08-15 12:10:18] [INFO] Processing queue item 72c594907ff34466b8b861292cfa8269 (Attempt 1)...
+[2026-08-15 12:10:18] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_50c66861352641aa875f886edd6ed85f.wav
+[2026-08-15 12:10:19] [INFO] Groq Whisper transcription success (183 chars).
+[2026-08-15 12:10:19] [INFO] Whisper Raw Transcript: " Como vai ser de uso pessoal, eu quero que tanto a API como os prompting estiverem embutidos no código. Só que eu quero ter a possibilidade de criar outros agentes com outros prompts."
+[2026-08-15 12:10:19] [INFO] Sending raw transcript (183 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 12:10:22] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 12:10:22] [INFO] LLM Final Corrected Text: "Como vai ser de uso pessoal? Eu quero que tanto a API como os prompting estejam embutidos no código. Só que eu quero ter a possibilidade de criar outros agentes com outros prompts."
+[2026-08-15 12:10:22] [INFO] Text copied to clipboard successfully.
+[2026-08-15 12:10:22] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 12:10:22] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_50c66861352641aa875f886edd6ed85f.wav
+[2026-08-15 12:10:22] [INFO] Queue item 72c594907ff34466b8b861292cfa8269 fully completed and audio purged.
+[2026-08-15 12:40:01] [INFO] Starting GroqFlow application...
+[2026-08-15 12:40:01] [INFO] Background RetryService started.
+[2026-08-15 12:40:01] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 12:40:01] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 12:56:46] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ddee1c931258476aa17fd20563aac2e4.wav
+[2026-08-15 12:56:46] [INFO] Captured Target Context: Process='Antigravity', Title='Para atender aos seus req...', HWnd=0x20188
+[2026-08-15 12:57:11] [INFO] Compressed ultralight audio recording stopped and saved (200752 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ddee1c931258476aa17fd20563aac2e4.wav
+[2026-08-15 12:57:11] [INFO] Added recording to persistent queue. ID: 963e7dc0ee1d460f9419ba4ae408ec93
+[2026-08-15 12:57:11] [INFO] Processing queue item 963e7dc0ee1d460f9419ba4ae408ec93 (Attempt 1)...
+[2026-08-15 12:57:11] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_ddee1c931258476aa17fd20563aac2e4.wav
+[2026-08-15 12:57:12] [INFO] Groq Whisper transcription success (395 chars).
+[2026-08-15 12:57:12] [INFO] Whisper Raw Transcript: " Pronto, embora o resultado esteja perfeito, copiado certinho, na hora de aparecer na tela, parece que a quebra de linha não está funcionando nesse resultado. Por exemplo, na tela para mim está aparecendo a visualização como se tivesse tudo em uma linha contínua. Na hora que eu copio de Live Call em um bloco de notas, aí vem certinho. Eu só queria que essa visualização ficasse correta também."
+[2026-08-15 12:57:12] [INFO] Sending raw transcript (395 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 12:57:14] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 12:57:14] [INFO] LLM Final Corrected Text: "Pronto, embora o resultado esteja perfeito, copiado certinho, na hora de aparecer na tela, parece que a quebra de linha não está funcionando nesse resultado. Por exemplo, na tela, para mim, está aparecendo a visualização como se estivesse tudo em uma linha contínua. Na hora que eu copio de Live Call em um bloco de notas, aí vem certinho. Eu só queria que essa visualização ficasse correta também."
+[2026-08-15 12:57:14] [INFO] Text copied to clipboard successfully.
+[2026-08-15 12:57:14] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 12:57:14] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ddee1c931258476aa17fd20563aac2e4.wav
+[2026-08-15 12:57:14] [INFO] Queue item 963e7dc0ee1d460f9419ba4ae408ec93 fully completed and audio purged.
+[2026-08-15 21:45:12] [INFO] Starting GroqFlow application...
+[2026-08-15 21:45:12] [INFO] Background RetryService started.
+[2026-08-15 21:45:12] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 21:45:12] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 21:49:26] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_838e179b91fb4b79a12a0d0ed6bd4059.wav
+[2026-08-15 21:49:26] [INFO] Captured Target Context: Process='msedge', Title='Google Gemini - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:51:18] [INFO] Compressed ultralight audio recording stopped and saved (908336 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_838e179b91fb4b79a12a0d0ed6bd4059.wav
+[2026-08-15 21:51:18] [INFO] Added recording to persistent queue. ID: 43c698febbbc4fb08d9bcf12896454da
+[2026-08-15 21:51:18] [INFO] Processing queue item 43c698febbbc4fb08d9bcf12896454da (Attempt 1)...
+[2026-08-15 21:51:18] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_838e179b91fb4b79a12a0d0ed6bd4059.wav
+[2026-08-15 21:51:20] [INFO] Groq Whisper transcription success (1321 chars).
+[2026-08-15 21:51:20] [INFO] Whisper Raw Transcript: " Eu quero que você seja o meu assistente de prompts e me ajude a montar um prompt completo e perfeito para que uma inteligência artificial de vibe coding consiga fazer um aplicativo para mim. É o seguinte, eu quero um aplicativo em chashtag.net para rodar no Windows. Aliás, não, desculpa Eu quero um aplicativo para o Macbook E eu vou utilizar o Antigravity Na verdade, para que ele funcione no Windows e no Macbook Poderia ser um modelo em HTML, por exemplo E assim ele fica de uma forma um pouco mais universal Eu quero que ele tenha banco de dados Salvamento automático de dados Quero que seja um aplicativo para uso pessoal Não é escalável Ele é um gestor de uma empresa É uma empresa que tem dois sócios E a minha esposa é a tesouria E ela vai fazer a gestão financeira da empresa É uma empresa de médicos Para médicos Ainda não tem um esforço de atuação Mas futuramente pode ser que Vire uma empresa de educação médica, de gerenciamento de UTIs, de hospitais, concorra a licitações e tudo mais. Então ele tem que ser escalável nessa magnitude. Inclusive eu falei do HTML, porque é uma linguagem que eu estou mais familiarizado, mas se você sugerir uma outra, que funcione ali no Macbook, na verdade nem sei se precisaria funcionar no Windows não. no Macbook já estaria bom, mas se funcionar nos dois é melhor ainda"
+[2026-08-15 21:51:20] [INFO] Sending raw transcript (1321 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:51:25] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:51:25] [INFO] LLM Final Corrected Text: "Eu quero que você seja o meu assistente de prompts e me ajude a montar um prompt completo e perfeito para que uma inteligência artificial de vibe coding consiga fazer um aplicativo para mim. É o seguinte: eu quero um aplicativo em hashtag.net para rodar no Windows. Aliás, não, desculpa. Eu quero um aplicativo para o MacBook e eu vou utilizar o Antigravity, na verdade, para que ele funcione no Windows e no MacBook. Poderia ser um modelo em HTML, por exemplo, e assim ele fica de uma forma um pouco mais universal. Eu quero que ele tenha banco de dados, salvamento automático de dados. Quero que seja um aplicativo para uso pessoal, não é escalável. Ele é um gestor de uma empresa. É uma empresa que tem dois sócios, e a minha esposa é a tesoureira e ela vai fazer a gestão financeira da empresa. É uma empresa de médicos, para médicos. Ainda não tem um esforço de atuação, mas futuramente pode ser que vire uma empresa de educação médica, de gerenciamento de UTIs, de hospitais, concorra a licitações e tudo mais. Então ele tem que ser escalável nessa magnitude. Inclusive eu falei do HTML, porque é uma linguagem que eu estou mais familiarizado, mas se você sugerir outra, que funcione ali no MacBook, na verdade nem sei se precisaria funcionar no Windows, não. No MacBook já estaria bom, mas se funcionar nos dois é melhor ainda."
+[2026-08-15 21:51:25] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:51:25] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:51:25] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_838e179b91fb4b79a12a0d0ed6bd4059.wav
+[2026-08-15 21:51:25] [INFO] Queue item 43c698febbbc4fb08d9bcf12896454da fully completed and audio purged.
+[2026-08-15 21:52:08] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e71f3f347f384aa98210dcb0c3bedf55.wav
+[2026-08-15 21:52:08] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:52:46] [INFO] Compressed ultralight audio recording stopped and saved (311344 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e71f3f347f384aa98210dcb0c3bedf55.wav
+[2026-08-15 21:52:46] [INFO] Added recording to persistent queue. ID: c7003c7a9cea4e63a4104a06cfad2f58
+[2026-08-15 21:52:46] [INFO] Processing queue item c7003c7a9cea4e63a4104a06cfad2f58 (Attempt 1)...
+[2026-08-15 21:52:46] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_e71f3f347f384aa98210dcb0c3bedf55.wav
+[2026-08-15 21:52:47] [INFO] Groq Whisper transcription success (443 chars).
+[2026-08-15 21:52:47] [INFO] Whisper Raw Transcript: " Sim, eu não quero que você coloque módulos iniciais ainda não Quero que bote mesmo só aquela parte de gestão financeira Fluxo de caixa, gestão de sócios Quanto que cada um já contribuiu Quanto que cada um ainda precisa contribuir Quero que você coloque um controle das contribuições mensais de cada sócio Quero que você me permita anexar os comprovantes de pagamento de cada um e outros comprovantes também de gastos e despesas com a empresa."
+[2026-08-15 21:52:47] [INFO] Sending raw transcript (443 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:52:49] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:52:49] [INFO] LLM Final Corrected Text: "Sim, eu não quero que você coloque módulos iniciais ainda não. Quero que bote mesmo só aquela parte de gestão financeira, fluxo de caixa, gestão de sócios, quanto cada um já contribuiu, quanto cada um ainda precisa contribuir. Quero que você coloque um controle das contribuições mensais de cada sócio. Quero que você me permita anexar os comprovantes de pagamento de cada um e outros comprovantes também de gastos e despesas com a empresa."
+[2026-08-15 21:52:49] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:52:49] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:52:49] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e71f3f347f384aa98210dcb0c3bedf55.wav
+[2026-08-15 21:52:49] [INFO] Queue item c7003c7a9cea4e63a4104a06cfad2f58 fully completed and audio purged.
+[2026-08-15 21:53:08] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_8d05c272acf74c75ae35065f9cefb7ab.wav
+[2026-08-15 21:53:08] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:53:11] [INFO] Compressed ultralight audio recording stopped and saved (24112 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_8d05c272acf74c75ae35065f9cefb7ab.wav
+[2026-08-15 21:53:11] [INFO] Added recording to persistent queue. ID: 71567ca633e64ed1a6d352c9f6d3820f
+[2026-08-15 21:53:11] [INFO] Processing queue item 71567ca633e64ed1a6d352c9f6d3820f (Attempt 1)...
+[2026-08-15 21:53:11] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_8d05c272acf74c75ae35065f9cefb7ab.wav
+[2026-08-15 21:53:12] [INFO] Groq Whisper transcription success (30 chars).
+[2026-08-15 21:53:12] [INFO] Whisper Raw Transcript: " Eu quero que você me pergunte"
+[2026-08-15 21:53:12] [INFO] Sending raw transcript (30 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:53:13] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:53:13] [INFO] LLM Final Corrected Text: "Eu quero que você me pergunte."
+[2026-08-15 21:53:13] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:53:13] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:53:13] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_8d05c272acf74c75ae35065f9cefb7ab.wav
+[2026-08-15 21:53:13] [INFO] Queue item 71567ca633e64ed1a6d352c9f6d3820f fully completed and audio purged.
+[2026-08-15 21:53:25] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_2de3b83bfe454a9e8e7d953906cae915.wav
+[2026-08-15 21:53:25] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:53:37] [INFO] Compressed ultralight audio recording stopped and saved (97840 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_2de3b83bfe454a9e8e7d953906cae915.wav
+[2026-08-15 21:53:37] [INFO] Added recording to persistent queue. ID: 2fde4dd93893491aaf0773360d305da1
+[2026-08-15 21:53:37] [INFO] Processing queue item 2fde4dd93893491aaf0773360d305da1 (Attempt 1)...
+[2026-08-15 21:53:37] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_2de3b83bfe454a9e8e7d953906cae915.wav
+[2026-08-15 21:53:37] [INFO] Groq Whisper transcription success (123 chars).
+[2026-08-15 21:53:37] [INFO] Whisper Raw Transcript: " O que você precisa saber para que o aplicativo funcione com perfeição? Pode fazer todas as perguntas que eu vou responder."
+[2026-08-15 21:53:37] [INFO] Sending raw transcript (123 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:53:39] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:53:39] [INFO] LLM Final Corrected Text: "O que você precisa saber para que o aplicativo funcione com perfeição? Pode fazer todas as perguntas que eu vou responder."
+[2026-08-15 21:53:39] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:53:39] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:53:39] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_2de3b83bfe454a9e8e7d953906cae915.wav
+[2026-08-15 21:53:39] [INFO] Queue item 2fde4dd93893491aaf0773360d305da1 fully completed and audio purged.
+[2026-08-15 21:54:00] [INFO] Global Low-Level Keyboard Hook stopped.
+[2026-08-15 21:54:04] [INFO] Starting GroqFlow application...
+[2026-08-15 21:54:04] [INFO] Background RetryService started.
+[2026-08-15 21:54:04] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 21:54:04] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 21:54:08] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b3e81f6cb6214392a6166a66c27c9278.wav
+[2026-08-15 21:54:09] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:55:58] [INFO] Compressed ultralight audio recording stopped and saved (882224 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b3e81f6cb6214392a6166a66c27c9278.wav
+[2026-08-15 21:55:58] [INFO] Added recording to persistent queue. ID: 2dc0bf8d3eae4ecfa00e04c6504a21ed
+[2026-08-15 21:55:58] [INFO] Processing queue item 2dc0bf8d3eae4ecfa00e04c6504a21ed (Attempt 1)...
+[2026-08-15 21:55:58] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_b3e81f6cb6214392a6166a66c27c9278.wav
+[2026-08-15 21:55:59] [INFO] Groq Whisper transcription success (1128 chars).
+[2026-08-15 21:55:59] [INFO] Whisper Raw Transcript: " Todos os sócios atualmente contribuem com o mesmo valor Pode ser que isso mude, mas por enquanto é a mesma coisa São 12 sócios, certo? Não 2 Os comprovantes vão ser PDFs e imagens Eles devem ficar guardados Acho que na nuvem não no computador no Mac mesmo e depois a gente pode escalar para a nuvem mas para guardar no Mac precisa ser em um formato compactado, eu coloco a imagem e o PDF lá e o programa já compacta ao máximo aquela informação sem perder sem perder qualidade não, pode perder um pouco a qualidade do comprovante, mas sem perder a legibilidade do comprovante. Sobre operação financeira, assessoria contábil e jurídica, taxas bancárias, anuidade de CRM, software de sistema não tem ainda, impostos de tributos vai ter, material de escritório vai ter, aluguel de sala vai ter. Vai ter o controle de múltiplas contas bancárias, que por enquanto a conta é da minha esposa, Mas vai ser a conta da APJ E o sistema Bom, não precisa ter o login Porque vai ser de uso pessoal mesmo Não precisa ter login não Pode abrir direto o painel de contratos E para exportar Cara, planilha Ou PDF Seria muito bom os dois na verdade"
+[2026-08-15 21:55:59] [INFO] Sending raw transcript (1128 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:56:02] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:56:02] [INFO] LLM Final Corrected Text: "Todos os sócios atualmente contribuem com o mesmo valor. Pode ser que isso mude, mas, por enquanto, é a mesma coisa. São 12 sócios, certo? Não, 2. Os comprovantes vão ser PDFs e imagens. Eles devem ficar guardados. Acho que na nuvem não, no computador, no Mac mesmo, e depois a gente pode escalar para a nuvem, mas, para guardar no Mac, precisa ser em um formato compactado; eu coloco a imagem e o PDF lá e o programa já compacta ao máximo aquela informação, sem perder qualidade. Não, pode perder um pouco a qualidade do comprovante, mas sem perder a legibilidade do comprovante. Sobre operação financeira, assessoria contábil e jurídica, taxas bancárias, anuidade de CRM, software de sistema, não tem ainda; impostos e tributos vão ter, material de escritório vai ter, aluguel de sala vai ter. Vai ter o controle de múltiplas contas bancárias, que, por enquanto, a conta é da minha esposa, mas vai ser a conta da APJ e o sistema. Bom, não precisa ter o login, porque vai ser de uso pessoal mesmo. Não precisa ter login, não. Pode abrir direto o painel de contratos. E, para exportar, cara, planilha ou PDF, seria muito bom os dois, na verdade."
+[2026-08-15 21:56:02] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:56:02] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:56:02] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b3e81f6cb6214392a6166a66c27c9278.wav
+[2026-08-15 21:56:02] [INFO] Queue item 2dc0bf8d3eae4ecfa00e04c6504a21ed fully completed and audio purged.
+[2026-08-15 21:56:32] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5c74ea9a8b714dba9f78c8e446bf82da.wav
+[2026-08-15 21:56:32] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Assist...', HWnd=0xC001C
+[2026-08-15 21:56:38] [INFO] Compressed ultralight audio recording stopped and saved (47664 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5c74ea9a8b714dba9f78c8e446bf82da.wav
+[2026-08-15 21:56:38] [INFO] Added recording to persistent queue. ID: f7cd9004f09f410ab3125b3888625e5b
+[2026-08-15 21:56:38] [INFO] Processing queue item f7cd9004f09f410ab3125b3888625e5b (Attempt 1)...
+[2026-08-15 21:56:38] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_5c74ea9a8b714dba9f78c8e446bf82da.wav
+[2026-08-15 21:56:38] [INFO] Groq Whisper transcription success (5 chars).
+[2026-08-15 21:56:38] [INFO] Whisper Raw Transcript: " E aí"
+[2026-08-15 21:56:38] [INFO] Sending raw transcript (5 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:56:39] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:56:39] [INFO] LLM Final Corrected Text: "E aí"
+[2026-08-15 21:56:39] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:56:39] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:56:39] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5c74ea9a8b714dba9f78c8e446bf82da.wav
+[2026-08-15 21:56:39] [INFO] Queue item f7cd9004f09f410ab3125b3888625e5b fully completed and audio purged.
+[2026-08-15 21:57:01] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_3071c756484d4181806fa1fc873789f2.wav
+[2026-08-15 21:57:01] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Assist...', HWnd=0xC001C
+[2026-08-15 21:57:14] [INFO] Compressed ultralight audio recording stopped and saved (103984 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_3071c756484d4181806fa1fc873789f2.wav
+[2026-08-15 21:57:14] [INFO] Added recording to persistent queue. ID: 7d25be0a57634b558f2163178821436c
+[2026-08-15 21:57:14] [INFO] Processing queue item 7d25be0a57634b558f2163178821436c (Attempt 1)...
+[2026-08-15 21:57:14] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_3071c756484d4181806fa1fc873789f2.wav
+[2026-08-15 21:57:15] [INFO] Groq Whisper transcription success (69 chars).
+[2026-08-15 21:57:15] [INFO] Whisper Raw Transcript: " Esses aí são os prompts a serem inseridos para os primeiros agentes."
+[2026-08-15 21:57:15] [INFO] Sending raw transcript (69 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:57:16] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:57:16] [INFO] LLM Final Corrected Text: "Esses aí são os prompts a serem inseridos para os primeiros agentes."
+[2026-08-15 21:57:16] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:57:16] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:57:16] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_3071c756484d4181806fa1fc873789f2.wav
+[2026-08-15 21:57:16] [INFO] Queue item 7d25be0a57634b558f2163178821436c fully completed and audio purged.
+[2026-08-15 21:58:10] [INFO] Global Low-Level Keyboard Hook stopped.
+[2026-08-15 21:58:12] [INFO] Starting GroqFlow application...
+[2026-08-15 21:58:12] [INFO] Background RetryService started.
+[2026-08-15 21:58:12] [INFO] Global Low-Level Keyboard Hook initialized.
+[2026-08-15 21:58:12] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 21:58:15] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5dd7756543274e4597a390bb3af696a8.wav
+[2026-08-15 21:58:15] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini e mais 1 página - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:58:18] [INFO] Compressed ultralight audio recording stopped and saved (27696 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5dd7756543274e4597a390bb3af696a8.wav
+[2026-08-15 21:58:18] [INFO] Added recording to persistent queue. ID: d2d81c0685ed4cda921aad74138636f5
+[2026-08-15 21:58:19] [INFO] Processing queue item d2d81c0685ed4cda921aad74138636f5 (Attempt 1)...
+[2026-08-15 21:58:19] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_5dd7756543274e4597a390bb3af696a8.wav
+[2026-08-15 21:58:19] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_c83350a639e54c0b8d175e3731bb8bdb.wav
+[2026-08-15 21:58:19] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini e mais 1 página - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:58:19] [INFO] Compressed ultralight audio recording stopped and saved (3120 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_c83350a639e54c0b8d175e3731bb8bdb.wav
+[2026-08-15 21:58:19] [INFO] Added recording to persistent queue. ID: 13c1b3f49be5452cb1cdd7c18f58b2cc
+[2026-08-15 21:58:19] [INFO] Groq Whisper transcription success (22 chars).
+[2026-08-15 21:58:19] [INFO] Whisper Raw Transcript: " O sistema é escalado."
+[2026-08-15 21:58:19] [INFO] Sending raw transcript (22 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:58:20] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:58:20] [INFO] LLM Final Corrected Text: "O sistema é escalado."
+[2026-08-15 21:58:20] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:58:20] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_d89969cda4544e2282530514e2ab82ed.wav
+[2026-08-15 21:58:20] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini e mais 1 página - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:58:20] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:58:20] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5dd7756543274e4597a390bb3af696a8.wav
+[2026-08-15 21:58:20] [INFO] Queue item d2d81c0685ed4cda921aad74138636f5 fully completed and audio purged.
+[2026-08-15 21:58:24] [INFO] Compressed ultralight audio recording stopped and saved (31792 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_d89969cda4544e2282530514e2ab82ed.wav
+[2026-08-15 21:58:24] [INFO] Added recording to persistent queue. ID: 5da01e7f4f6f4e0ebb1df825eaf6d9a0
+[2026-08-15 21:58:24] [INFO] Processing queue item 5da01e7f4f6f4e0ebb1df825eaf6d9a0 (Attempt 1)...
+[2026-08-15 21:58:24] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_d89969cda4544e2282530514e2ab82ed.wav
+[2026-08-15 21:58:25] [INFO] Groq Whisper transcription success (10 chars).
+[2026-08-15 21:58:25] [INFO] Whisper Raw Transcript: " Depois..."
+[2026-08-15 21:58:25] [INFO] Sending raw transcript (10 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:58:26] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:58:26] [INFO] LLM Final Corrected Text: "Depois..."
+[2026-08-15 21:58:26] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:58:26] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_44b4e8c3ef9b4668966623e3c998c8ad.wav
+[2026-08-15 21:58:26] [INFO] Captured Target Context: Process='msedge', Title='Prompt Para App Médico Web - Google Gemini e mais 1 página - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:58:26] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:58:26] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_d89969cda4544e2282530514e2ab82ed.wav
+[2026-08-15 21:58:26] [INFO] Queue item 5da01e7f4f6f4e0ebb1df825eaf6d9a0 fully completed and audio purged.
+[2026-08-15 21:58:47] [INFO] RetryService found 1 pending items. Triggering processing...
+[2026-08-15 21:58:47] [INFO] Processing queue item 13c1b3f49be5452cb1cdd7c18f58b2cc (Attempt 1)...
+[2026-08-15 21:58:47] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_c83350a639e54c0b8d175e3731bb8bdb.wav
+[2026-08-15 21:58:47] [INFO] Groq Whisper transcription success (26 chars).
+[2026-08-15 21:58:47] [INFO] Whisper Raw Transcript: " Legenda por Sônia Ruberti"
+[2026-08-15 21:58:47] [INFO] Sending raw transcript (26 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:58:48] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:58:48] [INFO] LLM Final Corrected Text: "Legenda por Sônia Ruberti."
+[2026-08-15 21:58:48] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:58:48] [INFO] Compressed ultralight audio recording stopped and saved (181808 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_44b4e8c3ef9b4668966623e3c998c8ad.wav
+[2026-08-15 21:58:48] [INFO] Added recording to persistent queue. ID: 553812cbbb4f49a69c82e53e16371a6b
+[2026-08-15 21:58:48] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:58:48] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_c83350a639e54c0b8d175e3731bb8bdb.wav
+[2026-08-15 21:58:48] [INFO] Queue item 13c1b3f49be5452cb1cdd7c18f58b2cc fully completed and audio purged.
+[2026-08-15 21:59:17] [INFO] RetryService found 1 pending items. Triggering processing...
+[2026-08-15 21:59:17] [INFO] Processing queue item 553812cbbb4f49a69c82e53e16371a6b (Attempt 1)...
+[2026-08-15 21:59:17] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_44b4e8c3ef9b4668966623e3c998c8ad.wav
+[2026-08-15 21:59:18] [INFO] Groq Whisper transcription success (5 chars).
+[2026-08-15 21:59:18] [INFO] Whisper Raw Transcript: " E aí"
+[2026-08-15 21:59:18] [INFO] Sending raw transcript (5 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 21:59:19] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 21:59:19] [INFO] LLM Final Corrected Text: "E aí"
+[2026-08-15 21:59:19] [INFO] Text copied to clipboard successfully.
+[2026-08-15 21:59:19] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 21:59:19] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_44b4e8c3ef9b4668966623e3c998c8ad.wav
+[2026-08-15 21:59:20] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_480084b65ab7455e92a30bd51aa797a9.wav
+[2026-08-15 21:59:20] [INFO] Captured Target Context: Process='msedge', Title='Nova guia e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 21:59:20] [INFO] Queue item 553812cbbb4f49a69c82e53e16371a6b fully completed and audio purged.
+[2026-08-15 22:08:25] [INFO] Starting GroqFlow application...
+[2026-08-15 22:08:25] [INFO] Background RetryService started.
+[2026-08-15 22:08:25] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:08:25] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:08:40] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:08:41] [INFO] Groq API key securely saved.
+[2026-08-15 22:08:41] [INFO] AutoStart registry key set.
+[2026-08-15 22:10:12] [INFO] Starting GroqFlow application...
+[2026-08-15 22:10:12] [INFO] Background RetryService started.
+[2026-08-15 22:10:12] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:10:12] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:10:16] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_12cf1bcf813e495eb8d1bf3b5906a07b.wav
+[2026-08-15 22:10:16] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:10:23] [INFO] Compressed ultralight audio recording stopped and saved (55344 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_12cf1bcf813e495eb8d1bf3b5906a07b.wav
+[2026-08-15 22:10:23] [INFO] Added recording to persistent queue. ID: 9a53d11c4d5e45988d77dc61f0434a3a
+[2026-08-15 22:10:23] [INFO] Processing queue item 9a53d11c4d5e45988d77dc61f0434a3a (Attempt 1)...
+[2026-08-15 22:10:23] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_12cf1bcf813e495eb8d1bf3b5906a07b.wav
+[2026-08-15 22:10:24] [INFO] Groq Whisper transcription success (34 chars).
+[2026-08-15 22:10:24] [INFO] Whisper Raw Transcript: " testando aqui a digitação por nós"
+[2026-08-15 22:10:24] [INFO] Sending raw transcript (34 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:10:24] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:10:24] [INFO] LLM Final Corrected Text: "Testando aqui a digitação por nós."
+[2026-08-15 22:10:24] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:10:24] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:10:24] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_12cf1bcf813e495eb8d1bf3b5906a07b.wav
+[2026-08-15 22:10:27] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:10:32] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_f68fb28641574e0780b37938033ea1e4.wav
+[2026-08-15 22:10:32] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:10:42] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:10:57] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:11:03] [INFO] Compressed ultralight audio recording stopped and saved (256048 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_f68fb28641574e0780b37938033ea1e4.wav
+[2026-08-15 22:11:03] [INFO] Added recording to persistent queue. ID: e905b3f8bd2a456fbaf35d296b7f98d3
+[2026-08-15 22:11:12] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:11:17] [INFO] RetryService found 1 pending items. Triggering processing...
+[2026-08-15 22:11:27] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:11:35] [INFO] Global Low-Level Keyboard Hook stopped.
+[2026-08-15 22:11:38] [INFO] Starting GroqFlow application...
+[2026-08-15 22:11:38] [INFO] Background RetryService started.
+[2026-08-15 22:11:38] [ERROR] Error loading pending audio queue | Exception: InvalidOperationException - Não é possível converter objeto do tipo 'System.Int32' em 'System.IntPtr'
+[2026-08-15 22:11:38] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:11:38] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:11:45] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_bdffae2444714deab842f251c64d4715.wav
+[2026-08-15 22:11:45] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:11:53] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:12:02] [INFO] Compressed ultralight audio recording stopped and saved (137264 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_bdffae2444714deab842f251c64d4715.wav
+[2026-08-15 22:12:02] [INFO] Added recording to persistent queue. ID: dc6e0a5b26944a6295720550c97a0c16
+[2026-08-15 22:12:02] [INFO] Processing queue item dc6e0a5b26944a6295720550c97a0c16 (Attempt 1)...
+[2026-08-15 22:12:02] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_bdffae2444714deab842f251c64d4715.wav
+[2026-08-15 22:12:03] [INFO] Groq Whisper transcription success (225 chars).
+[2026-08-15 22:12:03] [INFO] Whisper Raw Transcript: " Um bannerzinho no canto Pra saber se tá gravando Porque o banner sumiu Eu não preciso daquele banner grande com nome Pode ser só um íconezinho Pra eu saber que tá gravando E que eu saber que foi processado, foi gravado Enfim"
+[2026-08-15 22:12:03] [INFO] Sending raw transcript (225 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:12:05] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:12:05] [INFO] LLM Final Corrected Text: "Um bannerzinho no canto, para saber se está gravando, porque o banner sumiu. Eu não preciso daquele banner grande com nome; pode ser só um iconzinho para eu saber que está gravando e que eu saiba que foi processado, foi gravado. Enfim."
+[2026-08-15 22:12:05] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:12:05] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:12:05] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_bdffae2444714deab842f251c64d4715.wav
+[2026-08-15 22:12:08] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:12:23] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:13:33] [INFO] Starting GroqFlow application...
+[2026-08-15 22:13:33] [INFO] Background RetryService started.
+[2026-08-15 22:13:33] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:13:33] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:13:45] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e86f7f4e545d4ce2b0ac0e1cb8c0170f.wav
+[2026-08-15 22:13:45] [INFO] Captured Target Context: Process='msedge', Title='Nova guia e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 22:13:48] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:13:51] [INFO] Compressed ultralight audio recording stopped and saved (49200 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e86f7f4e545d4ce2b0ac0e1cb8c0170f.wav
+[2026-08-15 22:14:00] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b13eebcbc490437a81d4018283a36de4.wav
+[2026-08-15 22:14:00] [INFO] Captured Target Context: Process='msedge', Title='Nova guia e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 22:14:03] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:14:04] [INFO] Compressed ultralight audio recording stopped and saved (31280 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_b13eebcbc490437a81d4018283a36de4.wav
+[2026-08-15 22:14:18] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:14:22] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_da44b1a28c53421cafa726dbd274a0ff.wav
+[2026-08-15 22:14:22] [INFO] Captured Target Context: Process='GroqFlow', Title='', HWnd=0xA02FE
+[2026-08-15 22:14:33] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:14:48] [INFO] Global Low-Level Keyboard Hook installed successfully.
+[2026-08-15 22:17:12] [INFO] Starting GroqFlow application...
+[2026-08-15 22:17:12] [INFO] Background RetryService started.
+[2026-08-15 22:17:12] [INFO] Global Low-Level Keyboard Hook started.
+[2026-08-15 22:17:12] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:17:17] [INFO] Captured Target Context: Process='explorer', Title='', HWnd=0x10160
+[2026-08-15 22:17:20] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_81118c46b0724489b21de6a05cf60b81.wav
+[2026-08-15 22:17:23] [INFO] Compressed ultralight audio recording stopped and saved (22064 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_81118c46b0724489b21de6a05cf60b81.wav
+[2026-08-15 22:17:23] [INFO] Added recording to persistent queue. ID: 14f012fcb7e7415b96ed43affed28d6c
+[2026-08-15 22:17:23] [INFO] Processing queue item 14f012fcb7e7415b96ed43affed28d6c (Attempt 1)...
+[2026-08-15 22:17:23] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_81118c46b0724489b21de6a05cf60b81.wav
+[2026-08-15 22:17:24] [INFO] Groq Whisper transcription success (5 chars).
+[2026-08-15 22:17:24] [INFO] Whisper Raw Transcript: " E aí"
+[2026-08-15 22:17:24] [INFO] Sending raw transcript (5 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:17:24] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:17:24] [INFO] LLM Final Corrected Text: "E aí"
+[2026-08-15 22:17:24] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:17:24] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:17:24] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_81118c46b0724489b21de6a05cf60b81.wav
+[2026-08-15 22:17:24] [INFO] Queue item 14f012fcb7e7415b96ed43affed28d6c fully completed and audio purged.
+[2026-08-15 22:17:26] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:17:28] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e6d60f71eb0448a3a7cb436449ad9a7f.wav
+[2026-08-15 22:17:38] [INFO] Compressed ultralight audio recording stopped and saved (86064 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e6d60f71eb0448a3a7cb436449ad9a7f.wav
+[2026-08-15 22:17:38] [INFO] Added recording to persistent queue. ID: c7547f8ab90b4409baa63c9a98872163
+[2026-08-15 22:17:38] [INFO] Processing queue item c7547f8ab90b4409baa63c9a98872163 (Attempt 1)...
+[2026-08-15 22:17:38] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_e6d60f71eb0448a3a7cb436449ad9a7f.wav
+[2026-08-15 22:17:39] [INFO] Groq Whisper transcription success (131 chars).
+[2026-08-15 22:17:39] [INFO] Whisper Raw Transcript: " Beleza, agora o ícone apareceu, está discreto, está lá no cantinho, em vermelho, está funcionando. Vou testar a transcrição agora."
+[2026-08-15 22:17:39] [INFO] Sending raw transcript (131 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:17:40] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:17:40] [INFO] LLM Final Corrected Text: "Beleza, agora o ícone apareceu, está discreto, está lá no cantinho, em vermelho, está funcionando. Vou testar a transcrição agora."
+[2026-08-15 22:17:40] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:17:40] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:17:40] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_e6d60f71eb0448a3a7cb436449ad9a7f.wav
+[2026-08-15 22:17:40] [INFO] Queue item c7547f8ab90b4409baa63c9a98872163 fully completed and audio purged.
+[2026-08-15 22:17:42] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:17:42] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ea0bd6e4da2e40068666364bd42a17bd.wav
+[2026-08-15 22:17:51] [INFO] Compressed ultralight audio recording stopped and saved (74288 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ea0bd6e4da2e40068666364bd42a17bd.wav
+[2026-08-15 22:17:51] [INFO] Added recording to persistent queue. ID: a3f933f39c82444e8eb3e4d45519ce80
+[2026-08-15 22:17:51] [INFO] Processing queue item a3f933f39c82444e8eb3e4d45519ce80 (Attempt 1)...
+[2026-08-15 22:17:51] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_ea0bd6e4da2e40068666364bd42a17bd.wav
+[2026-08-15 22:17:52] [INFO] Groq Whisper transcription success (122 chars).
+[2026-08-15 22:17:52] [INFO] Whisper Raw Transcript: " beleza acho que agora funcionou tudo o que eu estou digitando aqui eu tô usando o aplicativo para falar e ele transcrever"
+[2026-08-15 22:17:52] [INFO] Sending raw transcript (122 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:17:53] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:17:53] [INFO] LLM Final Corrected Text: "Beleza, acho que agora funcionou tudo o que eu estou digitando aqui. Eu tô usando o aplicativo para falar e ele transcrever."
+[2026-08-15 22:17:53] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:17:53] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:17:53] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ea0bd6e4da2e40068666364bd42a17bd.wav
+[2026-08-15 22:17:53] [INFO] Queue item a3f933f39c82444e8eb3e4d45519ce80 fully completed and audio purged.
+[2026-08-15 22:18:08] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:18:09] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_2a223d51bc344222a36e98e83621ff24.wav
+[2026-08-15 22:18:13] [INFO] Compressed ultralight audio recording stopped and saved (32304 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_2a223d51bc344222a36e98e83621ff24.wav
+[2026-08-15 22:18:13] [INFO] Added recording to persistent queue. ID: cb4512cbcaca4fc999789954d232592a
+[2026-08-15 22:18:13] [INFO] Processing queue item cb4512cbcaca4fc999789954d232592a (Attempt 1)...
+[2026-08-15 22:18:13] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_2a223d51bc344222a36e98e83621ff24.wav
+[2026-08-15 22:18:14] [INFO] Groq Whisper transcription success (27 chars).
+[2026-08-15 22:18:14] [INFO] Whisper Raw Transcript: " Parece estar tudo ok agora"
+[2026-08-15 22:18:14] [INFO] Sending raw transcript (27 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:18:15] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:18:15] [INFO] LLM Final Corrected Text: "Parece estar tudo ok agora."
+[2026-08-15 22:18:15] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:18:15] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:18:15] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_2a223d51bc344222a36e98e83621ff24.wav
+[2026-08-15 22:18:15] [INFO] Queue item cb4512cbcaca4fc999789954d232592a fully completed and audio purged.
+[2026-08-15 22:25:34] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:25:35] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_215a4206634d48d6b7f11cc24ea624e3.wav
+[2026-08-15 22:25:45] [INFO] Compressed ultralight audio recording stopped and saved (77360 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_215a4206634d48d6b7f11cc24ea624e3.wav
+[2026-08-15 22:25:45] [INFO] Added recording to persistent queue. ID: d1c8e6de27a5446a956e4642be418992
+[2026-08-15 22:25:45] [INFO] Processing queue item d1c8e6de27a5446a956e4642be418992 (Attempt 1)...
+[2026-08-15 22:25:45] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_215a4206634d48d6b7f11cc24ea624e3.wav
+[2026-08-15 22:25:46] [INFO] Groq Whisper transcription success (80 chars).
+[2026-08-15 22:25:46] [INFO] Whisper Raw Transcript: " Qual a solução que você fez para tornar o atalho e o aplicativo mais confiável?"
+[2026-08-15 22:25:46] [INFO] Sending raw transcript (80 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:25:47] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:25:47] [INFO] LLM Final Corrected Text: "Qual a solução que você fez para tornar o atalho e o aplicativo mais confiável?"
+[2026-08-15 22:25:47] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:25:47] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:25:47] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_215a4206634d48d6b7f11cc24ea624e3.wav
+[2026-08-15 22:25:47] [INFO] Queue item d1c8e6de27a5446a956e4642be418992 fully completed and audio purged.
+[2026-08-15 22:28:27] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Assist...', HWnd=0xC001C
+[2026-08-15 22:28:28] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fb8cfb56688b46e7babe1685ca988989.wav
+[2026-08-15 22:28:56] [INFO] Compressed ultralight audio recording stopped and saved (226864 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fb8cfb56688b46e7babe1685ca988989.wav
+[2026-08-15 22:28:56] [INFO] Added recording to persistent queue. ID: 7acab43446504912b13ed7be19e921cd
+[2026-08-15 22:28:56] [INFO] Processing queue item 7acab43446504912b13ed7be19e921cd (Attempt 1)...
+[2026-08-15 22:28:56] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_fb8cfb56688b46e7babe1685ca988989.wav
+[2026-08-15 22:28:57] [INFO] Groq Whisper transcription success (359 chars).
+[2026-08-15 22:28:57] [INFO] Whisper Raw Transcript: " Pare esse aplicativo que você acabou de criar com esse disponível nessa pasta que eu estou te colocando acima Porque são aplicativos com uma finalidade muito parecida No entanto, um tem quatro vezes o tamanho de arquivo do outro Verifique para mim o que eles são diferentes E se um é superior ao outro no sentido de funcionalidades e potencial de crescimento"
+[2026-08-15 22:28:57] [INFO] Sending raw transcript (359 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:28:59] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:28:59] [INFO] LLM Final Corrected Text: "Pare esse aplicativo que você acabou de criar com esse disponível nessa pasta que eu estou te colocando acima porque são aplicativos com uma finalidade muito parecida. No entanto, um tem quatro vezes o tamanho de arquivo do outro. Verifique para mim o que eles são diferentes e se um é superior ao outro no sentido de funcionalidades e potencial de crescimento."
+[2026-08-15 22:28:59] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:28:59] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:28:59] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fb8cfb56688b46e7babe1685ca988989.wav
+[2026-08-15 22:28:59] [INFO] Queue item 7acab43446504912b13ed7be19e921cd fully completed and audio purged.
+[2026-08-15 22:29:34] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:29:35] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_995d546791954e8ab3cad4dce424201b.wav
+[2026-08-15 22:29:41] [INFO] Compressed ultralight audio recording stopped and saved (54320 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_995d546791954e8ab3cad4dce424201b.wav
+[2026-08-15 22:29:41] [INFO] Added recording to persistent queue. ID: 69eec24a94ae4846854bcfcd038b84f4
+[2026-08-15 22:29:41] [INFO] Processing queue item 69eec24a94ae4846854bcfcd038b84f4 (Attempt 1)...
+[2026-08-15 22:29:41] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_995d546791954e8ab3cad4dce424201b.wav
+[2026-08-15 22:29:42] [INFO] Groq Whisper transcription success (87 chars).
+[2026-08-15 22:29:42] [INFO] Whisper Raw Transcript: " Eu estou usando ele aqui agora no meu computador E não falhou e nem travou nenhuma vez"
+[2026-08-15 22:29:42] [INFO] Sending raw transcript (87 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:29:43] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:29:43] [INFO] LLM Final Corrected Text: "Eu estou usando ele aqui agora no meu computador e não falhou e nem travou nenhuma vez."
+[2026-08-15 22:29:43] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:29:43] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:29:43] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_995d546791954e8ab3cad4dce424201b.wav
+[2026-08-15 22:29:43] [INFO] Queue item 69eec24a94ae4846854bcfcd038b84f4 fully completed and audio purged.
+[2026-08-15 22:32:49] [INFO] Starting GroqFlow application...
+[2026-08-15 22:32:49] [INFO] Background RetryService started.
+[2026-08-15 22:32:49] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-08-15 22:32:49] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:32:49] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 22536)
+[2026-08-15 22:32:53] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:32:56] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1ddb09d5327d49748b24125ea5bf9bc5.wav
+[2026-08-15 22:33:05] [INFO] Compressed ultralight audio recording stopped and saved (80432 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1ddb09d5327d49748b24125ea5bf9bc5.wav
+[2026-08-15 22:33:05] [INFO] Added recording to persistent queue. ID: 93da53d9a72e4604a200e5563dc33aaa
+[2026-08-15 22:33:05] [INFO] Processing queue item 93da53d9a72e4604a200e5563dc33aaa (Attempt 1)...
+[2026-08-15 22:33:05] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_1ddb09d5327d49748b24125ea5bf9bc5.wav
+[2026-08-15 22:33:06] [INFO] Groq Whisper transcription success (111 chars).
+[2026-08-15 22:33:06] [INFO] Whisper Raw Transcript: " Beleza, vou testar aqui por algum tempo Até agora eu reiniciei o aplicativo aqui E parece que está funcionando"
+[2026-08-15 22:33:06] [INFO] Sending raw transcript (111 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:33:08] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:33:08] [INFO] LLM Final Corrected Text: "Beleza, vou testar aqui por algum tempo. Até agora, eu reiniciei o aplicativo aqui e parece que está funcionando."
+[2026-08-15 22:33:08] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:33:08] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:33:08] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1ddb09d5327d49748b24125ea5bf9bc5.wav
+[2026-08-15 22:33:08] [INFO] Queue item 93da53d9a72e4604a200e5563dc33aaa fully completed and audio purged.
+[2026-08-15 22:33:59] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:34:00] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_0f46fe16eb38406a89fbe33149e9052c.wav
+[2026-08-15 22:34:03] [INFO] Compressed ultralight audio recording stopped and saved (29744 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_0f46fe16eb38406a89fbe33149e9052c.wav
+[2026-08-15 22:34:03] [INFO] Added recording to persistent queue. ID: 6efc9faf933344da932734a4d5314dfc
+[2026-08-15 22:34:03] [INFO] Processing queue item 6efc9faf933344da932734a4d5314dfc (Attempt 1)...
+[2026-08-15 22:34:03] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_0f46fe16eb38406a89fbe33149e9052c.wav
+[2026-08-15 22:34:04] [INFO] Groq Whisper transcription success (40 chars).
+[2026-08-15 22:34:04] [INFO] Whisper Raw Transcript: " Vamos ver como vai ser o funcionamento."
+[2026-08-15 22:34:04] [INFO] Sending raw transcript (40 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:34:05] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:34:05] [INFO] LLM Final Corrected Text: "Vamos ver como vai ser o funcionamento."
+[2026-08-15 22:34:05] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:34:05] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:34:05] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_0f46fe16eb38406a89fbe33149e9052c.wav
+[2026-08-15 22:34:05] [INFO] Queue item 6efc9faf933344da932734a4d5314dfc fully completed and audio purged.
+[2026-08-15 22:34:07] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:34:07] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5225e40239744b93963f5ca9d76a46bb.wav
+[2026-08-15 22:34:21] [INFO] Compressed ultralight audio recording stopped and saved (117808 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5225e40239744b93963f5ca9d76a46bb.wav
+[2026-08-15 22:34:21] [INFO] Added recording to persistent queue. ID: 0be07ce05cd64896995a8c890ac659be
+[2026-08-15 22:34:21] [INFO] Processing queue item 0be07ce05cd64896995a8c890ac659be (Attempt 1)...
+[2026-08-15 22:34:21] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_5225e40239744b93963f5ca9d76a46bb.wav
+[2026-08-15 22:34:22] [INFO] Groq Whisper transcription success (213 chars).
+[2026-08-15 22:34:22] [INFO] Whisper Raw Transcript: " Na segunda-feira eu vou levar ele para o trabalho Através do meu Google Drive E vou atualizar a versão que está lá Que foi a que eu compilei hoje pela manhã Então vamos ver como é que vai ser o comportamento dela"
+[2026-08-15 22:34:22] [INFO] Sending raw transcript (213 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:34:24] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:34:24] [INFO] LLM Final Corrected Text: "Na segunda-feira, eu vou levar ele para o trabalho através do meu Google Drive e vou atualizar a versão que está lá, que foi a que eu compilei hoje pela manhã. Então, vamos ver como é que vai ser o comportamento dela."
+[2026-08-15 22:34:24] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:34:24] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:34:24] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_5225e40239744b93963f5ca9d76a46bb.wav
+[2026-08-15 22:34:24] [INFO] Queue item 0be07ce05cd64896995a8c890ac659be fully completed and audio purged.
+[2026-08-15 22:34:30] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:34:31] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_0262f15fbf02465dbc2d881e9a0d9377.wav
+[2026-08-15 22:34:48] [INFO] Compressed ultralight audio recording stopped and saved (136752 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_0262f15fbf02465dbc2d881e9a0d9377.wav
+[2026-08-15 22:34:48] [INFO] Added recording to persistent queue. ID: 35ae7987b5a74907a1ddb88a08f1f66a
+[2026-08-15 22:34:48] [INFO] Processing queue item 35ae7987b5a74907a1ddb88a08f1f66a (Attempt 1)...
+[2026-08-15 22:34:48] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_0262f15fbf02465dbc2d881e9a0d9377.wav
+[2026-08-15 22:34:49] [INFO] Groq Whisper transcription success (192 chars).
+[2026-08-15 22:34:49] [INFO] Whisper Raw Transcript: " O que eu quero dizer é que, mesmo que algumas falhas, o projeto agilizou muito o meu trabalho hoje, me permitindo fazer evoluções médicas em cerca de 20 segundos, 30 segundos aproximadamente."
+[2026-08-15 22:34:49] [INFO] Sending raw transcript (192 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:34:51] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:34:51] [INFO] LLM Final Corrected Text: "O que eu quero dizer é que, mesmo que algumas falhas, o projeto agilizou muito o meu trabalho hoje, me permitindo fazer evoluções médicas em cerca de 20 segundos, 30 segundos aproximadamente."
+[2026-08-15 22:34:51] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:34:51] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:34:51] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_0262f15fbf02465dbc2d881e9a0d9377.wav
+[2026-08-15 22:34:51] [INFO] Queue item 35ae7987b5a74907a1ddb88a08f1f66a fully completed and audio purged.
+[2026-08-15 22:35:14] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:35:15] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1b73fe30284b43e0abc328b6065c30cf.wav
+[2026-08-15 22:35:27] [INFO] Compressed ultralight audio recording stopped and saved (97840 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1b73fe30284b43e0abc328b6065c30cf.wav
+[2026-08-15 22:35:27] [INFO] Added recording to persistent queue. ID: 6a7561461ef6409fb13c8cba4d2a6a87
+[2026-08-15 22:35:27] [INFO] Processing queue item 6a7561461ef6409fb13c8cba4d2a6a87 (Attempt 1)...
+[2026-08-15 22:35:27] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_1b73fe30284b43e0abc328b6065c30cf.wav
+[2026-08-15 22:35:28] [INFO] Groq Whisper transcription success (145 chars).
+[2026-08-15 22:35:28] [INFO] Whisper Raw Transcript: " É que, de fato, esse processo de um aplicativo evoluir com alguns bugs e a gente ir precisando corrigir periodicamente com essa frequência toda?"
+[2026-08-15 22:35:28] [INFO] Sending raw transcript (145 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:35:29] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:35:29] [INFO] LLM Final Corrected Text: "É que, de fato, esse processo de um aplicativo evoluir com alguns bugs e a gente ir precisando corrigir periodicamente com essa frequência toda?"
+[2026-08-15 22:35:29] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:35:29] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:35:29] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1b73fe30284b43e0abc328b6065c30cf.wav
+[2026-08-15 22:35:29] [INFO] Queue item 6a7561461ef6409fb13c8cba4d2a6a87 fully completed and audio purged.
+[2026-08-15 22:36:16] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:36:16] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_a86a7a36ba9642ceac4f26d2102d8b46.wav
+[2026-08-15 22:36:23] [INFO] Compressed ultralight audio recording stopped and saved (62512 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_a86a7a36ba9642ceac4f26d2102d8b46.wav
+[2026-08-15 22:36:23] [INFO] Added recording to persistent queue. ID: 21bc3ecbac3f464d82f3cb763b8b5daf
+[2026-08-15 22:36:23] [INFO] Processing queue item 21bc3ecbac3f464d82f3cb763b8b5daf (Attempt 1)...
+[2026-08-15 22:36:23] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_a86a7a36ba9642ceac4f26d2102d8b46.wav
+[2026-08-15 22:36:24] [INFO] Groq Whisper transcription success (67 chars).
+[2026-08-15 22:36:24] [INFO] Whisper Raw Transcript: " Bom, eu não saberia fazer nada disso Graças a você, deu tudo certo"
+[2026-08-15 22:36:24] [INFO] Sending raw transcript (67 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:36:25] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:36:25] [INFO] LLM Final Corrected Text: "Bom, eu não saberia fazer nada disso. Graças a você, deu tudo certo."
+[2026-08-15 22:36:25] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:36:25] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:36:25] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_a86a7a36ba9642ceac4f26d2102d8b46.wav
+[2026-08-15 22:36:25] [INFO] Queue item 21bc3ecbac3f464d82f3cb763b8b5daf fully completed and audio purged.
+[2026-08-15 22:36:54] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:36:54] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_96e2efc671cb4fbb8d456d40c4175399.wav
+[2026-08-15 22:37:06] [INFO] Compressed ultralight audio recording stopped and saved (98864 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_96e2efc671cb4fbb8d456d40c4175399.wav
+[2026-08-15 22:37:06] [INFO] Added recording to persistent queue. ID: 90594d3f81924b4d9da55dc9439333ca
+[2026-08-15 22:37:06] [INFO] Processing queue item 90594d3f81924b4d9da55dc9439333ca (Attempt 1)...
+[2026-08-15 22:37:06] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_96e2efc671cb4fbb8d456d40c4175399.wav
+[2026-08-15 22:37:07] [INFO] Groq Whisper transcription success (145 chars).
+[2026-08-15 22:37:07] [INFO] Whisper Raw Transcript: " Caso eu queira fazer novas melhorias no futuro, eu devo voltar para essa mesma conversa ou eu devo criar uma nova conversa dentro desse projeto?"
+[2026-08-15 22:37:07] [INFO] Sending raw transcript (145 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:37:08] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:37:08] [INFO] LLM Final Corrected Text: "Caso eu queira fazer novas melhorias no futuro, eu devo voltar para essa mesma conversa ou eu devo criar uma nova conversa dentro desse projeto?"
+[2026-08-15 22:37:08] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:37:08] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:37:08] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_96e2efc671cb4fbb8d456d40c4175399.wav
+[2026-08-15 22:37:08] [INFO] Queue item 90594d3f81924b4d9da55dc9439333ca fully completed and audio purged.
+[2026-08-15 22:38:39] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:38:39] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_14d8c4f5b6084e749b8be6de8ce28a2d.wav
+[2026-08-15 22:39:12] [INFO] Compressed ultralight audio recording stopped and saved (266800 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_14d8c4f5b6084e749b8be6de8ce28a2d.wav
+[2026-08-15 22:39:12] [INFO] Added recording to persistent queue. ID: 3868bcc6dbba4905a34234daa5a95409
+[2026-08-15 22:39:12] [INFO] Processing queue item 3868bcc6dbba4905a34234daa5a95409 (Attempt 1)...
+[2026-08-15 22:39:12] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_14d8c4f5b6084e749b8be6de8ce28a2d.wav
+[2026-08-15 22:39:14] [INFO] Groq Whisper transcription success (443 chars).
+[2026-08-15 22:39:14] [INFO] Whisper Raw Transcript: " Um último ponto nessa conversa Você não conseguiria Modificar, por exemplo O nome Da pasta raiz Que está com o nome do projeto Está um nome que eu não consigo identificar Logo qual é o aplicativo Está Rapp Você não consegue botar para mim Como padrão daqui para frente E nos outros projetos também O nome que eu coloquei ali Depois que eu criei O projeto de forma rápida e eu modifiquei e você não consegue já fazer essa modificação para mim?"
+[2026-08-15 22:39:14] [INFO] Sending raw transcript (443 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:39:16] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:39:16] [INFO] LLM Final Corrected Text: "Um último ponto nessa conversa: você não conseguiria modificar, por exemplo, o nome da pasta raiz que está com o nome do projeto? Está um nome que eu não consigo identificar. Logo, qual é o aplicativo? Está Rapp. Você não consegue botar para mim como padrão daqui para frente e nos outros projetos também? O nome que eu coloquei ali depois que eu criei o projeto de forma rápida e eu modifiquei, e você não consegue já fazer essa modificação para mim?"
+[2026-08-15 22:39:16] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:39:16] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:39:16] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_14d8c4f5b6084e749b8be6de8ce28a2d.wav
+[2026-08-15 22:39:16] [INFO] Queue item 3868bcc6dbba4905a34234daa5a95409 fully completed and audio purged.
+[2026-08-15 22:39:52] [INFO] Captured Target Context: Process='Antigravity', Title='Sistema de Gestão Finance...', HWnd=0xC001C
+[2026-08-15 22:39:53] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1632435486f8400f8b264f5d8f51f0e7.wav
+[2026-08-15 22:40:01] [INFO] Compressed ultralight audio recording stopped and saved (65584 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1632435486f8400f8b264f5d8f51f0e7.wav
+[2026-08-15 22:40:01] [INFO] Added recording to persistent queue. ID: 56274d4fbecb4582929c7586ad9e5c9e
+[2026-08-15 22:40:01] [INFO] Processing queue item 56274d4fbecb4582929c7586ad9e5c9e (Attempt 1)...
+[2026-08-15 22:40:01] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_1632435486f8400f8b264f5d8f51f0e7.wav
+[2026-08-15 22:40:02] [INFO] Groq Whisper transcription success (5 chars).
+[2026-08-15 22:40:02] [INFO] Whisper Raw Transcript: " E aí"
+[2026-08-15 22:40:02] [INFO] Sending raw transcript (5 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:40:03] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:40:03] [INFO] LLM Final Corrected Text: "E aí"
+[2026-08-15 22:40:03] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:40:03] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:40:03] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_1632435486f8400f8b264f5d8f51f0e7.wav
+[2026-08-15 22:40:03] [INFO] Queue item 56274d4fbecb4582929c7586ad9e5c9e fully completed and audio purged.
+[2026-08-15 22:40:13] [INFO] Groq API key securely saved.
+[2026-08-15 22:40:13] [INFO] AutoStart registry key set.
+[2026-08-15 22:40:13] [INFO] Settings saved successfully.
+[2026-08-15 22:40:14] [INFO] Captured Target Context: Process='Antigravity', Title='Sistema de Gestão Finance...', HWnd=0xC001C
+[2026-08-15 22:40:15] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_02ba0cea6a4c4d208b982b98f9641073.wav
+[2026-08-15 22:40:42] [INFO] Compressed ultralight audio recording stopped and saved (220720 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_02ba0cea6a4c4d208b982b98f9641073.wav
+[2026-08-15 22:40:42] [INFO] Added recording to persistent queue. ID: c119e759d3a64643b295e7de5b761874
+[2026-08-15 22:40:42] [INFO] Processing queue item c119e759d3a64643b295e7de5b761874 (Attempt 1)...
+[2026-08-15 22:40:42] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_02ba0cea6a4c4d208b982b98f9641073.wav
+[2026-08-15 22:40:43] [INFO] Groq Whisper transcription success (285 chars).
+[2026-08-15 22:40:43] [INFO] Whisper Raw Transcript: " Você criou aqui o aplicativo, beleza. Eu já cliquei aqui nesse link do localhost 3000, ok. Mas no dia a dia, liguei o computador ou então liguei lá o Macbook e eu vou querer iniciar esse aplicativo. Como que eu faria isso? É um botão só ou eu preciso fazer abrir servidor e tudo mais?"
+[2026-08-15 22:40:43] [INFO] Sending raw transcript (285 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:40:45] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:40:45] [INFO] LLM Final Corrected Text: "Você criou aqui o aplicativo, beleza. Eu já cliquei aqui neste link do localhost 3000, ok. Mas, no dia a dia, liguei o computador ou então liguei o MacBook e eu vou querer iniciar esse aplicativo. Como eu faria isso? É um botão só ou eu preciso abrir o servidor e tudo mais?"
+[2026-08-15 22:40:45] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:40:45] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:40:45] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_02ba0cea6a4c4d208b982b98f9641073.wav
+[2026-08-15 22:40:45] [INFO] Queue item c119e759d3a64643b295e7de5b761874 fully completed and audio purged.
+[2026-08-15 22:41:18] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Assist...', HWnd=0xC001C
+[2026-08-15 22:41:19] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_df491704907f4796afa6aa9db738ed56.wav
+[2026-08-15 22:41:30] [INFO] Compressed ultralight audio recording stopped and saved (94768 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_df491704907f4796afa6aa9db738ed56.wav
+[2026-08-15 22:41:30] [INFO] Added recording to persistent queue. ID: a980565347934e10989330860a12307c
+[2026-08-15 22:41:30] [INFO] Processing queue item a980565347934e10989330860a12307c (Attempt 1)...
+[2026-08-15 22:41:30] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_df491704907f4796afa6aa9db738ed56.wav
+[2026-08-15 22:41:31] [INFO] Groq Whisper transcription success (145 chars).
+[2026-08-15 22:41:31] [INFO] Whisper Raw Transcript: " Certo, agora em vez de o nome ter NIFT Ferm, coloque o nome do programa que eu criei como nome da pasta para que eu identifique mais facilmente."
+[2026-08-15 22:41:31] [INFO] Sending raw transcript (145 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:41:33] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:41:33] [INFO] LLM Final Corrected Text: "Certo, agora, em vez de o nome ter NIFT Ferm, coloque o nome do programa que eu criei como nome da pasta para que eu identifique mais facilmente."
+[2026-08-15 22:41:33] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:41:33] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:41:33] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_df491704907f4796afa6aa9db738ed56.wav
+[2026-08-15 22:41:33] [INFO] Queue item a980565347934e10989330860a12307c fully completed and audio purged.
+[2026-08-15 22:42:02] [INFO] Captured Target Context: Process='Antigravity', Title='Sistema de Gestão Finance...', HWnd=0xC001C
+[2026-08-15 22:42:03] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ffa165d7833c45d68ba8748063aed4b3.wav
+[2026-08-15 22:42:46] [INFO] Compressed ultralight audio recording stopped and saved (352816 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ffa165d7833c45d68ba8748063aed4b3.wav
+[2026-08-15 22:42:46] [INFO] Added recording to persistent queue. ID: f1aff39464394995bb0b2be8d339a351
+[2026-08-15 22:42:46] [INFO] Processing queue item f1aff39464394995bb0b2be8d339a351 (Attempt 1)...
+[2026-08-15 22:42:46] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_ffa165d7833c45d68ba8748063aed4b3.wav
+[2026-08-15 22:42:48] [INFO] Groq Whisper transcription success (428 chars).
+[2026-08-15 22:42:48] [INFO] Whisper Raw Transcript: " Beleza, tem duas coisas aqui. Primeiro, eu quero que você coloque na pasta do projeto o nome do aplicativo que eu criei aqui. Gestão PJ Médica Mundo Plataforma. E segundo, eu quero começar o aplicativo sem dados de modelo. Porque lá eu vi que tem vários valores já cadastrados e tudo mais e eu não quero isso não. Quero começar com o aplicativo zerado mesmo. E terceiro, aqui está uma tarefa rodando, npm run dev. O que é isso?"
+[2026-08-15 22:42:48] [INFO] Sending raw transcript (428 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:42:51] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:42:51] [INFO] LLM Final Corrected Text: "Beleza, tem duas coisas aqui. Primeiro, eu quero que você coloque na pasta do projeto o nome do aplicativo que eu criei aqui. Gestão PJ Médica Mundo Plataforma. E, segundo, eu quero começar o aplicativo sem dados de modelo. Porque lá eu vi que tem vários valores já cadastrados e tudo mais, e eu não quero isso, não. Quero começar com o aplicativo zerado mesmo. E, terceiro, aqui está uma tarefa rodando, npm run dev. O que é isso?"
+[2026-08-15 22:42:51] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:42:51] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:42:51] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_ffa165d7833c45d68ba8748063aed4b3.wav
+[2026-08-15 22:42:51] [INFO] Queue item f1aff39464394995bb0b2be8d339a351 fully completed and audio purged.
+[2026-08-15 22:43:36] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Assist...', HWnd=0xC001C
+[2026-08-15 22:43:36] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_943affd2fee14c93b0113bee898d53ae.wav
+[2026-08-15 22:43:42] [INFO] Compressed ultralight audio recording stopped and saved (48688 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_943affd2fee14c93b0113bee898d53ae.wav
+[2026-08-15 22:43:42] [INFO] Added recording to persistent queue. ID: bb8a269ce4c949c1bbaf04cae16aa306
+[2026-08-15 22:43:42] [INFO] Processing queue item bb8a269ce4c949c1bbaf04cae16aa306 (Attempt 1)...
+[2026-08-15 22:43:42] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_943affd2fee14c93b0113bee898d53ae.wav
+[2026-08-15 22:43:43] [INFO] Groq Whisper transcription success (83 chars).
+[2026-08-15 22:43:43] [INFO] Whisper Raw Transcript: " posso ficar aqui nos duplicados? iguais na outra pasta? você apagou a outra pasta?"
+[2026-08-15 22:43:43] [INFO] Sending raw transcript (83 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:43:44] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:43:44] [INFO] LLM Final Corrected Text: "Posso ficar aqui nos duplicados? Iguais na outra pasta? Você apagou a outra pasta?"
+[2026-08-15 22:43:44] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:43:44] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:43:44] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_943affd2fee14c93b0113bee898d53ae.wav
+[2026-08-15 22:43:44] [INFO] Queue item bb8a269ce4c949c1bbaf04cae16aa306 fully completed and audio purged.
+[2026-08-15 22:43:49] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:43:50] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_9c2e4e4e84164101889ea3817afb41af.wav
+[2026-08-15 22:43:52] [INFO] Compressed ultralight audio recording stopped and saved (23600 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_9c2e4e4e84164101889ea3817afb41af.wav
+[2026-08-15 22:43:52] [INFO] Added recording to persistent queue. ID: ac83e809cf9241a1a3943443a5fed18c
+[2026-08-15 22:43:52] [INFO] Processing queue item ac83e809cf9241a1a3943443a5fed18c (Attempt 1)...
+[2026-08-15 22:43:52] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_9c2e4e4e84164101889ea3817afb41af.wav
+[2026-08-15 22:43:53] [INFO] Groq Whisper transcription success (5 chars).
+[2026-08-15 22:43:53] [INFO] Whisper Raw Transcript: " E aí"
+[2026-08-15 22:43:53] [INFO] Sending raw transcript (5 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:43:54] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:43:54] [INFO] LLM Final Corrected Text: "E aí"
+[2026-08-15 22:43:54] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:43:54] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:43:54] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_9c2e4e4e84164101889ea3817afb41af.wav
+[2026-08-15 22:43:54] [INFO] Queue item ac83e809cf9241a1a3943443a5fed18c fully completed and audio purged.
+[2026-08-15 22:44:05] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:44:06] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_9771b3bb1caa4ada9a38a99fe6193fb7.wav
+[2026-08-15 22:44:17] [INFO] Compressed ultralight audio recording stopped and saved (87600 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_9771b3bb1caa4ada9a38a99fe6193fb7.wav
+[2026-08-15 22:44:17] [INFO] Added recording to persistent queue. ID: 80e4a195e75b4e7db2cfc923464e9121
+[2026-08-15 22:44:17] [INFO] Processing queue item 80e4a195e75b4e7db2cfc923464e9121 (Attempt 1)...
+[2026-08-15 22:44:17] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_9771b3bb1caa4ada9a38a99fe6193fb7.wav
+[2026-08-15 22:44:18] [INFO] Groq Whisper transcription success (116 chars).
+[2026-08-15 22:44:18] [INFO] Whisper Raw Transcript: " Não ficaram arquivos duplicados, a outra pasta continua mantida. Não vai ficar tudo repetitivo, pesando duas vezes."
+[2026-08-15 22:44:18] [INFO] Sending raw transcript (116 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:44:19] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:44:19] [INFO] LLM Final Corrected Text: "Não ficaram arquivos duplicados, a outra pasta continua mantida. Não vai ficar tudo repetitivo, pesando duas vezes."
+[2026-08-15 22:44:19] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:44:19] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:44:19] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_9771b3bb1caa4ada9a38a99fe6193fb7.wav
+[2026-08-15 22:44:19] [INFO] Queue item 80e4a195e75b4e7db2cfc923464e9121 fully completed and audio purged.
+[2026-08-15 22:45:33] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:45:33] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fe9979b1deaf43828d87a78f6d851a03.wav
+[2026-08-15 22:45:36] [INFO] Compressed ultralight audio recording stopped and saved (23600 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fe9979b1deaf43828d87a78f6d851a03.wav
+[2026-08-15 22:45:36] [INFO] Added recording to persistent queue. ID: b7a8f5987695479fbda3ae44237cbea1
+[2026-08-15 22:45:36] [INFO] Processing queue item b7a8f5987695479fbda3ae44237cbea1 (Attempt 1)...
+[2026-08-15 22:45:36] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_fe9979b1deaf43828d87a78f6d851a03.wav
+[2026-08-15 22:45:37] [INFO] Groq Whisper transcription success (24 chars).
+[2026-08-15 22:45:37] [INFO] Whisper Raw Transcript: " Só isso, por gentileza."
+[2026-08-15 22:45:37] [INFO] Sending raw transcript (24 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:45:38] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:45:38] [INFO] LLM Final Corrected Text: "Só isso, por gentileza."
+[2026-08-15 22:45:38] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:45:38] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:45:38] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_fe9979b1deaf43828d87a78f6d851a03.wav
+[2026-08-15 22:45:38] [INFO] Queue item b7a8f5987695479fbda3ae44237cbea1 fully completed and audio purged.
+[2026-08-15 22:45:47] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0xC001C
+[2026-08-15 22:45:48] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_be43d23c6c0c4d3ab9a1b3ec84d0be92.wav
+[2026-08-15 22:45:52] [INFO] Compressed ultralight audio recording stopped and saved (32816 bytes): C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_be43d23c6c0c4d3ab9a1b3ec84d0be92.wav
+[2026-08-15 22:45:52] [INFO] Added recording to persistent queue. ID: 963d2a750acd437095566669ab5ee38c
+[2026-08-15 22:45:52] [INFO] Processing queue item 963d2a750acd437095566669ab5ee38c (Attempt 1)...
+[2026-08-15 22:45:52] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_be43d23c6c0c4d3ab9a1b3ec84d0be92.wav
+[2026-08-15 22:45:52] [INFO] Groq Whisper transcription success (42 chars).
+[2026-08-15 22:45:52] [INFO] Whisper Raw Transcript: " Eu queria dizer, já faça isso, por favor."
+[2026-08-15 22:45:52] [INFO] Sending raw transcript (42 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:45:53] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:45:53] [INFO] LLM Final Corrected Text: "Eu queria dizer, já faça isso, por favor."
+[2026-08-15 22:45:53] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:45:53] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:45:53] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\happy-hopper\data\audio_queue\rec_be43d23c6c0c4d3ab9a1b3ec84d0be92.wav
+[2026-08-15 22:45:53] [INFO] Queue item 963d2a750acd437095566669ab5ee38c fully completed and audio purged.
+[2026-08-15 22:52:42] [INFO] Starting GroqFlow application...
+[2026-08-15 22:52:42] [INFO] Background RetryService started.
+[2026-08-15 22:52:42] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-08-15 22:52:42] [INFO] GroqFlow Context fully initialized and resident in System Tray.
+[2026-08-15 22:52:42] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 26032)
+[2026-08-15 22:52:47] [INFO] Captured Target Context: Process='Antigravity', Title='Antigravity', HWnd=0x307EE
+[2026-08-15 22:52:54] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_30678ad3724c41d5ac3a9a3ce882a884.wav
+[2026-08-15 22:54:05] [INFO] Compressed ultralight audio recording stopped and saved (577072 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_30678ad3724c41d5ac3a9a3ce882a884.wav
+[2026-08-15 22:54:05] [INFO] Added recording to persistent queue. ID: bdb2f350b74845bcb365d20bf3e89185
+[2026-08-15 22:54:05] [INFO] Processing queue item bdb2f350b74845bcb365d20bf3e89185 (Attempt 1)...
+[2026-08-15 22:54:05] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_30678ad3724c41d5ac3a9a3ce882a884.wav
+[2026-08-15 22:54:07] [INFO] Groq Whisper transcription success (771 chars).
+[2026-08-15 22:54:07] [INFO] Whisper Raw Transcript: " Considerando esse aplicativo que está bem funcional, tem algumas coisas que eu gostaria de pontuar. A parte onde você coloca o modo escuro não tem funcionado muito bem. Segundo ponto, a fonte utilizada no aplicativo eu achei um pouco pequena e um pouco densa. Eu queria uma fonte mais legível e mais moderna. A fonte que falo é a letra Padrão, certo? Terceiro ponto Se tiver uma forma de colocar o servidor Para abrir ou fechar Tanto para o Windows como para o Mac Ele abrir através daquele botão Ok, mas fechar dentro da própria aba do sistema Em vez de apertar no botão fechar Encerrar sistema e se pudesse não ficar aquela tela preta ao fundo. Mas isso se der, se for comprometer alguma coisa em relação à funcionalidade do aplicativo, aí não faça essas modificações."
+[2026-08-15 22:54:07] [INFO] Sending raw transcript (771 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:54:10] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:54:10] [INFO] LLM Final Corrected Text: "Considerando esse aplicativo que está bem funcional, tem algumas coisas que eu gostaria de pontuar. A parte onde você coloca o modo escuro não tem funcionado muito bem. Segundo ponto, a fonte utilizada no aplicativo eu achei um pouco pequena e um pouco densa. Eu queria uma fonte mais legível e mais moderna. A fonte que falo é a letra padrão, certo? Terceiro ponto: se tiver uma forma de colocar o servidor para abrir ou fechar, tanto para o Windows como para o Mac, ele abrirá através daquele botão OK, mas fechar dentro da própria aba do sistema, em vez de apertar no botão fechar, encerrar sistema, e se pudesse não ficar aquela tela preta ao fundo. Mas isso se der, se for comprometer alguma coisa em relação à funcionalidade do aplicativo, aí não faça essas modificações."
+[2026-08-15 22:54:10] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:54:10] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:54:10] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_30678ad3724c41d5ac3a9a3ce882a884.wav
+[2026-08-15 22:54:10] [INFO] Queue item bdb2f350b74845bcb365d20bf3e89185 fully completed and audio purged.
+[2026-08-15 22:54:12] [INFO] Captured Target Context: Process='Antigravity', Title='Antigravity', HWnd=0x307EE
+[2026-08-15 22:54:12] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_235e008ed9854112b67d3ee2def0f216.wav
+[2026-08-15 22:54:17] [INFO] Compressed ultralight audio recording stopped and saved (37936 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_235e008ed9854112b67d3ee2def0f216.wav
+[2026-08-15 22:54:17] [INFO] Added recording to persistent queue. ID: e30006aeedda48d3a87be85fb1a46501
+[2026-08-15 22:54:17] [INFO] Processing queue item e30006aeedda48d3a87be85fb1a46501 (Attempt 1)...
+[2026-08-15 22:54:17] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_235e008ed9854112b67d3ee2def0f216.wav
+[2026-08-15 22:54:19] [INFO] Groq Whisper transcription success (63 chars).
+[2026-08-15 22:54:19] [INFO] Whisper Raw Transcript: " Antes de modificar essa parte, me dê a sua opinião sobre isso."
+[2026-08-15 22:54:19] [INFO] Sending raw transcript (63 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:54:20] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:54:20] [INFO] LLM Final Corrected Text: "Antes de modificar essa parte, me dê a sua opinião sobre isso."
+[2026-08-15 22:54:20] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:54:20] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:54:20] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_235e008ed9854112b67d3ee2def0f216.wav
+[2026-08-15 22:54:20] [INFO] Queue item e30006aeedda48d3a87be85fb1a46501 fully completed and audio purged.
+[2026-08-15 22:56:42] [INFO] Captured Target Context: Process='Antigravity', Title='Sugestões de Melhorias Ap...', HWnd=0x307EE
+[2026-08-15 22:56:43] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_e67361c3afac416897c8736abd47874b.wav
+[2026-08-15 22:57:24] [INFO] Compressed ultralight audio recording stopped and saved (331312 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_e67361c3afac416897c8736abd47874b.wav
+[2026-08-15 22:57:24] [INFO] Added recording to persistent queue. ID: 1ae3e2ed5a38491aaaa8d7e1dc265cb2
+[2026-08-15 22:57:24] [INFO] Processing queue item 1ae3e2ed5a38491aaaa8d7e1dc265cb2 (Attempt 1)...
+[2026-08-15 22:57:24] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_e67361c3afac416897c8736abd47874b.wav
+[2026-08-15 22:57:25] [INFO] Groq Whisper transcription success (350 chars).
+[2026-08-15 22:57:25] [INFO] Whisper Raw Transcript: " Eu lupo muito das ideias que você deu e eu queria só saber, nesse caso antes de prosseguir, o que aconteceria se a pessoa fechar a aba esquecendo de encerrar o sistema? Precisa haver uma proteção para isso. Seria interessante que tanto o botão encerrar sistema quanto o fechamento da aba do aplicativo gerassem o mesmo efeito de encerrar o servidor."
+[2026-08-15 22:57:25] [INFO] Sending raw transcript (350 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:57:27] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:57:27] [INFO] LLM Final Corrected Text: "Eu gosto muito das ideias que você deu e eu queria só saber, nesse caso, antes de prosseguir, o que aconteceria se a pessoa fechar a aba esquecendo de encerrar o sistema? Precisa haver uma proteção para isso. Seria interessante que tanto o botão encerrar sistema quanto o fechamento da aba do aplicativo gerassem o mesmo efeito de encerrar o servidor."
+[2026-08-15 22:57:27] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:57:27] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:57:27] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_e67361c3afac416897c8736abd47874b.wav
+[2026-08-15 22:57:27] [INFO] Queue item 1ae3e2ed5a38491aaaa8d7e1dc265cb2 fully completed and audio purged.
+[2026-08-15 22:59:18] [INFO] Captured Target Context: Process='Antigravity', Title='Sugestões de Melhorias Ap...', HWnd=0x307EE
+[2026-08-15 22:59:19] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_7cc9d6bca93a4f3f8d6a35da38f7526e.wav
+[2026-08-15 22:59:24] [INFO] Compressed ultralight audio recording stopped and saved (40496 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_7cc9d6bca93a4f3f8d6a35da38f7526e.wav
+[2026-08-15 22:59:24] [INFO] Added recording to persistent queue. ID: 5f664c0203db41bba5d64279709b218a
+[2026-08-15 22:59:24] [INFO] Processing queue item 5f664c0203db41bba5d64279709b218a (Attempt 1)...
+[2026-08-15 22:59:24] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_7cc9d6bca93a4f3f8d6a35da38f7526e.wav
+[2026-08-15 22:59:25] [INFO] Groq Whisper transcription success (18 chars).
+[2026-08-15 22:59:25] [INFO] Whisper Raw Transcript: " Pode implementar."
+[2026-08-15 22:59:25] [INFO] Sending raw transcript (18 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 22:59:26] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 22:59:26] [INFO] LLM Final Corrected Text: "Pode implementar."
+[2026-08-15 22:59:26] [INFO] Text copied to clipboard successfully.
+[2026-08-15 22:59:26] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 22:59:26] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_7cc9d6bca93a4f3f8d6a35da38f7526e.wav
+[2026-08-15 22:59:26] [INFO] Queue item 5f664c0203db41bba5d64279709b218a fully completed and audio purged.
+[2026-08-15 22:59:52] [INFO] Captured Target Context: Process='Antigravity', Title='Antigravity', HWnd=0x307EE
+[2026-08-15 22:59:53] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_5a4346268ad1477287229ce3a95d06e6.wav
+[2026-08-15 23:00:55] [INFO] Compressed ultralight audio recording stopped and saved (499248 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_5a4346268ad1477287229ce3a95d06e6.wav
+[2026-08-15 23:00:55] [INFO] Added recording to persistent queue. ID: 6b993c00e8aa428693657c2ce2c3dc97
+[2026-08-15 23:00:55] [INFO] Processing queue item 6b993c00e8aa428693657c2ce2c3dc97 (Attempt 1)...
+[2026-08-15 23:00:55] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_5a4346268ad1477287229ce3a95d06e6.wav
+[2026-08-15 23:00:56] [INFO] Groq Whisper transcription success (615 chars).
+[2026-08-15 23:00:56] [INFO] Whisper Raw Transcript: " E quando você pegue esse aplicativo, que foi criado em HTML com todas as funcionalidades, e me diga qual seria a melhor forma de rodar ele em um ambiente intranet com dois ou três acessos simultâneos, ou até mais, se for o caso, podendo ter até dez acessos simultâneos, e que as pessoas consigam editar as informações e tudo mais simultaneamente. Todos os computadores são Windows. Se seria melhor eu manter essa estrutura com a linguagem HTML, ou se seria melhor eu transformar em outra linguagem, que poderia ser a linguagem C, hashtag, .net, porque os computadores já possuem o framework runtime net instalados."
+[2026-08-15 23:00:56] [INFO] Sending raw transcript (615 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:00:58] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:00:58] [INFO] LLM Final Corrected Text: "E quando você pegar esse aplicativo, que foi criado em HTML com todas as funcionalidades, e me diga qual seria a melhor forma de rodá‑lo em um ambiente intranet com dois ou três acessos simultâneos, ou até mais, se for o caso, podendo ter até dez acessos simultâneos, e que as pessoas consigam editar as informações e tudo mais simultaneamente. Todos os computadores são Windows. Se seria melhor eu manter essa estrutura com a linguagem HTML, ou se seria melhor eu transformar em outra linguagem, que poderia ser a linguagem C, hashtag, .NET, porque os computadores já possuem o framework runtime .NET instalados?"
+[2026-08-15 23:00:58] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:00:58] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:00:58] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_5a4346268ad1477287229ce3a95d06e6.wav
+[2026-08-15 23:00:58] [INFO] Queue item 6b993c00e8aa428693657c2ce2c3dc97 fully completed and audio purged.
+[2026-08-15 23:03:00] [INFO] Captured Target Context: Process='Antigravity', Title='Sugestões de Melhorias Ap...', HWnd=0x307EE
+[2026-08-15 23:03:01] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_c17b1c36629240bfbd9179a4895251ee.wav
+[2026-08-15 23:04:56] [INFO] Compressed ultralight audio recording stopped and saved (930352 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_c17b1c36629240bfbd9179a4895251ee.wav
+[2026-08-15 23:04:56] [INFO] Added recording to persistent queue. ID: bd154ab6030c4cc9a02d3fcbdb22d759
+[2026-08-15 23:04:56] [INFO] Processing queue item bd154ab6030c4cc9a02d3fcbdb22d759 (Attempt 1)...
+[2026-08-15 23:04:56] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_c17b1c36629240bfbd9179a4895251ee.wav
+[2026-08-15 23:04:58] [INFO] Groq Whisper transcription success (1118 chars).
+[2026-08-15 23:04:58] [INFO] Whisper Raw Transcript: " Legal, gostei, funcionou. Agora ficaram dois arquivos, um iniciar-sistema.bat e um iniciar-sistema.vbs. E eu entrei pelo vbs e funcionou. Maravilha. Agora eu quero que você revise ali os arquivos e mantenha apenas os arquivos essenciais para funcionamento do aplicativo. Para que eu possa transferir para qualquer computador, Windows ou Mac, toda aquela pasta. E manter tudo funcionando e ao mesmo tempo manter preservados os dados. Por exemplo, se eu estou aqui no Mac, estão salvos os meus dados. E eu levar essa pasta para um computador Windows, eu vou abrir com aqueles mesmos dados. Isso é extremamente importante. E eu queria que você também me desse uma forma de fazer um backup automático de dados. Assim, caso o computador dê problema Alguma coisa aconteça Para que a gente possa transferir esses dados para outro computador Eu tenho meu computador com Windows e o da minha esposa com Mac E ela vai usar no dela Mas se porventura der um problema Esses dados ficariam salvos em algum lugar Poderia ser na nuvem E eu conseguiria baixar esses dados Fazer uma restauração E ela continuar usando no meu computador"
+[2026-08-15 23:04:58] [INFO] Sending raw transcript (1118 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:05:03] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:05:03] [INFO] LLM Final Corrected Text: " Legal, gostei, funcionou. Agora ficaram dois arquivos, um iniciar-sistema.bat e um iniciar-sistema.vbs. E eu entrei pelo vbs e funcionou. Maravilha. Agora eu quero que você revise ali os arquivos e mantenha apenas os arquivos essenciais para funcionamento do aplicativo. Para que eu possa transferir para qualquer computador, Windows ou Mac, toda aquela pasta. E manter tudo funcionando e ao mesmo tempo manter preservados os dados. Por exemplo, se eu estou aqui no Mac, estão salvos os meus dados. E eu levar essa pasta para um computador Windows, eu vou abrir com aqueles mesmos dados. Isso é extremamente importante. E eu queria que você também me desse uma forma de fazer um backup automático de dados. Assim, caso o computador dê problema Alguma coisa aconteça Para que a gente possa transferir esses dados para outro computador Eu tenho meu computador com Windows e o da minha esposa com Mac E ela vai usar no dela Mas se porventura der um problema Esses dados ficariam salvos em algum lugar Poderia ser na nuvem E eu conseguiria baixar esses dados Fazer uma restauração E ela continuar usando no meu computador"
+[2026-08-15 23:05:03] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:05:03] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:05:03] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_c17b1c36629240bfbd9179a4895251ee.wav
+[2026-08-15 23:05:03] [INFO] Queue item bd154ab6030c4cc9a02d3fcbdb22d759 fully completed and audio purged.
+[2026-08-15 23:07:01] [INFO] Captured Target Context: Process='Antigravity', Title='Hospedagem Intranet E Tec...', HWnd=0x307EE
+[2026-08-15 23:07:02] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_1ac84c45887e4ed79b79ef71417b34b4.wav
+[2026-08-15 23:08:13] [INFO] Compressed ultralight audio recording stopped and saved (579632 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_1ac84c45887e4ed79b79ef71417b34b4.wav
+[2026-08-15 23:08:13] [INFO] Added recording to persistent queue. ID: 0591a6e0f5ff447c94f7df9bf9ba4edb
+[2026-08-15 23:08:13] [INFO] Processing queue item 0591a6e0f5ff447c94f7df9bf9ba4edb (Attempt 1)...
+[2026-08-15 23:08:13] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_1ac84c45887e4ed79b79ef71417b34b4.wav
+[2026-08-15 23:08:15] [INFO] Groq Whisper transcription success (640 chars).
+[2026-08-15 23:08:15] [INFO] Whisper Raw Transcript: " Tudo isso que você falou tem algumas limitações sobre definir o computador servidor. Isso pode ser variável. Por exemplo, hoje eu estou no computador 1 e o meu colega no computador 2 e tem outro médico no computador 3. Alguém vai abrir o aplicativo primeiro. Na hora que essa pessoa abriu o aplicativo e ninguém tiver aberto ainda, essa pessoa passa a ser o servidor. E os outros passariam a ser clientes. E o sistema precisaria ficar alerta se o servidor não vai cair para que os outros clientes sejam avisados caso isso aconteça. Segundo ponto Não tenho acesso a prioridades de administrador no trabalho O resto acho que você já resolveu"
+[2026-08-15 23:08:15] [INFO] Sending raw transcript (640 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:08:17] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:08:17] [INFO] LLM Final Corrected Text: "Tudo isso que você falou tem algumas limitações sobre definir o computador servidor. Isso pode ser variável. Por exemplo, hoje eu estou no computador 1 e o meu colega no computador 2, e tem outro médico no computador 3. Alguém vai abrir o aplicativo primeiro. Na hora que essa pessoa abriu o aplicativo e ninguém tiver aberto ainda, essa pessoa passa a ser o servidor. E os outros passariam a ser clientes. E o sistema precisaria ficar alerta se o servidor não vai cair, para que os outros clientes sejam avisados caso isso aconteça. Segundo ponto: não tenho acesso a prioridades de administrador no trabalho. O resto acho que você já resolveu."
+[2026-08-15 23:08:17] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:08:17] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:08:17] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_1ac84c45887e4ed79b79ef71417b34b4.wav
+[2026-08-15 23:08:17] [INFO] Queue item 0591a6e0f5ff447c94f7df9bf9ba4edb fully completed and audio purged.
+[2026-08-15 23:10:18] [INFO] Captured Target Context: Process='Antigravity', Title='Hospedagem Intranet E Tec...', HWnd=0x307EE
+[2026-08-15 23:10:19] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_16dce71889474d7f8c6852399e08f442.wav
+[2026-08-15 23:10:48] [INFO] Compressed ultralight audio recording stopped and saved (234544 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_16dce71889474d7f8c6852399e08f442.wav
+[2026-08-15 23:10:48] [INFO] Added recording to persistent queue. ID: 56af3af611204b77afdd45d79c0edc70
+[2026-08-15 23:10:48] [INFO] Processing queue item 56af3af611204b77afdd45d79c0edc70 (Attempt 1)...
+[2026-08-15 23:10:48] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_16dce71889474d7f8c6852399e08f442.wav
+[2026-08-15 23:10:49] [INFO] Groq Whisper transcription success (272 chars).
+[2026-08-15 23:10:49] [INFO] Whisper Raw Transcript: " Gostei das soluções E em relação ao cenário do desafio central De onde os dados ficam guardados Nós temos sim uma pasta dentro da rede Que é compartilhada onde todos têm acesso E o aplicativo vai ficar dentro dessa pasta inclusive Então, dito isso, pode começar Obrigado."
+[2026-08-15 23:10:49] [INFO] Sending raw transcript (272 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:10:50] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:10:50] [INFO] LLM Final Corrected Text: "Gostei das soluções e, em relação ao cenário do desafio central, de onde os dados ficam guardados, nós temos, sim, uma pasta dentro da rede que é compartilhada, onde todos têm acesso, e o aplicativo vai ficar dentro dessa pasta inclusive. Então, dito isso, pode começar. Obrigado."
+[2026-08-15 23:10:51] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:10:51] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:10:51] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_16dce71889474d7f8c6852399e08f442.wav
+[2026-08-15 23:10:51] [INFO] Queue item 56af3af611204b77afdd45d79c0edc70 fully completed and audio purged.
+[2026-08-15 23:12:07] [INFO] Captured Target Context: Process='Antigravity', Title='Sugestões de Melhorias Ap...', HWnd=0x307EE
+[2026-08-15 23:12:08] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_648c190987a840818f7f5d6a09e4413c.wav
+[2026-08-15 23:12:54] [INFO] Compressed ultralight audio recording stopped and saved (370736 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_648c190987a840818f7f5d6a09e4413c.wav
+[2026-08-15 23:12:54] [INFO] Added recording to persistent queue. ID: 8bd8d6434e7646ea8aff69970dc527cc
+[2026-08-15 23:12:54] [INFO] Processing queue item 8bd8d6434e7646ea8aff69970dc527cc (Attempt 1)...
+[2026-08-15 23:12:54] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_648c190987a840818f7f5d6a09e4413c.wav
+[2026-08-15 23:12:55] [INFO] Groq Whisper transcription success (406 chars).
+[2026-08-15 23:12:55] [INFO] Whisper Raw Transcript: " Uma dúvida. Eu vi que a pasta ainda tem muitos arquivos. Teria como organizar isso? Por exemplo, se essa pasta está com muitos arquivos, eu colocaria todos esses arquivos dentro de uma pasta maior e deixaria do lado de fora dessa pasta Somente os atalhos de inicializar ou parar o sistema Tanto para Windows como para Mac Com ícones específicos que sugiram essas ações Dá para fazer? Se sim, já pode fazer"
+[2026-08-15 23:12:55] [INFO] Sending raw transcript (406 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:12:57] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:12:57] [INFO] LLM Final Corrected Text: "Uma dúvida. Eu vi que a pasta ainda tem muitos arquivos. Teria como organizar isso? Por exemplo, se essa pasta está com muitos arquivos, eu colocaria todos esses arquivos dentro de uma pasta maior e deixaria, do lado de fora dessa pasta, somente os atalhos de inicializar ou parar o sistema, tanto para Windows quanto para Mac, com ícones específicos que sugiram essas ações. Dá para fazer? Se sim, já pode fazer."
+[2026-08-15 23:12:57] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:12:57] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:12:57] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_648c190987a840818f7f5d6a09e4413c.wav
+[2026-08-15 23:12:57] [INFO] Queue item 8bd8d6434e7646ea8aff69970dc527cc fully completed and audio purged.
+[2026-08-15 23:20:03] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x307EE
+[2026-08-15 23:20:03] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_f56d3502c4534b30ab420a8aac757ee2.wav
+[2026-08-15 23:20:07] [INFO] Compressed ultralight audio recording stopped and saved (35376 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_f56d3502c4534b30ab420a8aac757ee2.wav
+[2026-08-15 23:20:07] [INFO] Added recording to persistent queue. ID: 871632a8579a409ea156a6cf34c462ca
+[2026-08-15 23:20:07] [INFO] Processing queue item 871632a8579a409ea156a6cf34c462ca (Attempt 1)...
+[2026-08-15 23:20:07] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_f56d3502c4534b30ab420a8aac757ee2.wav
+[2026-08-15 23:20:08] [INFO] Groq Whisper transcription success (35 chars).
+[2026-08-15 23:20:08] [INFO] Whisper Raw Transcript: " Agora o aplicativo está excelente."
+[2026-08-15 23:20:08] [INFO] Sending raw transcript (35 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:20:09] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:20:09] [INFO] LLM Final Corrected Text: "Agora o aplicativo está excelente."
+[2026-08-15 23:20:09] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:20:09] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:20:09] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_f56d3502c4534b30ab420a8aac757ee2.wav
+[2026-08-15 23:20:09] [INFO] Queue item 871632a8579a409ea156a6cf34c462ca fully completed and audio purged.
+[2026-08-15 23:20:12] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x307EE
+[2026-08-15 23:20:13] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_89ef252961e0422b81bf0ec3d03bec2f.wav
+[2026-08-15 23:20:18] [INFO] Compressed ultralight audio recording stopped and saved (46640 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_89ef252961e0422b81bf0ec3d03bec2f.wav
+[2026-08-15 23:20:18] [INFO] Added recording to persistent queue. ID: f951795e577b4440872afa4f59c6891b
+[2026-08-15 23:20:18] [INFO] Processing queue item f951795e577b4440872afa4f59c6891b (Attempt 1)...
+[2026-08-15 23:20:18] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_89ef252961e0422b81bf0ec3d03bec2f.wav
+[2026-08-15 23:20:19] [INFO] Groq Whisper transcription success (59 chars).
+[2026-08-15 23:20:19] [INFO] Whisper Raw Transcript: " Até agora o aplicativo está funcionando perfeitamente bem."
+[2026-08-15 23:20:19] [INFO] Sending raw transcript (59 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:20:20] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:20:20] [INFO] LLM Final Corrected Text: "Até agora o aplicativo está funcionando perfeitamente bem."
+[2026-08-15 23:20:20] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:20:20] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:20:20] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_89ef252961e0422b81bf0ec3d03bec2f.wav
+[2026-08-15 23:20:20] [INFO] Queue item f951795e577b4440872afa4f59c6891b fully completed and audio purged.
+[2026-08-15 23:24:45] [INFO] Captured Target Context: Process='msedge', Title='NeuroRehab Manager 8.0 (Intranet) e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 23:24:46] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_99d8304b79ff4023ab791cf9f23c70f1.wav
+[2026-08-15 23:24:54] [INFO] Compressed ultralight audio recording stopped and saved (65584 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_99d8304b79ff4023ab791cf9f23c70f1.wav
+[2026-08-15 23:24:54] [INFO] Added recording to persistent queue. ID: e1ed24a8db704184ba2c184e1a9f1e66
+[2026-08-15 23:24:54] [INFO] Processing queue item e1ed24a8db704184ba2c184e1a9f1e66 (Attempt 1)...
+[2026-08-15 23:24:54] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_99d8304b79ff4023ab791cf9f23c70f1.wav
+[2026-08-15 23:24:54] [INFO] Groq Whisper transcription success (86 chars).
+[2026-08-15 23:24:54] [INFO] Whisper Raw Transcript: " Ciente com sequelas de AVC isquêmico, apresentando hemiparesia direita e desartreana."
+[2026-08-15 23:24:54] [INFO] Sending raw transcript (86 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:24:57] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:24:57] [INFO] LLM Final Corrected Text: "Ciente com sequelas de AVC isquêmico, apresentando hemiparesia direita e desartreia."
+[2026-08-15 23:24:57] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:24:57] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:24:57] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_99d8304b79ff4023ab791cf9f23c70f1.wav
+[2026-08-15 23:24:57] [INFO] Queue item e1ed24a8db704184ba2c184e1a9f1e66 fully completed and audio purged.
+[2026-08-15 23:27:21] [INFO] Captured Target Context: Process='Antigravity', Title='Hospedagem Intranet E Tec...', HWnd=0x307EE
+[2026-08-15 23:27:21] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_568d4fc3342b4f6194a0e40a2880e05a.wav
+[2026-08-15 23:27:47] [INFO] Compressed ultralight audio recording stopped and saved (207408 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_568d4fc3342b4f6194a0e40a2880e05a.wav
+[2026-08-15 23:27:47] [INFO] Added recording to persistent queue. ID: ec4cf519857246f69167552c7fdfc116
+[2026-08-15 23:27:47] [INFO] Processing queue item ec4cf519857246f69167552c7fdfc116 (Attempt 1)...
+[2026-08-15 23:27:47] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_568d4fc3342b4f6194a0e40a2880e05a.wav
+[2026-08-15 23:27:48] [INFO] Groq Whisper transcription success (242 chars).
+[2026-08-15 23:27:48] [INFO] Whisper Raw Transcript: " E você deve manter na pasta do projeto somente os arquivos que forem essenciais para o funcionamento do aplicativo. Tudo que não for essencial, atualmente, você pode excluir. Também quero que você coloque o ícone do aplicativo no executável."
+[2026-08-15 23:27:48] [INFO] Sending raw transcript (242 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:27:49] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:27:49] [INFO] LLM Final Corrected Text: "E você deve manter na pasta do projeto somente os arquivos que forem essenciais para o funcionamento do aplicativo. Tudo que não for essencial, atualmente, você pode excluir. Também quero que você coloque o ícone do aplicativo no executável."
+[2026-08-15 23:27:49] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:27:49] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:27:49] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_568d4fc3342b4f6194a0e40a2880e05a.wav
+[2026-08-15 23:27:49] [INFO] Queue item ec4cf519857246f69167552c7fdfc116 fully completed and audio purged.
+[2026-08-15 23:28:23] [INFO] Captured Target Context: Process='Antigravity', Title='Hospedagem Intranet E Tec...', HWnd=0x307EE
+[2026-08-15 23:28:24] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_d477459c6e7b45c69edca0280414e97b.wav
+[2026-08-15 23:28:41] [INFO] Compressed ultralight audio recording stopped and saved (136240 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_d477459c6e7b45c69edca0280414e97b.wav
+[2026-08-15 23:28:41] [INFO] Added recording to persistent queue. ID: e32e39eb70a3403790df28da381d6854
+[2026-08-15 23:28:41] [INFO] Processing queue item e32e39eb70a3403790df28da381d6854 (Attempt 1)...
+[2026-08-15 23:28:41] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_d477459c6e7b45c69edca0280414e97b.wav
+[2026-08-15 23:28:42] [INFO] Groq Whisper transcription success (188 chars).
+[2026-08-15 23:28:42] [INFO] Whisper Raw Transcript: " Eu espero também que você exclua todos os arquivos que são dispensáveis de dentro da pasta do projeto. Deixe só o que precisa. E outra coisa, coloque um ícone nesse executável, por favor."
+[2026-08-15 23:28:42] [INFO] Sending raw transcript (188 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:28:44] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:28:44] [INFO] LLM Final Corrected Text: "Eu espero também que você exclua todos os arquivos que são dispensáveis de dentro da pasta do projeto. Deixe só o que precisa. E outra coisa, coloque um ícone nesse executável, por favor."
+[2026-08-15 23:28:44] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:28:44] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:28:44] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_d477459c6e7b45c69edca0280414e97b.wav
+[2026-08-15 23:28:44] [INFO] Queue item e32e39eb70a3403790df28da381d6854 fully completed and audio purged.
+[2026-08-15 23:31:02] [INFO] Captured Target Context: Process='Antigravity', Title='Hospedagem Intranet E Tec...', HWnd=0x307EE
+[2026-08-15 23:31:03] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_adbca011bddb4a729a38f7c9db14a6fb.wav
+[2026-08-15 23:32:40] [INFO] Compressed ultralight audio recording stopped and saved (782384 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_adbca011bddb4a729a38f7c9db14a6fb.wav
+[2026-08-15 23:32:40] [INFO] Added recording to persistent queue. ID: 30b95dced90c4420827185f70b851f0e
+[2026-08-15 23:32:40] [INFO] Processing queue item 30b95dced90c4420827185f70b851f0e (Attempt 1)...
+[2026-08-15 23:32:40] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_adbca011bddb4a729a38f7c9db14a6fb.wav
+[2026-08-15 23:32:42] [INFO] Groq Whisper transcription success (887 chars).
+[2026-08-15 23:32:42] [INFO] Whisper Raw Transcript: " Gostei, até o momento tá bom Outra coisa A parte da janelinha preta que fica aberta com o servidor Você pode adotar aquela mesma estrutura Que você fez num outro aplicativo que eu já pedi aqui Que é o aplicativo de gestão médica em que o servidor fica rodando ao fundo, sem janela preta. Tem uma espécie de ping de 8 segundos que, se porventura o servidor não responder ali, porque eu fechei a janela, o servidor encerra. e ao mesmo tempo tem um botão para encerramento seguro, em que ele encerra, se ele for cliente ele só encerra, se ele for servidor ele encerra o servidor também, desde que não haja outros clientes utilizando. Enquanto houver cliente, o servidor deve ficar mantido Se o computador for desligado, aí aparece a mensagem de que o servidor caiu para os outros clientes E a opção de assumir como servidor Antes de fazer qualquer modificação, me confirme se você entendeu"
+[2026-08-15 23:32:42] [INFO] Sending raw transcript (887 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:32:44] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:32:44] [INFO] LLM Final Corrected Text: "Gostei, até o momento está bom. Outra coisa: a parte da janelinha preta que fica aberta com o servidor, você pode adotar aquela mesma estrutura que você fez num outro aplicativo que eu já pedi aqui, que é o aplicativo de gestão médica em que o servidor fica rodando ao fundo, sem janela preta. Tem uma espécie de ping de 8 segundos que, se porventura o servidor não responder ali, porque eu fechei a janela, o servidor encerra, e ao mesmo tempo tem um botão para encerramento seguro, em que ele encerra; se ele for cliente, ele só encerra; se ele for servidor, ele encerra o servidor também, desde que não haja outros clientes utilizando. Enquanto houver cliente, o servidor deve ficar mantido. Se o computador for desligado, aí aparece a mensagem de que o servidor caiu para os outros clientes e a opção de assumir como servidor. Antes de fazer qualquer modificação, me confirme se você entendeu."
+[2026-08-15 23:32:44] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:32:44] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:32:44] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_adbca011bddb4a729a38f7c9db14a6fb.wav
+[2026-08-15 23:32:44] [INFO] Queue item 30b95dced90c4420827185f70b851f0e fully completed and audio purged.
+[2026-08-15 23:48:25] [INFO] Captured Target Context: Process='msedge', Title='NeuroRehab Manager 8.0 (Intranet) e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x2044A
+[2026-08-15 23:48:26] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_4abefbee7be54d299c868836fab41fa4.wav
+[2026-08-15 23:48:36] [INFO] Compressed ultralight audio recording stopped and saved (80944 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_4abefbee7be54d299c868836fab41fa4.wav
+[2026-08-15 23:48:36] [INFO] Added recording to persistent queue. ID: 91a37771a7e740fc8356c3ff105e7b1a
+[2026-08-15 23:48:36] [INFO] Processing queue item 91a37771a7e740fc8356c3ff105e7b1a (Attempt 1)...
+[2026-08-15 23:48:36] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_4abefbee7be54d299c868836fab41fa4.wav
+[2026-08-15 23:48:37] [INFO] Groq Whisper transcription success (112 chars).
+[2026-08-15 23:48:37] [INFO] Whisper Raw Transcript: " Paciente com sequelas de AVC isquêmico ocorrido em maio de 2026, apresentando desartria e hemiparesia esquerda."
+[2026-08-15 23:48:37] [INFO] Sending raw transcript (112 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:48:39] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:48:39] [INFO] LLM Final Corrected Text: "Paciente com sequelas de AVC isquêmico ocorrido em maio de 2026, apresentando desartria e hemiparesia esquerda."
+[2026-08-15 23:48:39] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:48:39] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:48:39] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_4abefbee7be54d299c868836fab41fa4.wav
+[2026-08-15 23:48:39] [INFO] Queue item 91a37771a7e740fc8356c3ff105e7b1a fully completed and audio purged.
+[2026-08-15 23:58:38] [INFO] Captured Target Context: Process='Antigravity', Title='Desenvolvimento De Ditado...', HWnd=0x1606A8
+[2026-08-15 23:58:39] [INFO] Native unmanaged waveIn audio recording started with lead-in (16000Hz Mono): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_56727d6d680a4d158a49cf0f4efe8125.wav
+[2026-08-15 23:58:47] [INFO] Compressed ultralight audio recording stopped and saved (69680 bytes): C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_56727d6d680a4d158a49cf0f4efe8125.wav
+[2026-08-15 23:58:47] [INFO] Added recording to persistent queue. ID: cab520a3bc4b44b59b1c5f05cbad9f48
+[2026-08-15 23:58:47] [INFO] Processing queue item cab520a3bc4b44b59b1c5f05cbad9f48 (Attempt 1)...
+[2026-08-15 23:58:47] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3-turbo' for file: rec_56727d6d680a4d158a49cf0f4efe8125.wav
+[2026-08-15 23:58:48] [INFO] Groq Whisper transcription success (73 chars).
+[2026-08-15 23:58:48] [INFO] Whisper Raw Transcript: " Você pode criar um ícone moderno no Gemini, bonito para esse aplicativo?"
+[2026-08-15 23:58:48] [INFO] Sending raw transcript (73 chars) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-15 23:58:49] [INFO] Groq LLM text correction completed successfully.
+[2026-08-15 23:58:49] [INFO] LLM Final Corrected Text: "Você pode criar um ícone moderno no Gemini, bonito para esse aplicativo?"
+[2026-08-15 23:58:49] [INFO] Text copied to clipboard successfully.
+[2026-08-15 23:58:49] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-15 23:58:49] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\GroqFlow\data\audio_queue\rec_56727d6d680a4d158a49cf0f4efe8125.wav
+[2026-08-15 23:58:49] [INFO] Queue item cab520a3bc4b44b59b1c5f05cbad9f48 fully completed and audio purged.
+[2026-08-15 23:59:27] [INFO] Global Low-Level Keyboard Hook thread stopped.
+[2026-08-15 23:59:27] [INFO] Global Low-Level Keyboard Hook thread stopped.
