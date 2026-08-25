@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 data class DictionaryEntry(
     val id: String,
@@ -55,8 +57,9 @@ class DictionaryManager(context: Context) {
             while (matcher.find()) {
                 val matchedText = matcher.group()
                 val adjustedReplacement = matchCase(matchedText, repl)
-                matcher.appendReplacement(sb, MatcherQuote(adjustedReplacement))
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(adjustedReplacement))
             }
+
             matcher.appendTail(sb)
             text = sb.toString()
         }
@@ -83,8 +86,5 @@ class DictionaryManager(context: Context) {
             else -> target.lowercase()
         }
     }
-
-    private fun MatcherQuote(s: String): String {
-        return s.replace("\\", "\\\\").replace("$", "\\$")
-    }
 }
+
