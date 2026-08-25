@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoxIA</string>
+    <string name="ime_name">Teclado de Voz VoxIA</string>
+    <string name="subtype_voice_pt">Ditado por Voz IA (Português)</string>
+    
+    <string name="status_ready">Toque no microfone para ditar</string>
+    <string name="status_recording">🎙 Gravando áudio... Toque para finalizar</string>
+    <string name="status_transcribing">⏳ Transcrevendo (Whisper)...</string>
+    <string name="status_correcting">✨ Formatando com IA (Llama 3.3)...</string>
+    <string name="status_done">✓ Inserido com sucesso!</string>
+    <string name="status_error">⚠ Erro ao processar. Verifique a API Key.</string>
+
+    <string name="settings_title">Configurações do VoxIA</string>
+    <string name="settings_enable_keyboard">1. Ativar Teclado VoxIA no Android</string>
+    <string name="settings_select_keyboard">2. Definir como Teclado Ativo</string>
+    <string name="settings_groq_key_hint">Cole sua Groq API Key (gsk_...)</string>
+    <string name="settings_supabase_email_hint">E-mail da sua conta Supabase</string>
+    <string name="settings_supabase_password_hint">Senha da sua conta Supabase</string>
+    <string name="settings_login_btn">Entrar e Sincronizar</string>
+    <string name="settings_logout_btn">Desconectar</string>
+    <string name="settings_sync_now">Sincronizar Agora</string>
+</resources>

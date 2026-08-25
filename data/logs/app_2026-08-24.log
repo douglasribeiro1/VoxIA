@@ -178,3 +178,18 @@
 [2026-08-24 21:12:53] [INFO] Groq API key securely saved.
 [2026-08-24 21:12:53] [INFO] AutoStart registry key set.
 [2026-08-24 21:12:53] [INFO] Settings saved successfully.
+[2026-08-24 21:14:25] [INFO] Captured Target Context: Process='Antigravity', Title='Criando App Android Sincr...', HWnd=0x30330
+[2026-08-24 21:14:30] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_9aecf62941e14cbca6ca7e14529910f5.m4a
+[2026-08-24 21:14:32] [INFO] Audio recording stopped and saved (18232 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_9aecf62941e14cbca6ca7e14529910f5.m4a
+[2026-08-24 21:14:32] [INFO] Added recording to persistent queue. ID: f4cf8832cb634e04bb4ecbf29351f0ab
+[2026-08-24 21:14:32] [INFO] Processing queue item f4cf8832cb634e04bb4ecbf29351f0ab (Attempt 1)...
+[2026-08-24 21:14:32] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_9aecf62941e14cbca6ca7e14529910f5.m4a
+[2026-08-24 21:14:33] [INFO] Groq Whisper transcription success (7 chars).
+[2026-08-24 21:14:33] [INFO] Whisper Raw Transcript: " Tchau."
+[2026-08-24 21:14:33] [INFO] Sending raw transcript (7 chars, max_tokens: 270) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-24 21:14:34] [INFO] Groq LLM text correction completed successfully.
+[2026-08-24 21:14:34] [INFO] Final Post-Processed Text: "Tchau."
+[2026-08-24 21:14:34] [INFO] Text copied to clipboard successfully.
+[2026-08-24 21:14:34] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-24 21:14:34] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_9aecf62941e14cbca6ca7e14529910f5.m4a
+[2026-08-24 21:14:34] [INFO] Queue item f4cf8832cb634e04bb4ecbf29351f0ab fully completed and audio purged.

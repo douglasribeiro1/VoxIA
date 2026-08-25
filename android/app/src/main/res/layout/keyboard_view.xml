@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_keyboard"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="12dp">
+
+    <!-- Barra Superior: Seletor de Prompt e Botão de Configurações -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <Spinner
+            android:id="@+id/spinnerPromptProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_key"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:minHeight="36dp"
+            android:spinnerMode="dropdown" />
+
+        <ImageButton
+            android:id="@+id/btnOpenSettings"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_key"
+            android:contentDescription="@string/settings_title"
+            android:src="@drawable/ic_settings"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+    <!-- Texto de Estado Atual -->
+    <TextView
+        android:id="@+id/tvStatusMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:gravity="center"
+        android:text="@string/status_ready"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <!-- Área Central: Botão de Microfone Principal -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/btnMicRecord"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_mic_button"
+            android:contentDescription="Gravar Ditado"
+            android:src="@drawable/ic_mic"
+            android:scaleType="centerInside"
+            android:elevation="6dp" />
+    </FrameLayout>
+
+    <!-- Barra Inferior: Atalhos, Trocar Teclado, Backspace, Enter -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="4dp">
+
+        <!-- Botão Alternar Teclado (Voltar pro Gboard) -->
+        <ImageButton
+            android:id="@+id/btnSwitchKeyboard"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_key"
+            android:contentDescription="Alternar Teclado"
+            android:src="@drawable/ic_globe"
+            android:scaleType="centerInside" />
+
+        <!-- Atalhos rápidos de pontuação -->
+        <Button
+            android:id="@+id/btnComma"
+            android:layout_width="38dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_key"
+            android:text=","
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnDot"
+            android:layout_width="38dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_key"
+            android:text="."
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnSpace"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_key"
+            android:text="Espaço"
+            android:textAllCaps="false"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <!-- Botão Backspace / Apagar -->
+        <ImageButton
+            android:id="@+id/btnBackspace"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_key"
+            android:contentDescription="Apagar"
+            android:src="@drawable/ic_backspace"
+            android:scaleType="centerInside" />
+
+        <!-- Botão Enter / Nova Linha -->
+        <ImageButton
+            android:id="@+id/btnEnter"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_key"
+            android:contentDescription="Nova Linha"
+            android:src="@drawable/ic_enter"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+</LinearLayout>
