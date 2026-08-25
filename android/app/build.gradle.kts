@@ -29,7 +29,6 @@ android {
             )
         }
         debug {
-            applicationIdSuffix = ""
             isDebuggable = true
         }
     }
@@ -48,7 +47,11 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     
-    // Corrotinas para chamadas assíncronas (áudio, rede)
+    // Lifecycle & Activity KTX (para lifecycleScope)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
+    
+    // Corrotinas para chamadas assíncronas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     
     // Cliente HTTP e JSON para Groq API e Supabase REST
