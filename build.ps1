@@ -16,11 +16,19 @@ if (Test-Path "app.ico") {
     $iconArg = "/win32icon:app.ico"
 }
 
-$cmd = "& '$cscPath' $references $iconArg /target:winexe /out:VoxIA.exe $sources"
+$targetOut = "VoxIA.exe"
+$cmd = "& '$cscPath' $references $iconArg /target:winexe /out:$targetOut $sources"
 Invoke-Expression $cmd
 
+if ($LASTEXITCODE -ne 0) {
+    # If in use by active process, compile to VoxIA_Update.exe
+    $targetOut = "VoxIA_Update.exe"
+    $cmd = "& '$cscPath' $references $iconArg /target:winexe /out:$targetOut $sources"
+    Invoke-Expression $cmd
+}
+
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "[SUCESSO] VoxIA.exe compilado com sucesso com icone integrado!" -ForegroundColor Green
+    Write-Host "[SUCESSO] $targetOut compilado com sucesso com icone integrado!" -ForegroundColor Green
 } else {
-    Write-Host "[ERRO] Falha na compilacao do VoxIA.exe" -ForegroundColor Red
+    Write-Host "[ERRO] Falha na compilacao do VoxIA" -ForegroundColor Red
 }

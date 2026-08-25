@@ -12,6 +12,7 @@ namespace VoxIA.Services
         public string Title { get; set; }
         public string PromptText { get; set; }
         public bool IsBuiltIn { get; set; }
+        public string UpdatedAt { get; set; }
 
         public PromptProfile()
         {
@@ -19,6 +20,7 @@ namespace VoxIA.Services
             Title = "Novo Prompt";
             PromptText = "";
             IsBuiltIn = false;
+            UpdatedAt = DateTime.UtcNow.ToString("o");
         }
 
         public PromptProfile(string id, string title, string promptText, bool isBuiltIn = false)
@@ -27,6 +29,7 @@ namespace VoxIA.Services
             Title = title;
             PromptText = promptText;
             IsBuiltIn = isBuiltIn;
+            UpdatedAt = DateTime.UtcNow.ToString("o");
         }
 
         public override string ToString()
@@ -247,6 +250,34 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
                     {
                         _currentSettings.ActivePromptId = _currentSettings.PromptProfiles.Last().Id;
                     }
+                }
+            }
+            else
+            {
+                // Self-healing: Ensure default templates exist and are never empty
+                var defaults = GetDefaultProfiles();
+                foreach (var def in defaults)
+                {
+                    var existing = _currentSettings.PromptProfiles.FirstOrDefault(p => p.Id == def.Id);
+                    if (existing != null)
+                    {
+                        existing.IsBuiltIn = true;
+                        if (string.IsNullOrWhiteSpace(existing.PromptText))
+                        {
+                            existing.PromptText = def.PromptText;
+                            existing.Title = def.Title;
+                        }
+                    }
+                    else
+                    {
+                        _currentSettings.PromptProfiles.Insert(0, def);
+                    }
+                }
+
+                foreach (var p in _currentSettings.PromptProfiles)
+                {
+                    if (p.PromptText == null) p.PromptText = "";
+                    if (string.IsNullOrEmpty(p.UpdatedAt)) p.UpdatedAt = DateTime.UtcNow.ToString("o");
                 }
             }
 

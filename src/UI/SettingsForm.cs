@@ -22,6 +22,7 @@ namespace VoxIA.UI
         private Button _btnResetPrompts;
         private List<PromptProfile> _localPrompts = new List<PromptProfile>();
         private string _currentSelectedPromptId = null;
+        private bool _isLoadingPrompts = false;
 
         private CheckBox _chkAutoClipboard;
         private CheckBox _chkAutoStart;
@@ -140,7 +141,7 @@ namespace VoxIA.UI
                 ScrollBars = ScrollBars.Vertical,
                 Font = new Font("Consolas", 9.25F, FontStyle.Regular)
             };
-            _txtPromptContent.TextChanged += (s, e) => UpdatePromptCharCount();
+            _txtPromptContent.TextChanged += TxtPromptContent_TextChanged;
 
             _lblPromptStatus = new Label { Text = "Prompt Padrão", Location = new Point(15, 460), AutoSize = true, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8.5F, FontStyle.Italic) };
             _lblCharCount = new Label { Text = "0 caracteres", Location = new Point(410, 460), AutoSize = true, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8.5F) };
@@ -313,22 +314,40 @@ namespace VoxIA.UI
 
         private void RefreshPromptComboBox(string selectId = null)
         {
-            _cboPromptProfiles.Items.Clear();
-            int selectedIndex = 0;
-
-            for (int i = 0; i < _localPrompts.Count; i++)
+            _isLoadingPrompts = true;
+            try
             {
-                var p = _localPrompts[i];
-                _cboPromptProfiles.Items.Add(p);
-                if (selectId != null && p.Id == selectId)
+                _cboPromptProfiles.Items.Clear();
+                int selectedIndex = 0;
+
+                for (int i = 0; i < _localPrompts.Count; i++)
                 {
-                    selectedIndex = i;
+                    var p = _localPrompts[i];
+                    _cboPromptProfiles.Items.Add(p);
+                    if (selectId != null && p.Id == selectId)
+                    {
+                        selectedIndex = i;
+                    }
+                }
+
+                if (_cboPromptProfiles.Items.Count > 0)
+                {
+                    _cboPromptProfiles.SelectedIndex = selectedIndex;
+                    var selected = _cboPromptProfiles.SelectedItem as PromptProfile;
+                    if (selected != null)
+                    {
+                        _currentSelectedPromptId = selected.Id;
+                        var target = _localPrompts.FirstOrDefault(p => p.Id == selected.Id);
+                        _txtPromptContent.Text = (target != null && target.PromptText != null) ? target.PromptText : (selected.PromptText ?? "");
+                        _lblPromptStatus.Text = selected.IsBuiltIn ? "★ Prompt Padrão de Fábrica (editável)" : "✦ Prompt Customizado pelo Usuário";
+                        _btnDeletePrompt.Enabled = !selected.IsBuiltIn && _localPrompts.Count > 1;
+                        UpdatePromptCharCount();
+                    }
                 }
             }
-
-            if (_cboPromptProfiles.Items.Count > 0)
+            finally
             {
-                _cboPromptProfiles.SelectedIndex = selectedIndex;
+                _isLoadingPrompts = false;
             }
         }
 
@@ -340,22 +359,53 @@ namespace VoxIA.UI
                 if (current != null)
                 {
                     current.PromptText = _txtPromptContent.Text;
+                    current.UpdatedAt = DateTime.UtcNow.ToString("o");
+                }
+            }
+        }
+
+        private void TxtPromptContent_TextChanged(object sender, EventArgs e)
+        {
+            UpdatePromptCharCount();
+
+            // Real-time synchronization to local profile buffer
+            if (!_isLoadingPrompts && !string.IsNullOrEmpty(_currentSelectedPromptId))
+            {
+                var current = _localPrompts.FirstOrDefault(p => p.Id == _currentSelectedPromptId);
+                if (current != null)
+                {
+                    current.PromptText = _txtPromptContent.Text;
+                    current.UpdatedAt = DateTime.UtcNow.ToString("o");
                 }
             }
         }
 
         private void CboPromptProfiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SaveCurrentPromptBuffer();
+            if (_isLoadingPrompts) return;
 
             var selected = _cboPromptProfiles.SelectedItem as PromptProfile;
-            if (selected != null)
+            if (selected == null) return;
+
+            if (selected.Id == _currentSelectedPromptId) return;
+
+            // 1. Save buffer of the previous prompt
+            SaveCurrentPromptBuffer();
+
+            // 2. Load newly selected prompt
+            _isLoadingPrompts = true;
+            try
             {
                 _currentSelectedPromptId = selected.Id;
-                _txtPromptContent.Text = selected.PromptText ?? "";
+                var target = _localPrompts.FirstOrDefault(p => p.Id == selected.Id);
+                _txtPromptContent.Text = (target != null && target.PromptText != null) ? target.PromptText : (selected.PromptText ?? "");
                 _lblPromptStatus.Text = selected.IsBuiltIn ? "★ Prompt Padrão de Fábrica (editável)" : "✦ Prompt Customizado pelo Usuário";
                 _btnDeletePrompt.Enabled = !selected.IsBuiltIn && _localPrompts.Count > 1;
                 UpdatePromptCharCount();
+            }
+            finally
+            {
+                _isLoadingPrompts = false;
             }
         }
 
@@ -382,7 +432,21 @@ RETORNE APENAS O TEXTO FINAL.",
 
             _localPrompts.Add(newProfile);
             _currentSelectedPromptId = newProfile.Id;
-            RefreshPromptComboBox(newProfile.Id);
+
+            _isLoadingPrompts = true;
+            try
+            {
+                RefreshPromptComboBox(newProfile.Id);
+                _txtPromptContent.Text = newProfile.PromptText;
+                _lblPromptStatus.Text = "✦ Prompt Customizado pelo Usuário";
+                _btnDeletePrompt.Enabled = true;
+                UpdatePromptCharCount();
+            }
+            finally
+            {
+                _isLoadingPrompts = false;
+            }
+
             _txtPromptContent.Focus();
         }
 
@@ -394,8 +458,23 @@ RETORNE APENAS O TEXTO FINAL.",
             string newName = PromptInputDialog("Renomear Prompt", "Novo nome para o prompt:", selected.Title);
             if (string.IsNullOrWhiteSpace(newName)) return;
 
+            var target = _localPrompts.FirstOrDefault(p => p.Id == selected.Id);
+            if (target != null)
+            {
+                target.Title = newName.Trim();
+                target.UpdatedAt = DateTime.UtcNow.ToString("o");
+            }
             selected.Title = newName.Trim();
-            RefreshPromptComboBox(selected.Id);
+
+            _isLoadingPrompts = true;
+            try
+            {
+                RefreshPromptComboBox(selected.Id);
+            }
+            finally
+            {
+                _isLoadingPrompts = false;
+            }
         }
 
         private void BtnDeletePrompt_Click(object sender, EventArgs e)
@@ -405,9 +484,23 @@ RETORNE APENAS O TEXTO FINAL.",
 
             if (MessageBox.Show(string.Format("Tem certeza que deseja excluir o prompt \"{0}\"?", selected.Title), "Excluir Prompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                _localPrompts.Remove(selected);
-                _currentSelectedPromptId = _localPrompts[0].Id;
-                RefreshPromptComboBox(_currentSelectedPromptId);
+                _localPrompts.RemoveAll(p => p.Id == selected.Id);
+                var next = _localPrompts[0];
+                _currentSelectedPromptId = next.Id;
+
+                _isLoadingPrompts = true;
+                try
+                {
+                    RefreshPromptComboBox(next.Id);
+                    _txtPromptContent.Text = next.PromptText ?? "";
+                    _lblPromptStatus.Text = next.IsBuiltIn ? "★ Prompt Padrão de Fábrica (editável)" : "✦ Prompt Customizado pelo Usuário";
+                    _btnDeletePrompt.Enabled = !next.IsBuiltIn && _localPrompts.Count > 1;
+                    UpdatePromptCharCount();
+                }
+                finally
+                {
+                    _isLoadingPrompts = false;
+                }
             }
         }
 
@@ -423,6 +516,7 @@ RETORNE APENAS O TEXTO FINAL.",
                     {
                         existing.Title = def.Title;
                         existing.PromptText = def.PromptText;
+                        existing.UpdatedAt = DateTime.UtcNow.ToString("o");
                     }
                     else
                     {
@@ -560,14 +654,11 @@ RETORNE APENAS O TEXTO FINAL.",
             s.CorrectionModel = "openai/gpt-oss-120b";
 
             // Save Prompts List
-            s.PromptProfiles = _localPrompts;
-            var selected = _cboPromptProfiles.SelectedItem as PromptProfile;
-            if (selected != null)
-            {
-                s.ActivePromptId = selected.Id;
-                s.SelectedPromptPreset = selected.Title;
-                s.CustomPromptText = selected.PromptText;
-            }
+            s.PromptProfiles = new List<PromptProfile>(_localPrompts);
+            var selected = _localPrompts.FirstOrDefault(p => p.Id == _currentSelectedPromptId) ?? (_cboPromptProfiles.SelectedItem as PromptProfile) ?? _localPrompts[0];
+            s.ActivePromptId = selected.Id;
+            s.SelectedPromptPreset = selected.Title;
+            s.CustomPromptText = selected.PromptText;
 
             s.AutoCopyToClipboard = _chkAutoClipboard.Checked;
             s.AudioBeepFeedback = _chkAudioBeep.Checked;
