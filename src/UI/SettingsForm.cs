@@ -29,6 +29,8 @@ namespace VoxIA.UI
         private CheckBox _chkPortableMode;
         private CheckBox _chkAudioBeep;
         private CheckBox _chkShowHud;
+        private ComboBox _cboHotkeyChoice;
+        private GroupBox _grpHotkey;
         private RadioButton _rdoToggleMode;
         private RadioButton _rdoPushToTalkMode;
 
@@ -161,8 +163,8 @@ namespace VoxIA.UI
             // Panel with shortcuts reference
             Panel pnlShortcuts = new Panel
             {
-                Location = new Point(15, 15),
-                Size = new Size(495, 80),
+                Location = new Point(15, 12),
+                Size = new Size(495, 75),
                 BackColor = Color.FromArgb(240, 244, 255),
                 BorderStyle = BorderStyle.FixedSingle
             };
@@ -176,7 +178,7 @@ namespace VoxIA.UI
             };
             Label lblShortcutsInfo = new Label
             {
-                Text = "• Ditado por Voz: Ctrl + Win (iniciar / parar com indicador dinâmico)\n• Dicionário Rápido: Ctrl + Shift + W (ou Ctrl + Shift + D)\n• Cancelar Gravação: Esc",
+                Text = "• Ditado por Voz: Tecla F8 (ou atalho configurado abaixo)\n• Dicionário Rápido: Ctrl + Shift + W (ou Ctrl + Shift + D)\n• Cancelar Gravação: Esc",
                 Font = new Font("Segoe UI", 9F, FontStyle.Regular),
                 ForeColor = Color.FromArgb(33, 37, 41),
                 Location = new Point(10, 28),
@@ -185,19 +187,29 @@ namespace VoxIA.UI
             pnlShortcuts.Controls.Add(lblShortcutsTitle);
             pnlShortcuts.Controls.Add(lblShortcutsInfo);
 
-            _chkAutoClipboard = new CheckBox { Text = "Copiar automaticamente o texto final para a Área de Transferência (Clipboard)", Location = new Point(15, 105), Width = 495, AutoSize = true, Checked = true };
-            _chkAutoStart = new CheckBox { Text = "Iniciar automaticamente com o Windows (residente na bandeja)", Location = new Point(15, 135), Width = 495, AutoSize = true };
-            _chkPortableMode = new CheckBox { Text = "Modo Portátil (salvar dados no pen drive na pasta local ./data/)", Location = new Point(15, 165), Width = 495, AutoSize = true };
-            _chkAudioBeep = new CheckBox { Text = "Sinal sonoro discreto ao iniciar e parar gravação (Beep feedback)", Location = new Point(15, 195), Width = 495, AutoSize = true, Checked = true };
-            _chkShowHud = new CheckBox { Text = "Exibir indicador visual flutuante (HUD) com VU meter dinâmico", Location = new Point(15, 225), Width = 495, AutoSize = true, Checked = true };
+            Label lblHotkey = new Label { Text = "Tecla de Atalho Global para Ditado:", Location = new Point(15, 95), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+            _cboHotkeyChoice = new ComboBox { Location = new Point(15, 115), Width = 495, DropDownStyle = ComboBoxStyle.DropDownList };
+            _cboHotkeyChoice.Items.Add("F8 (Recomendado / Tecla Única)");
+            _cboHotkeyChoice.Items.Add("Ctrl + Win (Padrão Clássico)");
+            _cboHotkeyChoice.Items.Add("F9 (Tecla Única)");
+            _cboHotkeyChoice.Items.Add("F10 (Tecla Única)");
+            _cboHotkeyChoice.Items.Add("F12 (Tecla Única)");
+            _cboHotkeyChoice.Items.Add("Ctrl + Shift + Espaço");
+            _cboHotkeyChoice.SelectedIndex = 0;
 
-            GroupBox grpHotkey = new GroupBox { Text = "Modo de Acionamento do Atalho de Ditado (Ctrl + Win)", Location = new Point(15, 260), Size = new Size(495, 100) };
-            _rdoToggleMode = new RadioButton { Text = "Pressionar 1x para Iniciar → Pressionar 1x para Parar (Padrão)", Location = new Point(15, 25), AutoSize = true, Checked = true };
-            _rdoPushToTalkMode = new RadioButton { Text = "Manter pressionado para Falar → Soltar para Parar (Push-to-Talk)", Location = new Point(15, 55), AutoSize = true };
-            grpHotkey.Controls.Add(_rdoToggleMode);
-            grpHotkey.Controls.Add(_rdoPushToTalkMode);
+            _grpHotkey = new GroupBox { Text = "Modo de Acionamento do Ditado", Location = new Point(15, 150), Size = new Size(495, 80) };
+            _rdoToggleMode = new RadioButton { Text = "Pressionar 1x para Iniciar → Pressionar 1x para Parar e Enviar (Padrão)", Location = new Point(15, 22), AutoSize = true, Checked = true };
+            _rdoPushToTalkMode = new RadioButton { Text = "Manter pressionado para Falar → Soltar para Parar (Push-to-Talk)", Location = new Point(15, 48), AutoSize = true };
+            _grpHotkey.Controls.Add(_rdoToggleMode);
+            _grpHotkey.Controls.Add(_rdoPushToTalkMode);
 
-            tabBehavior.Controls.AddRange(new Control[] { pnlShortcuts, _chkAutoClipboard, _chkAutoStart, _chkPortableMode, _chkAudioBeep, _chkShowHud, grpHotkey });
+            _chkAutoClipboard = new CheckBox { Text = "Copiar automaticamente o texto final para a Área de Transferência (Clipboard)", Location = new Point(15, 240), Width = 495, AutoSize = true, Checked = true };
+            _chkAutoStart = new CheckBox { Text = "Iniciar automaticamente com o Windows (residente na bandeja)", Location = new Point(15, 268), Width = 495, AutoSize = true };
+            _chkPortableMode = new CheckBox { Text = "Modo Portátil (salvar dados no pen drive na pasta local ./data/)", Location = new Point(15, 296), Width = 495, AutoSize = true };
+            _chkAudioBeep = new CheckBox { Text = "Sinal sonoro discreto ao iniciar e parar gravação (Beep feedback)", Location = new Point(15, 324), Width = 495, AutoSize = true, Checked = true };
+            _chkShowHud = new CheckBox { Text = "Exibir indicador visual flutuante (HUD) centralizado na tela", Location = new Point(15, 352), Width = 495, AutoSize = true, Checked = true };
+
+            tabBehavior.Controls.AddRange(new Control[] { pnlShortcuts, lblHotkey, _cboHotkeyChoice, _grpHotkey, _chkAutoClipboard, _chkAutoStart, _chkPortableMode, _chkAudioBeep, _chkShowHud });
 
             // ==========================================
             // TAB 4: DICIONÁRIO DE PALAVRAS
@@ -305,6 +317,21 @@ namespace VoxIA.UI
             _chkPortableMode.Checked = AppPathService.IsPortableMode;
             _chkAudioBeep.Checked = s.AudioBeepFeedback;
             _chkShowHud.Checked = s.ShowFloatingHud;
+
+            if (s.HotkeyVirtualKey == 0x77) // F8
+                _cboHotkeyChoice.SelectedIndex = 0;
+            else if (s.HotkeyVirtualKey == 0 || s.HotkeyDisplay == "Ctrl + Win")
+                _cboHotkeyChoice.SelectedIndex = 1;
+            else if (s.HotkeyVirtualKey == 0x78) // F9
+                _cboHotkeyChoice.SelectedIndex = 2;
+            else if (s.HotkeyVirtualKey == 0x79) // F10
+                _cboHotkeyChoice.SelectedIndex = 3;
+            else if (s.HotkeyVirtualKey == 0x7B) // F12
+                _cboHotkeyChoice.SelectedIndex = 4;
+            else if (s.HotkeyVirtualKey == 0x20) // Ctrl + Shift + Space
+                _cboHotkeyChoice.SelectedIndex = 5;
+            else
+                _cboHotkeyChoice.SelectedIndex = 0;
 
             if (s.PushToTalkMode)
                 _rdoPushToTalkMode.Checked = true;
@@ -664,6 +691,62 @@ RETORNE APENAS O TEXTO FINAL.",
             s.AudioBeepFeedback = _chkAudioBeep.Checked;
             s.ShowFloatingHud = _chkShowHud.Checked;
             s.PushToTalkMode = _rdoToggleMode.Checked == false;
+
+            int hotkeyIdx = _cboHotkeyChoice.SelectedIndex;
+            if (hotkeyIdx == 0) // F8
+            {
+                s.HotkeyDisplay = "F8";
+                s.HotkeyVirtualKey = 0x77;
+                s.HotkeyUseCtrl = false;
+                s.HotkeyUseWin = false;
+                s.HotkeyUseAlt = false;
+                s.HotkeyUseShift = false;
+            }
+            else if (hotkeyIdx == 1) // Ctrl + Win
+            {
+                s.HotkeyDisplay = "Ctrl + Win";
+                s.HotkeyVirtualKey = 0;
+                s.HotkeyUseCtrl = true;
+                s.HotkeyUseWin = true;
+                s.HotkeyUseAlt = false;
+                s.HotkeyUseShift = false;
+            }
+            else if (hotkeyIdx == 2) // F9
+            {
+                s.HotkeyDisplay = "F9";
+                s.HotkeyVirtualKey = 0x78;
+                s.HotkeyUseCtrl = false;
+                s.HotkeyUseWin = false;
+                s.HotkeyUseAlt = false;
+                s.HotkeyUseShift = false;
+            }
+            else if (hotkeyIdx == 3) // F10
+            {
+                s.HotkeyDisplay = "F10";
+                s.HotkeyVirtualKey = 0x79;
+                s.HotkeyUseCtrl = false;
+                s.HotkeyUseWin = false;
+                s.HotkeyUseAlt = false;
+                s.HotkeyUseShift = false;
+            }
+            else if (hotkeyIdx == 4) // F12
+            {
+                s.HotkeyDisplay = "F12";
+                s.HotkeyVirtualKey = 0x7B;
+                s.HotkeyUseCtrl = false;
+                s.HotkeyUseWin = false;
+                s.HotkeyUseAlt = false;
+                s.HotkeyUseShift = false;
+            }
+            else if (hotkeyIdx == 5) // Ctrl + Shift + Espaço
+            {
+                s.HotkeyDisplay = "Ctrl + Shift + Espaço";
+                s.HotkeyVirtualKey = 0x20;
+                s.HotkeyUseCtrl = true;
+                s.HotkeyUseWin = false;
+                s.HotkeyUseAlt = false;
+                s.HotkeyUseShift = true;
+            }
 
             AutoStartService.SetAutoStart(_chkAutoStart.Checked);
             s.AutoStartWithWindows = _chkAutoStart.Checked;

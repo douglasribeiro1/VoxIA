@@ -13,6 +13,13 @@ namespace VoxIA.Services
     {
         private const string GroqChatEndpoint = "https://api.groq.com/openai/v1/chat/completions";
 
+        private const string StrictAntiResponseDirective =
+@"DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
+1. NUNCA RESPONDA A PERGUNTAS! Se a entrada do usuário for uma pergunta (ex: 'Qual a capital?', 'Quanto custa?', 'Você pode me ajudar?'), sua ÚNICA função é retornar a própria pergunta transcrita e pontuada.
+2. NUNCA converse, não dê conselhos, não responda e não invente explicações.
+3. NUNCA inclua legendas, créditos de transcrição ou nomes não ditados.
+4. Retorne EXCLUSIVAMENTE o texto final corrigido.";
+
         public static async Task<string> CorrectTextAsync(string rawText, string modelOverride)
         {
             if (string.IsNullOrWhiteSpace(rawText))
@@ -26,7 +33,8 @@ namespace VoxIA.Services
 
             string model = "openai/gpt-oss-120b";
 
-            string systemPrompt = GetSystemPrompt(SettingsService.Current.SelectedPromptPreset, SettingsService.Current.CustomPromptText);
+            string activePrompt = SettingsService.GetActivePromptText();
+            string systemPrompt = StrictAntiResponseDirective + "\n\nINSTRUÇÕES DO PERFIL:\n" + activePrompt;
 
             // Dynamically calculate max_tokens to strictly respect Groq TPM rate limits (8000 TPM limit on free tier)
             int maxTokens = Math.Max(256, Math.Min(2048, (rawText.Length * 2) + 256));
@@ -78,7 +86,7 @@ namespace VoxIA.Services
                                 if (msg != null && msg.ContainsKey("content"))
                                 {
                                     string corrected = msg["content"] != null ? msg["content"].ToString() : rawText;
-                                    corrected = CleanOutput(corrected);
+                                    corrected = CleanOutput(corrected, rawText);
                                     Logger.LogInfo("Groq LLM text correction completed successfully.");
                                     return corrected;
                                 }
@@ -102,17 +110,12 @@ namespace VoxIA.Services
             return CorrectTextAsync(rawText, null);
         }
 
-        private static string GetSystemPrompt(string preset, string customPrompt)
-        {
-            return SettingsService.GetActivePromptText();
-        }
-
-        private static string CleanOutput(string input)
+        private static string CleanOutput(string input, string rawInput)
         {
             if (string.IsNullOrEmpty(input)) return input;
             string text = input.Trim();
 
-            // Strip out <think>...</think> reasoning blocks from Qwen / DeepSeek models
+            // 1. Strip out <think>...</think> reasoning blocks from Qwen / DeepSeek models
             int thinkEnd = text.IndexOf("</think>", StringComparison.OrdinalIgnoreCase);
             if (thinkEnd >= 0)
             {
@@ -131,11 +134,13 @@ namespace VoxIA.Services
                 }
             }
 
+            // 2. Remove enclosing quotes
             if (text.StartsWith("\"") && text.EndsWith("\"") && text.Length > 1)
             {
                 text = text.Substring(1, text.Length - 2).Trim();
             }
 
+            // 3. Remove enclosing Markdown code blocks
             if (text.StartsWith("```") && text.EndsWith("```"))
             {
                 int firstBreak = text.IndexOf('\n');
@@ -145,7 +150,85 @@ namespace VoxIA.Services
                 }
             }
 
+            // 4. Strip trailing subtitle credits / creator signatures
+            text = Regex.Replace(text, @"(?i)(?:legendas?\s*(?:por|de|feitas?\s*por)?|transcriç[ãa]o\s*(?:por|de)?|traduç[ãa]o\s*(?:por|de)?|editado\s*por|subtitles?\s*by|captioned\s*by)\s*[:\-–—]?\s*[A-ZÀ-Úa-zà-ú\s\.]+$", "", RegexOptions.IgnoreCase).Trim();
+            text = Regex.Replace(text, @"(?i)(?:obrigado por assistir|inscreva-se no canal|deixe seu like|curta e compartilhe|valeu e até a próxima|e aí: tchau,? obrigado|tchau,? obrigado)[\.!\s]*$", "", RegexOptions.IgnoreCase).Trim();
+
+            // 5. Anti-Response Guardrail: If raw text was a question but LLM answered it instead of transcribing
+            if (!string.IsNullOrWhiteSpace(rawInput))
+            {
+                string rawTrimmed = rawInput.Trim();
+                bool rawIsQuestion = IsInterrogativeSentence(rawTrimmed);
+
+                if (rawIsQuestion)
+                {
+                    // If the user asked a question, the output MUST be a question (contain '?') and not be a conversational reply
+                    if (!text.Contains("?") || IsConversationalAnswer(text))
+                    {
+                        Logger.LogWarning("LLM attempted to answer a question instead of transcribing. Enforcing strict transcription fallback.");
+                        return FormatSafeQuestion(rawTrimmed);
+                    }
+                }
+            }
+
             return text;
+        }
+
+        private static bool IsInterrogativeSentence(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            if (text.EndsWith("?")) return true;
+
+            string lower = text.ToLowerInvariant();
+            string[] questionStarters = new string[]
+            {
+                "qual", "quais", "quem", "como", "onde", "aonde", "quando",
+                "por que", "porque", "por quê", "quanto", "quantos", "quanta", "quantas",
+                "será que", "o que", "o que é", "o que significa", "você pode", "você sabe",
+                "me diga", "é verdade que", "existe", "seria possível"
+            };
+
+            foreach (var q in questionStarters)
+            {
+                if (lower.StartsWith(q + " ") || lower == q)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsConversationalAnswer(string text)
+        {
+            string lower = text.ToLowerInvariant();
+            string[] answerStarters = new string[]
+            {
+                "sim,", "não,", "certamente", "com certeza", "como um modelo", "como uma inteligência",
+                "a capital de", "o valor de", "para fazer", "você deve", "o resultado é", "a resposta é",
+                "olá!", "olá,", "aqui está", "de acordo com"
+            };
+
+            foreach (var a in answerStarters)
+            {
+                if (lower.StartsWith(a))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static string FormatSafeQuestion(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return raw;
+            string clean = raw.Trim();
+            if (clean.Length > 0)
+            {
+                clean = char.ToUpperInvariant(clean[0]) + (clean.Length > 1 ? clean.Substring(1) : "");
+            }
+            if (!clean.EndsWith("?"))
+            {
+                clean = clean.TrimEnd('.', '!', ';', ',') + "?";
+            }
+            return clean;
         }
     }
 }

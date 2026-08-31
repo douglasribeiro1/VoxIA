@@ -52,7 +52,11 @@ namespace VoxIA.Services
 
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
-                    throw new InvalidOperationException("Whisper returned empty transcription.");
+                    Logger.LogInfo(string.Format("Queue item {0} was silent or filtered as hallucination. Discarding cleanly.", item.Id));
+                    PendingAudioRepository.MarkCompleted(item.Id, "", "");
+                    if (OnProcessingCompleted != null)
+                        OnProcessingCompleted("", "");
+                    return;
                 }
 
                 Logger.LogInfo(string.Format("Whisper Raw Transcript: \"{0}\"", rawText));

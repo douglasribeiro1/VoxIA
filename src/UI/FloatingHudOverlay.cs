@@ -31,22 +31,17 @@ namespace VoxIA.UI
         private const uint SWP_SHOWWINDOW = 0x0040;
 
         private System.Windows.Forms.Timer _hideTimer;
-        private System.Windows.Forms.Timer _animTimer;
         private HudState _state = HudState.HIDDEN;
-        private Func<float> _audioLevelProvider;
-        private float _displayAudioLevel = 0f;
-        private float _pulsePhase = 0f;
         private string _statusText = "";
 
         public FloatingHudOverlay(Func<float> audioLevelProvider = null)
         {
-            _audioLevelProvider = audioLevelProvider;
             InitializeComponent();
         }
 
         public void SetAudioLevelProvider(Func<float> provider)
         {
-            _audioLevelProvider = provider;
+            // Kept for backward compatibility
         }
 
         protected override CreateParams CreateParams
@@ -65,55 +60,21 @@ namespace VoxIA.UI
             this.ShowInTaskbar = false;
             this.TopMost = true;
             this.StartPosition = FormStartPosition.Manual;
-            this.Size = new Size(84, 42);
-            this.BackColor = Color.FromArgb(18, 18, 22);
+            this.Size = new Size(160, 40);
+
+            // Transparency Key ensures the area outside the rounded pill is 100% transparent (no black rectangle)
+            this.BackColor = Color.Magenta;
+            this.TransparencyKey = Color.Magenta;
             this.DoubleBuffered = true;
 
             _hideTimer = new System.Windows.Forms.Timer();
-            _hideTimer.Interval = 1800;
+            _hideTimer.Interval = 1300;
             _hideTimer.Tick += (s, e) =>
             {
                 _hideTimer.Stop();
-                _animTimer.Stop();
                 _state = HudState.HIDDEN;
                 this.Hide();
             };
-
-            _animTimer = new System.Windows.Forms.Timer();
-            _animTimer.Interval = 33; // ~30 FPS smooth rendering
-            _animTimer.Tick += AnimTimer_Tick;
-        }
-
-        private void AnimTimer_Tick(object sender, EventArgs e)
-        {
-            if (_state == HudState.RECORDING)
-            {
-                _pulsePhase += 0.12f;
-                if (_pulsePhase > (float)(Math.PI * 2))
-                    _pulsePhase -= (float)(Math.PI * 2);
-
-                float target = 0f;
-                if (_audioLevelProvider != null)
-                {
-                    try { target = _audioLevelProvider(); } catch { }
-                }
-
-                // Smooth interpolation for equalizer bars
-                if (target > _displayAudioLevel)
-                    _displayAudioLevel = _displayAudioLevel * 0.4f + target * 0.6f;
-                else
-                    _displayAudioLevel = _displayAudioLevel * 0.8f + target * 0.2f;
-
-                this.Invalidate();
-            }
-            else if (_state == HudState.PROCESSING)
-            {
-                _pulsePhase += 0.15f;
-                if (_pulsePhase > (float)(Math.PI * 2))
-                    _pulsePhase -= (float)(Math.PI * 2);
-
-                this.Invalidate();
-            }
         }
 
         public void ShowRecording()
@@ -124,12 +85,11 @@ namespace VoxIA.UI
             {
                 _hideTimer.Stop();
                 _state = HudState.RECORDING;
-                _statusText = "";
-                this.Size = new Size(84, 42);
-                PositionAtBottomRight();
+                _statusText = "Gravando...";
+                this.Size = new Size(150, 40);
+                PositionAtScreenCenter();
                 this.Show();
                 EnsureTopMost();
-                _animTimer.Start();
                 this.Invalidate();
             });
         }
@@ -142,12 +102,11 @@ namespace VoxIA.UI
             {
                 _hideTimer.Stop();
                 _state = HudState.PROCESSING;
-                _statusText = "⏳";
-                this.Size = new Size(52, 42);
-                PositionAtBottomRight();
+                _statusText = "Processando...";
+                this.Size = new Size(160, 40);
+                PositionAtScreenCenter();
                 this.Show();
                 EnsureTopMost();
-                _animTimer.Start();
                 this.Invalidate();
             });
         }
@@ -158,14 +117,14 @@ namespace VoxIA.UI
 
             this.InvokeIfRequired(() =>
             {
-                _animTimer.Stop();
                 _state = HudState.SUCCESS;
-                _statusText = "✓";
-                this.Size = new Size(52, 42);
-                PositionAtBottomRight();
+                _statusText = "Transcrito!";
+                this.Size = new Size(140, 40);
+                PositionAtScreenCenter();
                 this.Show();
                 EnsureTopMost();
                 this.Invalidate();
+                _hideTimer.Interval = 1200;
                 _hideTimer.Start();
             });
         }
@@ -176,14 +135,14 @@ namespace VoxIA.UI
 
             this.InvokeIfRequired(() =>
             {
-                _animTimer.Stop();
                 _state = HudState.ERROR;
-                _statusText = "⚠";
-                this.Size = new Size(52, 42);
-                PositionAtBottomRight();
+                _statusText = "Falha no áudio";
+                this.Size = new Size(150, 40);
+                PositionAtScreenCenter();
                 this.Show();
                 EnsureTopMost();
                 this.Invalidate();
+                _hideTimer.Interval = 2000;
                 _hideTimer.Start();
             });
         }
@@ -197,10 +156,12 @@ namespace VoxIA.UI
             catch { }
         }
 
-        private void PositionAtBottomRight()
+        private void PositionAtScreenCenter()
         {
             Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
-            this.Location = new Point(workingArea.Right - this.Width - 20, workingArea.Bottom - this.Height - 20);
+            int x = workingArea.Left + (workingArea.Width - this.Width) / 2;
+            int y = workingArea.Bottom - this.Height - 65;
+            this.Location = new Point(x, y);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -208,21 +169,22 @@ namespace VoxIA.UI
             base.OnPaint(e);
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
             int w = this.ClientSize.Width;
             int h = this.ClientSize.Height;
 
-            // Draw pill background with subtle glow border
-            using (GraphicsPath path = CreateRoundedRectanglePath(new Rectangle(1, 1, w - 3, h - 3), (h - 3) / 2))
+            // Draw pill background with clean border
+            using (GraphicsPath path = CreateRoundedRectanglePath(new Rectangle(2, 2, w - 5, h - 5), (h - 5) / 2))
             {
-                using (SolidBrush bgBrush = new SolidBrush(Color.FromArgb(20, 20, 25)))
+                using (SolidBrush bgBrush = new SolidBrush(Color.FromArgb(22, 22, 28)))
                 {
                     g.FillPath(bgBrush, path);
                 }
 
                 Color borderColor = Color.FromArgb(70, 70, 85);
                 if (_state == HudState.RECORDING)
-                    borderColor = Color.FromArgb(220, 53, 69);
+                    borderColor = Color.FromArgb(235, 55, 70);
                 else if (_state == HudState.PROCESSING)
                     borderColor = Color.FromArgb(255, 193, 7);
                 else if (_state == HudState.SUCCESS)
@@ -230,83 +192,64 @@ namespace VoxIA.UI
                 else if (_state == HudState.ERROR)
                     borderColor = Color.FromArgb(220, 53, 69);
 
-                using (Pen borderPen = new Pen(borderColor, 1.8f))
+                using (Pen borderPen = new Pen(borderColor, 2.0f))
                 {
                     g.DrawPath(borderPen, path);
                 }
             }
 
+            // Draw icon indicator and text
             if (_state == HudState.RECORDING)
             {
-                // 1. Draw glowing pulsating red dot on left
-                float pulse = (float)(Math.Sin(_pulsePhase) + 1.0) / 2.0f; // 0.0 to 1.0
-                int dotX = 16;
+                // Solid red recording indicator
+                int dotX = 22;
                 int dotY = h / 2;
-
-                // Pulsing outer aura
-                int auraSize = (int)(14 + pulse * 6);
-                int alpha = (int)(40 + pulse * 60);
-                using (SolidBrush auraBrush = new SolidBrush(Color.FromArgb(alpha, 255, 60, 70)))
-                {
-                    g.FillEllipse(auraBrush, dotX - auraSize / 2, dotY - auraSize / 2, auraSize, auraSize);
-                }
-
-                // Core red dot
                 using (SolidBrush dotBrush = new SolidBrush(Color.FromArgb(255, 45, 60)))
                 {
-                    g.FillEllipse(dotBrush, dotX - 4, dotY - 4, 8, 8);
+                    g.FillEllipse(dotBrush, dotX - 6, dotY - 6, 12, 12);
                 }
 
-                // 2. Draw dynamic real-time Audio Waveform / VU Bars on right (4 bars)
-                int barCount = 4;
-                int barWidth = 3;
-                int barSpacing = 5;
-                int startX = 35;
-                int centerY = h / 2;
-                int maxBarHeight = 22;
-                int minBarHeight = 3;
-
-                // Phase offsets so bars dance fluidly
-                float[] multipliers = new float[] { 0.85f, 1.25f, 1.05f, 0.75f };
-
-                for (int i = 0; i < barCount; i++)
+                // Crisp text
+                using (Font font = new Font("Segoe UI", 10.5F, FontStyle.Bold))
+                using (SolidBrush textBrush = new SolidBrush(Color.White))
                 {
-                    float barLevel = Math.Min(1.0f, _displayAudioLevel * multipliers[i]);
-                    int barH = minBarHeight + (int)((maxBarHeight - minBarHeight) * barLevel);
-                    int bx = startX + i * (barWidth + barSpacing);
-                    int by = centerY - barH / 2;
-
-                    Color barColor = Color.FromArgb(240, 240, 245);
-                    if (barLevel > 0.05f)
-                    {
-                        // Accent tint on louder sounds
-                        barColor = Color.FromArgb(255, 90, 100);
-                    }
-
-                    using (SolidBrush barBrush = new SolidBrush(barColor))
-                    {
-                        // Draw rounded bar
-                        FillRoundedRect(g, barBrush, new Rectangle(bx, by, barWidth, barH), barWidth / 2);
-                    }
+                    g.DrawString(_statusText, font, textBrush, new PointF(38, (h - font.Height) / 2 - 1));
                 }
             }
-            else
+            else if (_state == HudState.PROCESSING)
             {
-                // Draw Icon centered for PROCESSING, SUCCESS, ERROR
-                Color textColor = Color.White;
-                if (_state == HudState.PROCESSING) textColor = Color.FromArgb(255, 193, 7);
-                else if (_state == HudState.SUCCESS) textColor = Color.FromArgb(40, 167, 69);
-                else if (_state == HudState.ERROR) textColor = Color.FromArgb(220, 53, 69);
-
-                using (Font font = new Font("Segoe UI Emoji", 14F, FontStyle.Regular))
-                using (SolidBrush brush = new SolidBrush(textColor))
+                // Amber hourglass icon + text
+                using (Font iconFont = new Font("Segoe UI", 10.5F, FontStyle.Regular))
+                using (Font textFont = new Font("Segoe UI", 10.5F, FontStyle.Bold))
+                using (SolidBrush amberBrush = new SolidBrush(Color.FromArgb(255, 193, 7)))
+                using (SolidBrush textBrush = new SolidBrush(Color.White))
                 {
-                    StringFormat sf = new StringFormat
-                    {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-                    g.DrawString(_statusText, font, brush, new RectangleF(0, 0, w, h), sf);
+                    g.DrawString("⏳", iconFont, amberBrush, new PointF(14, (h - iconFont.Height) / 2));
+                    g.DrawString(_statusText, textFont, textBrush, new PointF(38, (h - textFont.Height) / 2 - 1));
+                }
+            }
+            else if (_state == HudState.SUCCESS)
+            {
+                // Green checkmark + text
+                using (Font iconFont = new Font("Segoe UI", 11F, FontStyle.Bold))
+                using (Font textFont = new Font("Segoe UI", 10.5F, FontStyle.Bold))
+                using (SolidBrush greenBrush = new SolidBrush(Color.FromArgb(40, 190, 80)))
+                using (SolidBrush textBrush = new SolidBrush(Color.White))
+                {
+                    g.DrawString("✓", iconFont, greenBrush, new PointF(16, (h - iconFont.Height) / 2));
+                    g.DrawString(_statusText, textFont, textBrush, new PointF(36, (h - textFont.Height) / 2 - 1));
+                }
+            }
+            else if (_state == HudState.ERROR)
+            {
+                // Red warning + text
+                using (Font iconFont = new Font("Segoe UI", 10.5F, FontStyle.Bold))
+                using (Font textFont = new Font("Segoe UI", 10F, FontStyle.Bold))
+                using (SolidBrush redBrush = new SolidBrush(Color.FromArgb(235, 55, 70)))
+                using (SolidBrush textBrush = new SolidBrush(Color.White))
+                {
+                    g.DrawString("⚠", iconFont, redBrush, new PointF(14, (h - iconFont.Height) / 2));
+                    g.DrawString(_statusText, textFont, textBrush, new PointF(36, (h - textFont.Height) / 2 - 1));
                 }
             }
         }
@@ -326,20 +269,6 @@ namespace VoxIA.UI
             path.AddArc(arc, 90, 90);
             path.CloseFigure();
             return path;
-        }
-
-        private static void FillRoundedRect(Graphics g, Brush brush, Rectangle rect, int radius)
-        {
-            if (radius <= 0 || rect.Height <= radius * 2 || rect.Width <= radius * 2)
-            {
-                g.FillRectangle(brush, rect);
-                return;
-            }
-
-            using (GraphicsPath path = CreateRoundedRectanglePath(rect, radius))
-            {
-                g.FillPath(brush, path);
-            }
         }
 
         private void InvokeIfRequired(Action action)

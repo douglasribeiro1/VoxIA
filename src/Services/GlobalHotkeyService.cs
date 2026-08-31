@@ -33,6 +33,19 @@ namespace VoxIA.Services
         private const int VK_W = 0x57;
         private const int VK_D = 0x44;
 
+        public const int VK_F1 = 0x70;
+        public const int VK_F2 = 0x71;
+        public const int VK_F3 = 0x72;
+        public const int VK_F4 = 0x73;
+        public const int VK_F5 = 0x74;
+        public const int VK_F6 = 0x75;
+        public const int VK_F7 = 0x76;
+        public const int VK_F8 = 0x77;
+        public const int VK_F9 = 0x78;
+        public const int VK_F10 = 0x79;
+        public const int VK_F11 = 0x7A;
+        public const int VK_F12 = 0x7B;
+
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         private static LowLevelKeyboardProc _proc = HookCallback;
@@ -292,6 +305,11 @@ namespace VoxIA.Services
                                 if (handlerPress != null) handlerPress();
                             });
                         }
+                    }
+
+                    if (s.HotkeyVirtualKey >= VK_F1 && s.HotkeyVirtualKey <= VK_F12)
+                    {
+                        return (IntPtr)1; // Suppress function key to prevent conflicts with active apps
                     }
                 }
                 else

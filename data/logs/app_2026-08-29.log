@@ -1,0 +1,117 @@
+[2026-08-29 20:45:01] [INFO] Starting VoxIA application...
+[2026-08-29 20:45:01] [INFO] Background RetryService started.
+[2026-08-29 20:45:01] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-08-29 20:45:01] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-08-29 20:45:01] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 26756)
+[2026-08-29 20:55:01] [INFO] Captured Target Context: Process='msedge', Title='Busca: "óleo" | Mateus Mais - Pessoal — Microsoft​ Edge', HWnd=0x302E4
+[2026-08-29 20:55:03] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_02adcf377f7942b498dcb8f0ec3a0f3e.m4a
+[2026-08-29 20:55:13] [INFO] Audio recording stopped and saved (124366 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_02adcf377f7942b498dcb8f0ec3a0f3e.m4a
+[2026-08-29 20:55:13] [INFO] Added recording to persistent queue. ID: 63d168e3761a4f7796e7f46be737f6c7
+[2026-08-29 20:55:13] [INFO] Processing queue item 63d168e3761a4f7796e7f46be737f6c7 (Attempt 1)...
+[2026-08-29 20:55:13] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_02adcf377f7942b498dcb8f0ec3a0f3e.m4a
+[2026-08-29 20:55:15] [INFO] Groq Whisper transcription success (112 chars).
+[2026-08-29 20:55:15] [INFO] Whisper Raw Transcript: " Quais são as principais características dos óleos de cozinha, como canola, milho, soja, algodão, dentre outros?"
+[2026-08-29 20:55:15] [INFO] Sending raw transcript (112 chars, max_tokens: 480) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-29 20:55:16] [INFO] Groq LLM text correction completed successfully.
+[2026-08-29 20:55:16] [INFO] Dictionary loaded successfully (4 entries).
+[2026-08-29 20:55:16] [INFO] Final Post-Processed Text: "Os óleos de cozinha apresentam diferentes perfis nutricionais, pontos de fumaça e sabores, o que influencia sua escolha para cada tipo de preparo culinário.
+
+O óleo de canola, extraído das sementes da planta Brassica napus, destaca‑se pelo baixo teor de gorduras saturadas e alto teor de gorduras monoinsaturadas, além de conter ômega‑3 (ácido alfa‑linolênico). Seu ponto de fumaça, em torno de 204 °C, permite o uso em frituras leves e em preparações que exigem calor moderado, sem conferir sabor forte ao alimento.
+
+O óleo de milho, obtido a partir dos grãos do milho, possui um ponto de fumaça próximo a 232 °C, sendo adequado para frituras e refogados. É rico em ácidos graxos poliinsaturados, principalmente ômega‑6 (ácido linoleico), e apresenta um sabor neutro que não interfere no tempero dos pratos.
+
+O óleo de soja, proveniente das sementes da soja, tem ponto de fumaça em torno de 225 °C. É rico em gorduras poliinsaturadas, especialmente ômega‑6, e contém quantidades moderadas de ômega‑3. Seu sabor é suave, o que o torna versátil para frituras, assados e molhos.
+
+O óleo de algodão, extraído das sementes do algodão, apresenta ponto de fumaça próximo a 216 °C. Possui maior teor de gorduras saturadas em comparação com os óleos citados anteriormente, mas ainda mantém um perfil equilibrado de gorduras mono"
+[2026-08-29 20:55:16] [INFO] Text copied to clipboard successfully.
+[2026-08-29 20:55:16] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-29 20:55:17] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_02adcf377f7942b498dcb8f0ec3a0f3e.m4a
+[2026-08-29 20:55:17] [INFO] Queue item 63d168e3761a4f7796e7f46be737f6c7 fully completed and audio purged.
+[2026-08-29 20:55:37] [INFO] Groq API key securely saved.
+[2026-08-29 20:55:37] [INFO] AutoStart registry key set.
+[2026-08-29 20:55:37] [INFO] Settings saved successfully.
+[2026-08-29 20:55:38] [INFO] Captured Target Context: Process='msedge', Title='Busca: "óleo" | Mateus Mais - Pessoal — Microsoft​ Edge', HWnd=0x302E4
+[2026-08-29 20:55:39] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_418ae9e6817b4efb8d3ada7d34b6d548.m4a
+[2026-08-29 20:55:47] [INFO] Audio recording stopped and saved (100330 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_418ae9e6817b4efb8d3ada7d34b6d548.m4a
+[2026-08-29 20:55:47] [INFO] Added recording to persistent queue. ID: 140af7427b6a46ecb3ceb95c78bcd689
+[2026-08-29 20:55:47] [INFO] Processing queue item 140af7427b6a46ecb3ceb95c78bcd689 (Attempt 1)...
+[2026-08-29 20:55:47] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_418ae9e6817b4efb8d3ada7d34b6d548.m4a
+[2026-08-29 20:55:48] [INFO] Groq Whisper transcription success (104 chars).
+[2026-08-29 20:55:48] [INFO] Whisper Raw Transcript: " São as principais características dos óleos de cozinha como canola, milho, algodão, soja, entre outros."
+[2026-08-29 20:55:48] [INFO] Sending raw transcript (104 chars, max_tokens: 464) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-29 20:55:49] [INFO] Groq LLM text correction completed successfully.
+[2026-08-29 20:55:49] [INFO] Final Post-Processed Text: "São as principais características dos óleos de cozinha, como canola, milho, algodão, soja, entre outros."
+[2026-08-29 20:55:49] [INFO] Text copied to clipboard successfully.
+[2026-08-29 20:55:50] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-29 20:55:50] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_418ae9e6817b4efb8d3ada7d34b6d548.m4a
+[2026-08-29 20:55:50] [INFO] Queue item 140af7427b6a46ecb3ceb95c78bcd689 fully completed and audio purged.
+[2026-08-29 21:11:25] [INFO] Captured Target Context: Process='msedge', Title='Salvar como', HWnd=0x30680
+[2026-08-29 21:11:26] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_9a942501619049d49667cd02431340ae.m4a
+[2026-08-29 21:11:36] [INFO] Audio recording stopped and saved (113137 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_9a942501619049d49667cd02431340ae.m4a
+[2026-08-29 21:11:36] [INFO] Added recording to persistent queue. ID: 99929a9ba41b48d0b81d7b1b2d92689d
+[2026-08-29 21:11:36] [INFO] Processing queue item 99929a9ba41b48d0b81d7b1b2d92689d (Attempt 1)...
+[2026-08-29 21:11:36] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_9a942501619049d49667cd02431340ae.m4a
+[2026-08-29 21:11:37] [INFO] Groq Whisper transcription success (113 chars).
+[2026-08-29 21:11:37] [INFO] Whisper Raw Transcript: " A altura de tela constando a liquidação de pagamento do Imposto de Renda de Maria do Rosário Ribeiro Gomes 2026."
+[2026-08-29 21:11:37] [INFO] Sending raw transcript (113 chars, max_tokens: 482) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-29 21:11:38] [INFO] Groq LLM text correction completed successfully.
+[2026-08-29 21:11:38] [INFO] Final Post-Processed Text: "A altura da tela.  
+
+Constando a liquidação de pagamento do Imposto de Renda de Maria do Rosário Ribeiro Gomes, 2026."
+[2026-08-29 21:11:38] [INFO] Text copied to clipboard successfully.
+[2026-08-29 21:11:38] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-29 21:11:38] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_9a942501619049d49667cd02431340ae.m4a
+[2026-08-29 21:11:38] [INFO] Queue item 99929a9ba41b48d0b81d7b1b2d92689d fully completed and audio purged.
+[2026-08-29 21:26:04] [INFO] Captured Target Context: Process='msedge', Title='Google Gemini e mais 7 páginas - Pessoal — Microsoft​ Edge', HWnd=0x302E4
+[2026-08-29 21:26:05] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_ea1f7c96a03641a1864b67183e1eceae.m4a
+[2026-08-29 21:26:39] [INFO] Audio recording stopped and saved (409291 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_ea1f7c96a03641a1864b67183e1eceae.m4a
+[2026-08-29 21:26:39] [INFO] Added recording to persistent queue. ID: 042f9e829724461cac0a8ada4f39d4c8
+[2026-08-29 21:26:39] [INFO] Processing queue item 042f9e829724461cac0a8ada4f39d4c8 (Attempt 1)...
+[2026-08-29 21:26:39] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_ea1f7c96a03641a1864b67183e1eceae.m4a
+[2026-08-29 21:26:40] [INFO] Groq Whisper transcription success (318 chars).
+[2026-08-29 21:26:40] [INFO] Whisper Raw Transcript: " seguinte, eu estou aqui com a pendência da malha do imposto de renda de pessoa física e eu estou tentando enviar a declaração retificadora para fazer a correção dos lançamentos já fiz a correção pelo meu aplicativo do imposto de renda e aí eu não e aí eu preciso de saber o número da intimação, onde eu consulto isso."
+[2026-08-29 21:26:40] [INFO] Sending raw transcript (318 chars, max_tokens: 892) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-29 21:26:42] [INFO] Groq LLM text correction completed successfully.
+[2026-08-29 21:26:42] [INFO] Final Post-Processed Text: "Segue: estou aqui com a pendência da malha do Imposto de Renda de pessoa física e estou tentando enviar a declaração retificadora para corrigir os lançamentos. Já fiz a correção pelo meu aplicativo do Imposto de Renda, mas não sei onde encontrar o número da intimação. Preciso saber onde consultá‑lo."
+[2026-08-29 21:26:42] [INFO] Text copied to clipboard successfully.
+[2026-08-29 21:26:42] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-29 21:26:42] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_ea1f7c96a03641a1864b67183e1eceae.m4a
+[2026-08-29 21:26:42] [INFO] Queue item 042f9e829724461cac0a8ada4f39d4c8 fully completed and audio purged.
+[2026-08-29 21:27:09] [INFO] Groq API key securely saved.
+[2026-08-29 21:27:09] [INFO] AutoStart registry key set.
+[2026-08-29 21:27:09] [INFO] Settings saved successfully.
+[2026-08-29 21:28:32] [INFO] Captured Target Context: Process='msedge', Title='Como Consultar Intimação da Malha Fina - Google Gemini e mais 9 páginas - Pessoal — Microsoft​ Edge', HWnd=0x302E4
+[2026-08-29 21:28:33] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_61c5bb70495f494c9352cbae662d8e84.m4a
+[2026-08-29 21:28:35] [INFO] Audio recording stopped and saved (31064 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_61c5bb70495f494c9352cbae662d8e84.m4a
+[2026-08-29 21:28:35] [INFO] Added recording to persistent queue. ID: f84ca6ef31814512abe700b3ada6933e
+[2026-08-29 21:28:35] [INFO] Processing queue item f84ca6ef31814512abe700b3ada6933e (Attempt 1)...
+[2026-08-29 21:28:35] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_61c5bb70495f494c9352cbae662d8e84.m4a
+[2026-08-29 21:28:36] [INFO] Groq Whisper transcription success (22 chars).
+[2026-08-29 21:28:36] [INFO] Whisper Raw Transcript: " Não tem nada no ECAQ."
+[2026-08-29 21:28:36] [INFO] Sending raw transcript (22 chars, max_tokens: 300) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-29 21:28:37] [INFO] Groq LLM text correction completed successfully.
+[2026-08-29 21:28:37] [INFO] Final Post-Processed Text: "Prezado(a) Senhor(a),
+
+Informo que, após verificação, não consta nenhum registro ou informação no ECAQ."
+[2026-08-29 21:28:37] [INFO] Text copied to clipboard successfully.
+[2026-08-29 21:28:37] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-29 21:28:37] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_61c5bb70495f494c9352cbae662d8e84.m4a
+[2026-08-29 21:28:37] [INFO] Queue item f84ca6ef31814512abe700b3ada6933e fully completed and audio purged.
+[2026-08-29 21:29:09] [INFO] Groq API key securely saved.
+[2026-08-29 21:29:09] [INFO] AutoStart registry key set.
+[2026-08-29 21:29:09] [INFO] Settings saved successfully.
+[2026-08-29 21:29:11] [INFO] Captured Target Context: Process='msedge', Title='Como Consultar Intimação da Malha Fina - Google Gemini e mais 9 páginas - Pessoal — Microsoft​ Edge', HWnd=0x302E4
+[2026-08-29 21:29:12] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_727ad2ebe37b42b4998c40841dc7117e.m4a
+[2026-08-29 21:29:16] [INFO] Audio recording stopped and saved (53446 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_727ad2ebe37b42b4998c40841dc7117e.m4a
+[2026-08-29 21:29:16] [INFO] Added recording to persistent queue. ID: e56e855e763c46c38ad9f2b0b00a54ef
+[2026-08-29 21:29:16] [INFO] Processing queue item e56e855e763c46c38ad9f2b0b00a54ef (Attempt 1)...
+[2026-08-29 21:29:16] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_727ad2ebe37b42b4998c40841dc7117e.m4a
+[2026-08-29 21:29:17] [INFO] Groq Whisper transcription success (53 chars).
+[2026-08-29 21:29:17] [INFO] Whisper Raw Transcript: " Não tem nada lá no portal EK, na caixa de mensagens."
+[2026-08-29 21:29:17] [INFO] Sending raw transcript (53 chars, max_tokens: 362) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-08-29 21:29:18] [INFO] Groq LLM text correction completed successfully.
+[2026-08-29 21:29:18] [INFO] Final Post-Processed Text: "Não tem nada lá no portal EK, na caixa de mensagens."
+[2026-08-29 21:29:18] [INFO] Text copied to clipboard successfully.
+[2026-08-29 21:29:18] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-08-29 21:29:18] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\data\audio_queue\rec_727ad2ebe37b42b4998c40841dc7117e.m4a
+[2026-08-29 21:29:18] [INFO] Queue item e56e855e763c46c38ad9f2b0b00a54ef fully completed and audio purged.

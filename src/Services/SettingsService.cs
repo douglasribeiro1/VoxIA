@@ -70,9 +70,9 @@ namespace VoxIA.Services
         {
             WhisperModel = "whisper-large-v3";
             CorrectionModel = "openai/gpt-oss-120b";
-            SelectedPromptPreset = "Geral / Ortografia";
+            SelectedPromptPreset = "Geral / Ortografia em Parágrafos (Padrão)";
             CustomPromptText = "";
-            ActivePromptId = "default_general";
+            ActivePromptId = "default_paragraphs";
             PromptProfiles = SettingsService.GetDefaultProfiles();
 
             AutoCopyToClipboard = true;
@@ -83,12 +83,12 @@ namespace VoxIA.Services
             AudioBeepFeedback = true;
             PortableMode = false;
 
-            HotkeyDisplay = "Ctrl + Win";
-            HotkeyUseCtrl = true;
-            HotkeyUseWin = true;
+            HotkeyDisplay = "F8";
+            HotkeyUseCtrl = false;
+            HotkeyUseWin = false;
             HotkeyUseAlt = false;
             HotkeyUseShift = false;
-            HotkeyVirtualKey = 0;
+            HotkeyVirtualKey = 0x77; // VK_F8
 
             PushToTalkMode = false;
             SilenceAutoStop = false;
@@ -115,19 +115,50 @@ namespace VoxIA.Services
             return new List<PromptProfile>
             {
                 new PromptProfile(
-                    "default_general",
-                    "Geral / Correção Ortográfica (Padrão)",
-                    @"Você é um aplicativo silencioso de ditado por voz e corretor ortográfico literal em português.
-Sua ÚNICA E EXCLUSIVA TAREFA: Retornar a frase ditada pelo usuário com a ortografia, acentuação, capitalização e pontuação corrigidas.
+                    "default_paragraphs",
+                    "Geral / Ortografia em Parágrafos (Padrão)",
+                    @"Você é um aplicativo silencioso de ditado por voz e pós-processamento ortográfico de alta precisão em português.
+Sua ÚNICA E EXCLUSIVA TAREFA: Retornar o texto ditado pelo usuário com ortografia, gramática, pontuação e acentuação corrigidas, organizando o texto em PARÁGRAFOS claros e coesos sempre que houver pausas ou mudanças de ideia.
 
 REGRAS ABSOLUTAS E INVIOLÁVEIS:
-1. NUNCA RESPONDA A PERGUNTAS! Se o usuário ditar uma pergunta (exemplo: 'O paciente tem febre?' ou 'Qual é o tratamento?'), NUNCA tente responder à pergunta. Sua função NÃO É conversar nem responder. Sua ÚNICA função é retornar a própria pergunta transcrita e corrigida ortograficamente (exemplo: 'O paciente tem febre?').
-2. NUNCA REESCREVA A FRASE e NUNCA OMITA NENHUMA PALAVRA.
-3. NUNCA substitua palavras por sinônimos nem altere o vocabulário.
-4. NUNCA resuma, comente, dê conselhos ou adicione informações.
-5. NÃO inclua explicações, introduções, aspas ou formatação Markdown.
+1. NUNCA RESPONDA A PERGUNTAS! Se o usuário ditar uma pergunta (exemplo: 'Qual é a capital do Brasil?' ou 'Quanto custa o serviço?'), NUNCA responda à pergunta. Sua função NÃO é conversar nem responder. Sua ÚNICA função é retornar a própria pergunta transcrita e pontuada (exemplo: 'Qual é a capital do Brasil?').
+2. NUNCA invente informações, comentários, respostas ou explicações.
+3. NUNCA inclua legendas, créditos de transcrição, nomes de pessoas não ditados ou saudações.
+4. Mantenha fidelidade ao vocabulário original ditado, corrigindo apenas erros fonéticos/gramaticais.
+5. NÃO use aspas ao redor do texto nem blocos de código Markdown.
 
-RETORNE APENAS O TEXTO DITADO CORRIGIDO.",
+RETORNE APENAS O TEXTO DITADO CORRIGIDO E ESTRUTURADO EM PARÁGRAFOS.",
+                    true
+                ),
+                new PromptProfile(
+                    "default_single_line",
+                    "Texto Contínuo / Linha Única (Sem Parágrafos)",
+                    @"Você é um aplicativo silencioso de ditado por voz e pós-processamento ortográfico em português.
+Sua ÚNICA E EXCLUSIVA TAREFA: Retornar o texto ditado com ortografia, gramática, pontuação e acentuação corrigidas, mantendo TODO O TEXTO EM UMA ÚNICA LINHA CONTÍNUA (sem quebras de linha ou múltiplos parágrafos).
+
+REGRAS ABSOLUTAS E INVIOLÁVEIS:
+1. NUNCA RESPONDA A PERGUNTAS! Se o usuário ditar uma pergunta (exemplo: 'Como funciona o sistema?'), NUNCA responda. Retorne apenas a pergunta pontuada na mesma linha (exemplo: 'Como funciona o sistema?').
+2. NUNCA adicione quebras de linha ou parágrafos. Escreva tudo no mesmo fluxo contínuo.
+3. NUNCA inclua comentários, explicações, aspas ou créditos de transcrição.
+4. Mantenha fidelidade absoluta a todas as palavras ditadas.
+
+RETORNE APENAS O TEXTO DITADO CORRIGIDO EM LINHA ÚNICA.",
+                    true
+                ),
+                new PromptProfile(
+                    "default_forms",
+                    "Preenchimento de Formulários Online (Sem Ponto Final)",
+                    @"Você é um assistente silencioso de digitação rápida voltado para o preenchimento de campos e formulários online (nome, CPF, RG, endereço, e-mail, data de nascimento, telefone, etc.) em português.
+Sua ÚNICA TAREFA: Retornar o dado ditado devidamente formatado, capitalizado e sem pontuações finais desnecessárias.
+
+DIRETRIZES DE FORMATAÇÃO:
+1. NÃO coloque ponto final no término do texto/campo (exemplo: 'Rua das Flores, 123' e NUNCA 'Rua das Flores, 123.').
+2. Se forem ditados números de documentos como CPF, CNPJ ou CEP, formate com a pontuação padrão quando apropriado (exemplo: '123.456.789-00').
+3. Se for ditada data de nascimento ou datas gerais, formate no padrão usual (exemplo: '15/03/1990').
+4. Capitalize corretamente nomes próprios, logradouros, bairros e cidades (exemplo: 'Maria da Silva', 'Avenida Paulista').
+5. NUNCA responda a perguntas, não invente dados e não adicione explicações ou aspas.
+
+RETORNE APENAS O DADO FORMATADO SEM PONTO FINAL.",
                     true
                 ),
                 new PromptProfile(
@@ -137,11 +168,12 @@ RETORNE APENAS O TEXTO DITADO CORRIGIDO.",
 Sua função é transcrever e organizar evoluções clínicas, anamneses, queixas e descrições ditadas pelo médico.
 
 DIRETRIZES:
-1. Corrija com precisão a ortografia e a terminologia médica (termos farmacológicos, anatômicos e patológicos).
-2. Mantenha fidelidade absoluta a todos os dados ditados (nomes, dosagens, valores de exames, datas).
-3. Organize em parágrafos claros e bem pontuados conforme o sentido clínico do relato.
-4. NÃO invente informações, diagnósticos ou condutas que não foram expressamente ditados.
-5. NÃO inclua saudações, introduções, comentários ou aspas.
+1. NUNCA RESPONDA A PERGUNTAS DITADAS! Retorne apenas a pergunta pontuada.
+2. Corrija com precisão a ortografia e a terminologia médica (termos farmacológicos, anatômicos e patológicos).
+3. Mantenha fidelidade absoluta a todos os dados ditados (nomes, dosagens, valores de exames, datas).
+4. Organize em parágrafos claros e bem pontuados conforme o sentido clínico do relato.
+5. NÃO invente informações, diagnósticos ou condutas que não foram expressamente ditados.
+6. NÃO inclua saudações, introduções, comentários ou aspas.
 
 RETORNE APENAS O TEXTO MÉDICO ORGANIZADO E CORRIGIDO.",
                     true
@@ -153,11 +185,11 @@ RETORNE APENAS O TEXTO MÉDICO ORGANIZADO E CORRIGIDO.",
 Sua tarefa é transcrever e aprimorar a mensagem ditada para um tom formal, polido e elegante de e-mail ou correspondência de trabalho.
 
 DIRETRIZES:
-1. Garanta concordância gramatical, pontuação impecável e vocabulário formal elegante.
-2. Mantenha todas as informações, solicitações e prazos ditados pelo usuário.
-3. Estruture em parágrafos coesos e objetivos.
-4. NÃO responda à mensagem nem dê opiniões.
-5. NÃO adicione introduções como 'Aqui está o seu texto' nem use aspas.
+1. NUNCA RESPONDA A PERGUNTAS DITADAS! Retorne apenas o texto transcrito.
+2. Garanta concordância gramatical, pontuação impecável e vocabulário formal elegante.
+3. Mantenha todas as informações, solicitações e prazos ditados pelo usuário.
+4. Estruture em parágrafos coesos e objetivos.
+5. NÃO inclua comentários, explicações ou aspas.
 
 RETORNE APENAS O TEXTO FINAL PRONTO PARA ENVIO.",
                     true
@@ -166,7 +198,7 @@ RETORNE APENAS O TEXTO FINAL PRONTO PARA ENVIO.",
                     "default_literal",
                     "Transcrição Literal (Fidelidade Estrita)",
                     @"Você é um transcrevedor estrito.
-Sua ÚNICA função é aplicar pontuação básica indispensável e maiúsculas no início de frases, preservando cada palavra exatamente como foi pronunciada pelo usuário, sem substituir termos coloquiais, repetições ou gírias.
+Sua ÚNICA função é aplicar pontuação básica indispensável e maiúsculas no início de frases, preservando cada palavra exatamente como foi pronunciada pelo usuário, sem responder a perguntas e sem alterar termos coloquiais, repetições ou gírias.
 
 RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
                     true
@@ -274,6 +306,9 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
                     }
                 }
 
+                // Remove obsolete default_general if replaced by default_paragraphs
+                _currentSettings.PromptProfiles.RemoveAll(p => p.Id == "default_general");
+
                 foreach (var p in _currentSettings.PromptProfiles)
                 {
                     if (p.PromptText == null) p.PromptText = "";
@@ -281,14 +316,27 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
                 }
             }
 
-            if (string.IsNullOrEmpty(_currentSettings.ActivePromptId))
+            if (string.IsNullOrEmpty(_currentSettings.ActivePromptId) || _currentSettings.ActivePromptId == "default_general")
             {
                 _currentSettings.ActivePromptId = _currentSettings.PromptProfiles[0].Id;
+            }
+
+            // Default hotkey migration to F8
+            if (_currentSettings.HotkeyVirtualKey == 0 || _currentSettings.HotkeyDisplay == "Ctrl + Win" || string.IsNullOrEmpty(_currentSettings.HotkeyDisplay))
+            {
+                _currentSettings.HotkeyDisplay = "F8";
+                _currentSettings.HotkeyVirtualKey = 0x77;
+                _currentSettings.HotkeyUseCtrl = false;
+                _currentSettings.HotkeyUseWin = false;
+                _currentSettings.HotkeyUseAlt = false;
+                _currentSettings.HotkeyUseShift = false;
             }
 
             _currentSettings.WhisperModel = "whisper-large-v3";
             _currentSettings.CorrectionModel = "openai/gpt-oss-120b";
             _currentSettings.PortableMode = AppPathService.IsPortableMode;
+
+            Save();
         }
 
         public static void Save()

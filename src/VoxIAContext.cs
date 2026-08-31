@@ -52,7 +52,9 @@ namespace VoxIA
         {
             _trayMenu = new ContextMenuStrip();
 
-            _menuRecord = new ToolStripMenuItem("🎙 Iniciar Gravação (Ctrl + Win)", null, OnMenuRecordClick);
+            string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
+
+            _menuRecord = new ToolStripMenuItem(string.Format("🎙 Iniciar Gravação ({0})", hotkey), null, OnMenuRecordClick);
             _menuPrompts = new ToolStripMenuItem("🎯 Prompt de IA Ativo");
             _menuDict = new ToolStripMenuItem("📖 Dicionário de Palavras (Ctrl + Shift + W)", null, (s, e) => OpenDictionaryQuickForm());
             _menuPending = new ToolStripMenuItem("📋 Áudios Pendentes", null, (s, e) => OpenPendingForm());
@@ -80,7 +82,7 @@ namespace VoxIA
             _notifyIcon = new NotifyIcon
             {
                 ContextMenuStrip = _trayMenu,
-                Text = "VoxIA — Ditado por Voz (Ctrl + Win)",
+                Text = string.Format("VoxIA — Ditado por Voz ({0})", hotkey),
                 Visible = true
             };
 
@@ -208,10 +210,10 @@ namespace VoxIA
 
         private void ShowShortcutsDialog()
         {
+            string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
+
             string msg = "⌨ GUIA DE ATALHOS GLOBAIS DO VOXIA:\n\n" +
-                         "🎙 Iniciar / Parar Ditado:\n" +
-                         "   • Atalho Padrão: Ctrl + Win\n" +
-                         "   • Push-to-Talk: Manter pressionado para falar\n\n" +
+                         string.Format("🎙 Iniciar / Parar Ditado:\n   • Tecla de Atalho: {0}\n   • Push-to-Talk: Manter pressionado para falar\n\n", hotkey) +
                          "📖 Adicionar Palavra ao Dicionário:\n" +
                          "   • Atalho Rápido: Ctrl + Shift + W (ou Ctrl + Shift + D)\n" +
                          "   • Como usar: Selecione o texto em qualquer app (Word, Chrome, Prontuário) e pressione o atalho.\n\n" +
@@ -258,7 +260,8 @@ namespace VoxIA
                 AudioFeedbackService.PlayStartBeep();
 
                 _hud.ShowRecording();
-                _menuRecord.Text = "⏹ Parar e Enviar (Ctrl + Win)";
+                string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
+                _menuRecord.Text = string.Format("⏹ Parar e Enviar ({0})", hotkey);
             }
             catch (Exception ex)
             {
@@ -278,7 +281,8 @@ namespace VoxIA
 
             double durationSec = _audioRecorder.RecordingDuration.TotalSeconds;
             string filePath = _audioRecorder.StopRecording();
-            _menuRecord.Text = "🎙 Iniciar Gravação (Ctrl + Win)";
+            string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
+            _menuRecord.Text = string.Format("🎙 Iniciar Gravação ({0})", hotkey);
             AudioFeedbackService.PlayStopBeep();
 
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
@@ -300,7 +304,14 @@ namespace VoxIA
 
         private void OnProcessingSuccess(string rawText, string finalText)
         {
-            _hud.ShowSuccess();
+            if (!string.IsNullOrWhiteSpace(finalText))
+            {
+                _hud.ShowSuccess();
+            }
+            else
+            {
+                _hud.Hide();
+            }
             UpdatePendingBadge();
         }
 
