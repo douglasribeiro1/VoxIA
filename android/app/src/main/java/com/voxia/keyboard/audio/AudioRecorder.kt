@@ -1,4 +1,4 @@
-package com.voxia.keyboard.audio
+﻿package com.voxia.keyboard.audio
 
 import android.content.Context
 import android.media.MediaRecorder
@@ -10,6 +10,7 @@ class AudioRecorder(private val context: Context) {
     private var recorder: MediaRecorder? = null
     private var currentOutputFile: File? = null
     private var isRecording = false
+    private var recordingStartTime = 0L
 
     fun startRecording(): Boolean {
         if (isRecording) return false
@@ -36,6 +37,7 @@ class AudioRecorder(private val context: Context) {
                 start()
             }
 
+            recordingStartTime = System.currentTimeMillis()
             isRecording = true
             true
         } catch (e: Exception) {
@@ -48,14 +50,31 @@ class AudioRecorder(private val context: Context) {
     fun stopRecording(): File? {
         if (!isRecording || recorder == null) return null
 
+        val elapsed = System.currentTimeMillis() - recordingStartTime
+        if (elapsed < 600) {
+            // Pequena pausa para evitar o erro stop failed do MediaRecorder em gravações ultracurtas
+            try { Thread.sleep(600 - elapsed) } catch (ignored: Exception) {}
+        }
+
         return try {
             recorder?.apply {
-                stop()
+                try {
+                    stop()
+                } catch (e: Exception) {
+                    Log.w("AudioRecorder", "Aviso no stop do MediaRecorder: ${e.message}")
+                }
                 release()
             }
             recorder = null
             isRecording = false
-            currentOutputFile
+
+            val file = currentOutputFile
+            if (file != null && file.exists() && file.length() > 200) {
+                file
+            } else {
+                Log.w("AudioRecorder", "Arquivo de áudio muito curto ou vazio")
+                null
+            }
         } catch (e: Exception) {
             Log.e("AudioRecorder", "Erro ao parar gravação", e)
             cleanup()

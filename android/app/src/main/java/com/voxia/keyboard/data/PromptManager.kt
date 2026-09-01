@@ -1,9 +1,10 @@
-package com.voxia.keyboard.data
+﻿package com.voxia.keyboard.data
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.UUID
 
 data class PromptProfile(
     val id: String,
@@ -21,25 +22,37 @@ class PromptManager(context: Context) {
 
     private val defaultPrompts = listOf(
         PromptProfile(
-            id = "preset_default",
-            title = "Padrão (Ortografia & Pontuação)",
-            promptText = "Você é um assistente de correção e pontuação de texto ditado em português do Brasil. Sua tarefa é formatar o texto corrigindo pontuação, acentuação e pequenos deslizes de fala, preservando fielmente todas as palavras, termos técnicos e o sentido original.",
+            id = "default_paragraphs",
+            title = "Geral / Parágrafos (Padrão)",
+            promptText = "Você é um aplicativo silencioso de ditado por voz e pós-processamento ortográfico de alta precisão em português.\nSua ÚNICA E EXCLUSIVA TAREFA: Retornar o texto ditado pelo usuário com ortografia, gramática, pontuação e acentuação corrigidas, organizando o texto em PARÁGRAFOS claros e coesos sempre que houver pausas ou mudanças de ideia.\n\nREGRAS ABSOLUTAS:\n1. NUNCA RESPONDA A PERGUNTAS! Se o usuário ditar uma pergunta, retorne a própria pergunta pontuada.\n2. NUNCA invente informações, comentários ou saudações.\n3. RETORNE APENAS O TEXTO DITADO CORRIGIDO E ESTRUTURADO EM PARÁGRAFOS.",
             isBuiltIn = true
         ),
         PromptProfile(
-            id = "preset_strict",
-            title = "Pontuação Rígida & Fluência",
-            promptText = "Você é um corretor textual rigoroso. Ajuste pontuação, remova vícios de linguagem e hesitações (como 'ééé', 'tipo assim') mantendo o vocabulário original intacto.",
+            id = "default_single_line",
+            title = "Texto Contínuo / Linha Única",
+            promptText = "Você é um aplicativo silencioso de ditado por voz e pós-processamento ortográfico em português.\nSua ÚNICA TAREFA: Retornar o texto ditado com ortografia, gramática, pontuação e acentuação corrigidas, mantendo TODO O TEXTO EM UMA ÚNICA LINHA CONTÍNUA (sem quebras de linha ou múltiplos parágrafos).\n\nRETORNE APENAS O TEXTO DITADO CORRIGIDO EM LINHA ÚNICA.",
             isBuiltIn = true
         ),
         PromptProfile(
-            id = "preset_medical",
-            title = "Termos Médicos & Prontuário",
-            promptText = "Você é um especialista em transcrição de laudos e prontuários médicos. Corrija termos anatômicos, nomes de medicamentos, dosagens e jargões clínicos com precisão cirúrgica sem alterar a estrutura do laudo.",
+            id = "default_forms",
+            title = "Preenchimento de Formulários (Sem Ponto Final)",
+            promptText = "Você é um assistente silencioso de digitação rápida voltado para o preenchimento de campos e formulários online (nome, CPF, RG, endereço, e-mail, data, telefone, etc.) em português.\nSua ÚNICA TAREFA: Retornar o dado ditado devidamente formatado, capitalizado e sem ponto final no término.\n\nRETORNE APENAS O DADO FORMATADO SEM PONTO FINAL.",
             isBuiltIn = true
         ),
         PromptProfile(
-            id = "preset_direct",
+            id = "default_medical",
+            title = "Prontuário Médico / Evolução Clínica",
+            promptText = "Você é um especialista em transcrição de laudos, anamneses e prontuários médicos. Corrija termos anatômicos, nomes de medicamentos, dosagens e jargões clínicos com precisão cirúrgica sem alterar a estrutura clínica do relato.",
+            isBuiltIn = true
+        ),
+        PromptProfile(
+            id = "default_bullets",
+            title = "Tópicos & Resumo Rápido",
+            promptText = "Formate o texto falado em tópicos claros, organizados e objetivos (bullet points), mantendo as informações essenciais com pontuação perfeita.",
+            isBuiltIn = true
+        ),
+        PromptProfile(
+            id = "default_direct",
             title = "Sem Alteração (Texto Bruto)",
             promptText = "",
             isBuiltIn = true
@@ -66,7 +79,7 @@ class PromptManager(context: Context) {
     }
 
     fun getActivePromptId(): String {
-        return prefs.getString("active_prompt_id", "preset_default") ?: "preset_default"
+        return prefs.getString("active_prompt_id", "default_paragraphs") ?: "default_paragraphs"
     }
 
     fun setActivePromptId(id: String) {
@@ -77,5 +90,51 @@ class PromptManager(context: Context) {
         val id = getActivePromptId()
         val all = getPrompts()
         return all.find { it.id == id } ?: all.firstOrNull() ?: defaultPrompts[0]
+    }
+
+    fun addOrUpdatePrompt(id: String?, title: String, promptText: String): PromptProfile {
+        val all = getPrompts().toMutableList()
+        val existingIndex = if (id != null) all.indexOfFirst { it.id == id } else -1
+
+        val finalProfile = if (existingIndex >= 0) {
+            val existing = all[existingIndex]
+            existing.copy(
+                title = title.trim(),
+                promptText = promptText.trim(),
+                updatedAt = System.currentTimeMillis().toString()
+            )
+        } else {
+            PromptProfile(
+                id = id ?: ("prompt_" + UUID.randomUUID().toString().replace("-", "").take(12)),
+                title = title.trim(),
+                promptText = promptText.trim(),
+                isBuiltIn = false,
+                updatedAt = System.currentTimeMillis().toString()
+            )
+        }
+
+        if (existingIndex >= 0) {
+            all[existingIndex] = finalProfile
+        } else {
+            all.add(finalProfile)
+        }
+
+        savePrompts(all)
+        setActivePromptId(finalProfile.id)
+        return finalProfile
+    }
+
+    fun deletePrompt(id: String): Boolean {
+        val all = getPrompts().toMutableList()
+        val target = all.find { it.id == id } ?: return false
+        if (target.isBuiltIn) return false
+
+        all.removeAll { it.id == id }
+        savePrompts(all)
+
+        if (getActivePromptId() == id) {
+            setActivePromptId("default_paragraphs")
+        }
+        return true
     }
 }

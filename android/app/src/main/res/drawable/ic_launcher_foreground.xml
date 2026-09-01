@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Sound Waves / Glowing Arc Left -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#10B981"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M35,46 C33,51 33,57 35,62" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#34D399"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M29,41 C25,49 25,59 29,67" />
+
+    <!-- Sound Waves / Glowing Arc Right -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#10B981"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M73,46 C75,51 75,57 73,62" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#34D399"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M79,41 C83,49 83,59 79,67" />
+
+    <!-- Outer Mic Cradle Ring -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#6366F1"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:pathData="M41,52 C41,61 46.8,67 54,67 C61.2,67 67,61 67,52" />
+
+    <!-- Mic Stem & Base -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#6366F1"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:pathData="M54,67 L54,76" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#6366F1"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M45,76 L63,76" />
+
+    <!-- Mic Main Capsule Body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,34 C49.5,34 46,37.5 46,42 L46,54 C46,58.5 49.5,62 54,62 C58.5,62 62,58.5 62,54 L62,42 C62,37.5 58.5,34 54,34 Z" />
+
+    <!-- Mic Capsule Grille Accent -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#6366F1"
+        android:strokeWidth="1.6"
+        android:pathData="M47,43 L61,43 M47,48 L61,48" />
+
+    <!-- AI Star Sparkle Badge (Top Right) -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M68,30 L69.5,34 L73.5,35.5 L69.5,37 L68,41 L66.5,37 L62.5,35.5 L66.5,34 Z" />
+</vector>

@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_keyboard"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="10dp">
+
+    <!-- ========================================== -->
+    <!-- 1. PAINEL PRINCIPAL DE VOZ & TECLADO       -->
+    <!-- ========================================== -->
+    <LinearLayout
+        android:id="@+id/layoutMainVoiceView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <!-- Barra Superior de Ações e Prompts -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Seletor de Perfil de Prompt -->
+            <Spinner
+                android:id="@+id/spinnerPromptProfile"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_key"
+                android:paddingStart="8dp"
+                android:paddingEnd="6dp"
+                android:spinnerMode="dropdown" />
+
+            <!-- Botão Editar Prompt Atual -->
+            <ImageButton
+                android:id="@+id/btnEditPrompt"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Editar Prompt Atual"
+                android:src="@drawable/ic_edit"
+                android:scaleType="centerInside" />
+
+            <!-- Botão Criar Novo Prompt -->
+            <ImageButton
+                android:id="@+id/btnAddPrompt"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Novo Prompt"
+                android:src="@drawable/ic_add"
+                android:scaleType="centerInside" />
+
+            <!-- Botão Adicionar Termo ao Dicionário -->
+            <ImageButton
+                android:id="@+id/btnAddDict"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Adicionar Palavra ao Dicionário"
+                android:src="@drawable/ic_book"
+                android:scaleType="centerInside" />
+
+            <!-- Botão Configurações -->
+            <ImageButton
+                android:id="@+id/btnOpenSettings"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="@string/settings_title"
+                android:src="@drawable/ic_settings"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+        <!-- Mensagem de Status -->
+        <TextView
+            android:id="@+id/tvStatusMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:text="@string/status_ready"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <!-- Botão de Reenviar Último Áudio Salvo (visível apenas em caso de oscilação de rede) -->
+        <Button
+            android:id="@+id/btnRetryAudio"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/accent"
+            android:text="🔄 Reenviar último áudio gravado"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- Botão Redondo de Microfone Central -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/btnMicRecord"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_mic_button"
+                android:contentDescription="Gravar Ditado"
+                android:src="@drawable/ic_mic"
+                android:scaleType="centerInside"
+                android:elevation="4dp" />
+        </FrameLayout>
+
+        <!-- Barra Inferior de Digitação & ENVIO DIRETO -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="2dp">
+
+            <!-- Alternar Teclado (Voltar ao Gboard/Padrão) -->
+            <ImageButton
+                android:id="@+id/btnSwitchKeyboard"
+                android:layout_width="40dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Alternar Teclado"
+                android:src="@drawable/ic_globe"
+                android:scaleType="centerInside" />
+
+            <!-- Pontuação Rápida -->
+            <Button
+                android:id="@+id/btnComma"
+                android:layout_width="32dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_key"
+                android:text=","
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnDot"
+                android:layout_width="32dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_key"
+                android:text="."
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Barra de Espaço -->
+            <Button
+                android:id="@+id/btnSpace"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_key"
+                android:text="Espaço"
+                android:textAllCaps="false"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <!-- Apagar / Backspace -->
+            <ImageButton
+                android:id="@+id/btnBackspace"
+                android:layout_width="40dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Apagar"
+                android:src="@drawable/ic_backspace"
+                android:scaleType="centerInside" />
+
+            <!-- Nova Linha / Enter -->
+            <ImageButton
+                android:id="@+id/btnEnter"
+                android:layout_width="40dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Nova Linha"
+                android:src="@drawable/ic_enter"
+                android:scaleType="centerInside" />
+
+            <!-- BOTÃO ENVIAR MENSAGEM DIRETO (SEND ACTION) -->
+            <ImageButton
+                android:id="@+id/btnSend"
+                android:layout_width="46dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_btn_send"
+                android:contentDescription="@string/btn_send_desc"
+                android:src="@drawable/ic_send"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ========================================== -->
+    <!-- 2. EDITOR DE PROMPT DIRETO NO TECLADO      -->
+    <!-- ========================================== -->
+    <LinearLayout
+        android:id="@+id/layoutPromptEditor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_editor_box"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <!-- Topo do Editor de Prompt -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:id="@+id/tvPromptEditorHeading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/prompt_edit_title"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnClosePromptEditor"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Fechar"
+                android:src="@drawable/ic_close"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+        <!-- Título do Prompt -->
+        <EditText
+            android:id="@+id/etPromptTitle"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_input_field"
+            android:hint="@string/prompt_title_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:singleLine="true"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Instruções do Prompt -->
+        <EditText
+            android:id="@+id/etPromptInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_input_field"
+            android:hint="@string/prompt_instructions_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:padding="8dp"
+            android:gravity="top|start"
+            android:scrollbars="vertical"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Botões de Ação do Editor de Prompt -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/btnCancelPromptEditor"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_key"
+                android:text="@string/btn_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnDeletePrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_key"
+                android:text="@string/btn_delete_prompt"
+                android:textAllCaps="false"
+                android:textColor="@color/danger"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnSavePrompt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/bg_btn_send"
+                android:text="@string/btn_save_prompt"
+                android:textAllCaps="false"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ========================================== -->
+    <!-- 3. DICIONÁRIO RÁPIDO DIRETO NO TECLADO     -->
+    <!-- ========================================== -->
+    <LinearLayout
+        android:id="@+id/layoutDictionaryQuickAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_editor_box"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <!-- Topo do Dicionário Rápido -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dict_quick_title"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnCloseDictEditor"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Fechar"
+                android:src="@drawable/ic_close"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+        <!-- Campo Palavra Original -->
+        <EditText
+            android:id="@+id/etDictOriginal"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_input_field"
+            android:hint="@string/dict_orig_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:singleLine="true"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Campo Substituição -->
+        <EditText
+            android:id="@+id/etDictReplacement"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_input_field"
+            android:hint="@string/dict_repl_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:singleLine="true"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Checkbox Vocabulário Técnico -->
+        <CheckBox
+            android:id="@+id/cbDictVocabOnly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dict_vocab_only"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Botões de Ação do Dicionário -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/btnCancelDictEditor"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_key"
+                android:text="@string/btn_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnSaveDictEntry"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/bg_btn_send"
+                android:text="@string/btn_save_dict"
+                android:textAllCaps="false"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

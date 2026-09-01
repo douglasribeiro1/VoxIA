@@ -7,7 +7,7 @@
     <string name="status_ready">Toque no microfone para ditar</string>
     <string name="status_recording">🎙 Gravando áudio... Toque para finalizar</string>
     <string name="status_transcribing">⏳ Transcrevendo (Whisper)...</string>
-    <string name="status_correcting">✨ Formatando com IA (Llama 3.3)...</string>
+    <string name="status_correcting">✨ Formatando com IA (GPT-OSS 120B)...</string>
     <string name="status_done">✓ Inserido com sucesso!</string>
     <string name="status_error">⚠ Erro ao processar. Verifique a API Key.</string>
 
@@ -20,4 +20,22 @@
     <string name="settings_login_btn">Entrar e Sincronizar</string>
     <string name="settings_logout_btn">Desconectar</string>
     <string name="settings_sync_now">Sincronizar Agora</string>
+    
+    <!-- Prompts e Dicionário In-Keyboard -->
+    <string name="prompt_edit_title">Editar Prompt da IA</string>
+    <string name="prompt_new_title">Novo Prompt da IA</string>
+    <string name="prompt_title_hint">Nome / Título do Prompt</string>
+    <string name="prompt_instructions_hint">Instruções para a IA formatar o seu texto...</string>
+    <string name="btn_save_prompt">Salvar &amp; Usar</string>
+    <string name="btn_delete_prompt">Excluir</string>
+    <string name="btn_cancel">Cancelar</string>
+    
+    <string name="dict_quick_title">Adicionar ao Dicionário</string>
+    <string name="dict_orig_hint">Palavra ou termo falado (ex: Vóxia)</string>
+    <string name="dict_repl_hint">Substituir por (ex: VoxIA)</string>
+    <string name="dict_vocab_only">Apenas vocabulário técnico para o Whisper</string>
+    <string name="btn_save_dict">Salvar Palavra</string>
+    
+    <string name="btn_send_desc">Enviar mensagem</string>
+    <string name="setting_auto_send">Auto-enviar mensagem após ditar</string>
 </resources>

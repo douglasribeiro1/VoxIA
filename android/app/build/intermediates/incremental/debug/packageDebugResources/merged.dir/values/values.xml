@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#10B981</color>
+    <color name="background_dark">#0F172A</color>
+    <color name="danger">#EF4444</color>
+    <color name="key_bg">#2A3447</color>
+    <color name="key_pressed">#3E4C66</color>
+    <color name="keyboard_bg">#181E2A</color>
+    <color name="mic_idle">#6366F1</color>
+    <color name="mic_recording">#EF4444</color>
+    <color name="primary">#6366F1</color>
+    <color name="primary_dark">#4F46E5</color>
+    <color name="surface_dark">#1E293B</color>
+    <color name="surface_dark_light">#334155</color>
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <string name="app_name">VoxIA</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_delete_prompt">Excluir</string>
+    <string name="btn_save_dict">Salvar Palavra</string>
+    <string name="btn_save_prompt">Salvar &amp; Usar</string>
+    <string name="btn_send_desc">Enviar mensagem</string>
+    <string name="dict_orig_hint">Palavra ou termo falado (ex: Vóxia)</string>
+    <string name="dict_quick_title">Adicionar ao Dicionário</string>
+    <string name="dict_repl_hint">Substituir por (ex: VoxIA)</string>
+    <string name="dict_vocab_only">Apenas vocabulário técnico para o Whisper</string>
+    <string name="ime_name">Teclado de Voz VoxIA</string>
+    <string name="prompt_edit_title">Editar Prompt da IA</string>
+    <string name="prompt_instructions_hint">Instruções para a IA formatar o seu texto...</string>
+    <string name="prompt_new_title">Novo Prompt da IA</string>
+    <string name="prompt_title_hint">Nome / Título do Prompt</string>
+    <string name="setting_auto_send">Auto-enviar mensagem após ditar</string>
+    <string name="settings_enable_keyboard">1. Ativar Teclado VoxIA no Android</string>
+    <string name="settings_groq_key_hint">Cole sua Groq API Key (gsk_...)</string>
+    <string name="settings_login_btn">Entrar e Sincronizar</string>
+    <string name="settings_logout_btn">Desconectar</string>
+    <string name="settings_select_keyboard">2. Definir como Teclado Ativo</string>
+    <string name="settings_supabase_email_hint">E-mail da sua conta Supabase</string>
+    <string name="settings_supabase_password_hint">Senha da sua conta Supabase</string>
+    <string name="settings_sync_now">Sincronizar Agora</string>
+    <string name="settings_title">Configurações do VoxIA</string>
+    <string name="status_correcting">✨ Formatando com IA (GPT-OSS 120B)...</string>
+    <string name="status_done">✓ Inserido com sucesso!</string>
+    <string name="status_error">⚠ Erro ao processar. Verifique a API Key.</string>
+    <string name="status_ready">Toque no microfone para ditar</string>
+    <string name="status_recording">🎙 Gravando áudio... Toque para finalizar</string>
+    <string name="status_transcribing">⏳ Transcrevendo (Whisper)...</string>
+    <string name="subtype_voice_pt">Ditado por Voz IA (Português)</string>
+    <style name="Theme.VoxIA" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:statusBarColor">@color/background_dark</item>
+        <item name="android:navigationBarColor">@color/background_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
