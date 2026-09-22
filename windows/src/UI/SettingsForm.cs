@@ -205,7 +205,7 @@ namespace VoxIA.UI
 
             _chkAutoClipboard = new CheckBox { Text = "Copiar automaticamente o texto final para a Área de Transferência (Clipboard)", Location = new Point(15, 240), Width = 495, AutoSize = true, Checked = true };
             _chkAutoStart = new CheckBox { Text = "Iniciar automaticamente com o Windows (residente na bandeja)", Location = new Point(15, 268), Width = 495, AutoSize = true };
-            _chkPortableMode = new CheckBox { Text = "Modo Portátil (salvar dados no pen drive na pasta local ./data/)", Location = new Point(15, 296), Width = 495, AutoSize = true };
+            _chkPortableMode = new CheckBox { Text = "Modo Portátil (Padrão: dados e configurações salvos localmente na pasta ./data/)", Location = new Point(15, 296), Width = 495, AutoSize = true };
             _chkAudioBeep = new CheckBox { Text = "Sinal sonoro discreto ao iniciar e parar gravação (Beep feedback)", Location = new Point(15, 324), Width = 495, AutoSize = true, Checked = true };
             _chkShowHud = new CheckBox { Text = "Exibir indicador visual flutuante (HUD) centralizado na tela", Location = new Point(15, 352), Width = 495, AutoSize = true, Checked = true };
 

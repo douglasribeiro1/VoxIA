@@ -1,0 +1,13 @@
+[2026-09-22 18:11:56] [INFO] Starting VoxIA application...
+[2026-09-22 18:11:56] [INFO] Background RetryService started.
+[2026-09-22 18:11:56] [INFO] Settings saved successfully.
+[2026-09-22 18:11:57] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 18:11:57] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 18:11:57] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 15300)
+[2026-09-22 18:35:14] [INFO] Starting VoxIA application...
+[2026-09-22 18:35:14] [INFO] Background RetryService started.
+[2026-09-22 18:35:14] [INFO] Settings saved successfully.
+[2026-09-22 18:35:14] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 18:35:14] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 18:35:14] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 18:35:14] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 15556)

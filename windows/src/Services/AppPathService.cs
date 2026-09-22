@@ -62,17 +62,28 @@ namespace VoxIA.Services
         {
             string appDir = AppDomain.CurrentDomain.BaseDirectory;
             string portableDataDir = Path.Combine(appDir, "data");
-            string portableMarkerFile = Path.Combine(appDir, "portable.txt");
+            string nonPortableMarkerFile = Path.Combine(appDir, "non_portable.txt");
 
-            if (Directory.Exists(portableDataDir) || File.Exists(portableMarkerFile))
-            {
-                _isPortableMode = true;
-                _dataDirectory = portableDataDir;
-            }
-            else
+            // Portable Mode is now the DEFAULT behavior for VoxIA
+            if (File.Exists(nonPortableMarkerFile))
             {
                 _isPortableMode = false;
                 _dataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VoxIA");
+            }
+            else
+            {
+                _isPortableMode = true;
+                _dataDirectory = portableDataDir;
+
+                string portableMarkerFile = Path.Combine(appDir, "portable.txt");
+                try
+                {
+                    if (!File.Exists(portableMarkerFile))
+                    {
+                        File.WriteAllText(portableMarkerFile, "VoxIA Portable Mode Marker");
+                    }
+                }
+                catch { }
             }
 
             EnsureDirectoriesExist();
@@ -82,15 +93,23 @@ namespace VoxIA.Services
         {
             string appDir = AppDomain.CurrentDomain.BaseDirectory;
             string portableMarkerFile = Path.Combine(appDir, "portable.txt");
+            string nonPortableMarkerFile = Path.Combine(appDir, "non_portable.txt");
             string portableDataDir = Path.Combine(appDir, "data");
 
             if (enable)
             {
+                if (File.Exists(nonPortableMarkerFile))
+                {
+                    try { File.Delete(nonPortableMarkerFile); } catch { }
+                }
+
                 if (!Directory.Exists(portableDataDir))
                     Directory.CreateDirectory(portableDataDir);
 
                 if (!File.Exists(portableMarkerFile))
-                    File.WriteAllText(portableMarkerFile, "VoxIA Portable Mode Marker");
+                {
+                    try { File.WriteAllText(portableMarkerFile, "VoxIA Portable Mode Marker"); } catch { }
+                }
 
                 _isPortableMode = true;
                 _dataDirectory = portableDataDir;
@@ -101,6 +120,13 @@ namespace VoxIA.Services
                 {
                     try { File.Delete(portableMarkerFile); } catch { }
                 }
+
+                try
+                {
+                    File.WriteAllText(nonPortableMarkerFile, "VoxIA Non-Portable Mode Marker");
+                }
+                catch { }
+
                 _isPortableMode = false;
                 _dataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VoxIA");
             }

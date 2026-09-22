@@ -1,0 +1,84 @@
+[2026-09-10 09:26:25] [INFO] Starting VoxIA application...
+[2026-09-10 09:26:25] [INFO] Background RetryService started.
+[2026-09-10 09:26:26] [INFO] Settings saved successfully.
+[2026-09-10 09:26:26] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-10 09:26:26] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-10 09:26:26] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 15404)
+[2026-09-10 09:53:03] [INFO] Captured Target Context: Process='msedge', Title='Gemini Spark e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x80014
+[2026-09-10 09:53:04] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_ec7f283283854b889206cf03d56d37d2.m4a
+[2026-09-10 09:53:39] [INFO] Audio recording stopped and saved (427860 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_ec7f283283854b889206cf03d56d37d2.m4a
+[2026-09-10 09:53:39] [INFO] Added recording to persistent queue. ID: eabfcd3dbb734e74a1e7bc6ae02ceba2
+[2026-09-10 09:53:39] [INFO] Processing queue item eabfcd3dbb734e74a1e7bc6ae02ceba2 (Attempt 1)...
+[2026-09-10 09:53:39] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_ec7f283283854b889206cf03d56d37d2.m4a
+[2026-09-10 09:53:41] [INFO] Groq Whisper transcription success (raw: 266 chars, cleaned: 265 chars).
+[2026-09-10 09:53:41] [INFO] Whisper Raw Transcript: "O que é feito com o pagamento? A nota fiscal vai para o meu e-mail. Então, o que eu quero que você faça? Você pega o arquivo do contrato, o arquivo da nota fiscal, separa para mim e me entrega eles no ponto de submeter já no site do hospital. O que é a nota fiscal?"
+[2026-09-10 09:53:41] [INFO] Sending raw transcript (265 chars, max_tokens: 786) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-10 09:53:43] [INFO] Groq LLM text correction completed successfully.
+[2026-09-10 09:53:43] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-10 09:53:43] [INFO] Final Post-Processed Text: "O que é feito com o pagamento? A nota fiscal vai para o meu e‑mail. Então, o que eu quero que você faça? Você pega o arquivo do contrato, o arquivo da nota fiscal, separa para mim e me entrega eles no ponto de submeter já no site do hospital. O que é a nota fiscal?"
+[2026-09-10 09:53:43] [INFO] Text copied to clipboard successfully.
+[2026-09-10 09:53:43] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-10 09:53:43] [INFO] Text copied to clipboard successfully.
+[2026-09-10 09:53:43] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_ec7f283283854b889206cf03d56d37d2.m4a
+[2026-09-10 09:53:43] [INFO] Queue item eabfcd3dbb734e74a1e7bc6ae02ceba2 fully completed and audio purged.
+[2026-09-10 09:53:58] [INFO] Captured Target Context: Process='msedge', Title='Gemini Spark e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x80014
+[2026-09-10 09:53:59] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_d3a09f7ea1494dfe93d5ad2dcf970610.m4a
+[2026-09-10 09:54:12] [INFO] Audio recording stopped and saved (157972 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_d3a09f7ea1494dfe93d5ad2dcf970610.m4a
+[2026-09-10 09:54:12] [INFO] Added recording to persistent queue. ID: 3583c3fca69f42e38fae360941ca9ea0
+[2026-09-10 09:54:12] [INFO] Processing queue item 3583c3fca69f42e38fae360941ca9ea0 (Attempt 1)...
+[2026-09-10 09:54:12] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_d3a09f7ea1494dfe93d5ad2dcf970610.m4a
+[2026-09-10 09:54:13] [INFO] Groq Whisper transcription success (raw: 189 chars, cleaned: 188 chars).
+[2026-09-10 09:54:13] [INFO] Whisper Raw Transcript: "A nota fiscal geralmente chega no meu e-mail no dia 11, mas você deve ficar monitorando porque pode ter pequenas variações, dia 10, dia 12, dia 13, mas nunca deixe chegar até o dia 15, tá?"
+[2026-09-10 09:54:13] [INFO] Sending raw transcript (188 chars, max_tokens: 632) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-10 09:54:15] [INFO] Groq LLM text correction completed successfully.
+[2026-09-10 09:54:15] [INFO] Final Post-Processed Text: "A nota fiscal geralmente chega no meu e‑mail no dia 11, mas você deve ficar monitorando porque pode ter pequenas variações, dia 10, dia 12, dia 13, mas nunca deixe chegar até o dia 15, tá?"
+[2026-09-10 09:54:15] [INFO] Text copied to clipboard successfully.
+[2026-09-10 09:54:15] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-10 09:54:15] [INFO] Text copied to clipboard successfully.
+[2026-09-10 09:54:15] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_d3a09f7ea1494dfe93d5ad2dcf970610.m4a
+[2026-09-10 09:54:15] [INFO] Queue item 3583c3fca69f42e38fae360941ca9ea0 fully completed and audio purged.
+[2026-09-10 09:56:10] [INFO] Captured Target Context: Process='msedge', Title='Salvar Saída de Impressão como', HWnd=0x1703A8
+[2026-09-10 09:56:10] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_3d05be2065374cbca0deca44f1cdf704.m4a
+[2026-09-10 09:56:18] [INFO] Audio recording stopped and saved (86707 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_3d05be2065374cbca0deca44f1cdf704.m4a
+[2026-09-10 09:56:18] [INFO] Added recording to persistent queue. ID: 77ae3a04dcfa4d97a67553a0afed9997
+[2026-09-10 09:56:18] [INFO] Processing queue item 77ae3a04dcfa4d97a67553a0afed9997 (Attempt 1)...
+[2026-09-10 09:56:18] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_3d05be2065374cbca0deca44f1cdf704.m4a
+[2026-09-10 09:56:18] [INFO] Groq Whisper transcription success (raw: 46 chars, cleaned: 45 chars).
+[2026-09-10 09:56:18] [INFO] Whisper Raw Transcript: "Contrato com a academia Self-Fit, musculação."
+[2026-09-10 09:56:18] [INFO] Sending raw transcript (45 chars, max_tokens: 346) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-10 09:56:20] [INFO] Groq LLM text correction completed successfully.
+[2026-09-10 09:56:20] [INFO] Final Post-Processed Text: "Contrato com a academia Self-Fit, musculação."
+[2026-09-10 09:56:20] [INFO] Text copied to clipboard successfully.
+[2026-09-10 09:56:20] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-10 09:56:20] [INFO] Text copied to clipboard successfully.
+[2026-09-10 09:56:20] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_3d05be2065374cbca0deca44f1cdf704.m4a
+[2026-09-10 09:56:20] [INFO] Queue item 77ae3a04dcfa4d97a67553a0afed9997 fully completed and audio purged.
+[2026-09-10 10:40:20] [INFO] Starting VoxIA application...
+[2026-09-10 10:40:20] [INFO] Background RetryService started.
+[2026-09-10 10:40:20] [INFO] Settings saved successfully.
+[2026-09-10 10:40:20] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-10 10:40:20] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-10 10:40:20] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 9316)
+[2026-09-10 11:45:47] [INFO] Starting VoxIA application...
+[2026-09-10 11:45:47] [INFO] Background RetryService started.
+[2026-09-10 11:45:47] [INFO] Settings saved successfully.
+[2026-09-10 11:45:47] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-10 11:45:47] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-10 11:45:47] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 18580)
+[2026-09-10 11:46:47] [INFO] Captured Target Context: Process='msedge', Title='Salvar Saída de Impressão como', HWnd=0x3022E
+[2026-09-10 11:46:48] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_c1fbc96a313f48e6b327f5ccfd65c131.m4a
+[2026-09-10 11:46:55] [INFO] Audio recording stopped and saved (83724 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_c1fbc96a313f48e6b327f5ccfd65c131.m4a
+[2026-09-10 11:46:55] [INFO] Added recording to persistent queue. ID: cec006a365744bcc88ec3580874750e2
+[2026-09-10 11:46:55] [INFO] Processing queue item cec006a365744bcc88ec3580874750e2 (Attempt 1)...
+[2026-09-10 11:46:55] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_c1fbc96a313f48e6b327f5ccfd65c131.m4a
+[2026-09-10 11:46:56] [INFO] Groq Whisper transcription success (raw: 64 chars, cleaned: 63 chars).
+[2026-09-10 11:46:56] [INFO] Whisper Raw Transcript: "Contrato, musculação, academia Self-Fit, Douglas Ribeiro Gomes."
+[2026-09-10 11:46:56] [INFO] Sending raw transcript (63 chars, max_tokens: 382) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-10 11:46:59] [INFO] Groq LLM text correction completed successfully.
+[2026-09-10 11:46:59] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-10 11:46:59] [INFO] Final Post-Processed Text: "Contrato, musculação, academia Self-Fit, Douglas Ribeiro Gomes."
+[2026-09-10 11:47:00] [INFO] Text copied to clipboard successfully.
+[2026-09-10 11:47:00] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-10 11:47:00] [INFO] Text copied to clipboard successfully.
+[2026-09-10 11:47:00] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_c1fbc96a313f48e6b327f5ccfd65c131.m4a
+[2026-09-10 11:47:00] [INFO] Queue item cec006a365744bcc88ec3580874750e2 fully completed and audio purged.

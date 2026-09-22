@@ -81,7 +81,7 @@ namespace VoxIA.Services
             ShowFloatingHud = true;
             ShowNotifications = true;
             AudioBeepFeedback = true;
-            PortableMode = false;
+            PortableMode = true;
 
             HotkeyDisplay = "F8";
             HotkeyUseCtrl = false;

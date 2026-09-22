@@ -1,0 +1,134 @@
+[2026-09-02 16:23:56] [INFO] Starting VoxIA application...
+[2026-09-02 16:23:56] [INFO] Background RetryService started.
+[2026-09-02 16:23:56] [INFO] Settings saved successfully.
+[2026-09-02 16:23:56] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-02 16:23:56] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-02 16:23:56] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 25944)
+[2026-09-02 16:24:00] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-02 16:24:04] [INFO] Groq API key securely saved.
+[2026-09-02 16:24:04] [INFO] AutoStart registry key set.
+[2026-09-02 16:24:04] [INFO] Settings saved successfully.
+[2026-09-02 16:24:12] [INFO] Groq API key securely saved.
+[2026-09-02 16:24:12] [INFO] AutoStart registry key set.
+[2026-09-02 16:24:12] [INFO] Settings saved successfully.
+[2026-09-02 16:24:14] [INFO] Captured Target Context: Process='msedge', Title='Gemini Spark e mais 1 página - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 16:24:20] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_2471d3cf4eab48db9234908d25e14b22.m4a
+[2026-09-02 16:24:21] [INFO] Audio recording stopped and saved (1589 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_2471d3cf4eab48db9234908d25e14b22.m4a
+[2026-09-02 16:24:21] [WARN] Discarded too short or empty audio recording (1589 bytes, 0,07s): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_2471d3cf4eab48db9234908d25e14b22.m4a
+[2026-09-02 16:24:29] [INFO] Captured Target Context: Process='msedge', Title='Gemini Spark e mais 1 página - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 16:24:30] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_0aee78236dcd42c384d6eb049a5125a3.m4a
+[2026-09-02 16:24:42] [INFO] Audio recording stopped and saved (145623 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_0aee78236dcd42c384d6eb049a5125a3.m4a
+[2026-09-02 16:24:42] [INFO] Added recording to persistent queue. ID: b30b5a3323ab49799d299c8fbef82f19
+[2026-09-02 16:24:42] [INFO] Processing queue item b30b5a3323ab49799d299c8fbef82f19 (Attempt 1)...
+[2026-09-02 16:24:42] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_0aee78236dcd42c384d6eb049a5125a3.m4a
+[2026-09-02 16:24:43] [INFO] Groq Whisper transcription success (raw: 177 chars, cleaned: 176 chars).
+[2026-09-02 16:24:43] [INFO] Whisper Raw Transcript: "Eu fui lá agora no meu Google Drive e eu não encontrei nada organizado, tá tudo do mesmo jeito que tava antes, uma bagunça, um monte de pasta, os arquivos todos soltos na raiz."
+[2026-09-02 16:24:43] [INFO] Sending raw transcript (176 chars, max_tokens: 608) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-02 16:24:45] [INFO] Groq LLM text correction completed successfully.
+[2026-09-02 16:24:45] [INFO] Final Post-Processed Text: "O requerente compareceu ao seu Google Drive e constatou a ausência de organização, permanecendo o conteúdo na mesma condição anterior, caracterizada por desordem, múltiplas pastas e arquivos dispersos na raiz."
+[2026-09-02 16:24:45] [INFO] Text copied to clipboard successfully.
+[2026-09-02 16:24:45] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-02 16:24:45] [INFO] Text copied to clipboard successfully.
+[2026-09-02 16:24:45] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_0aee78236dcd42c384d6eb049a5125a3.m4a
+[2026-09-02 16:24:45] [INFO] Queue item b30b5a3323ab49799d299c8fbef82f19 fully completed and audio purged.
+[2026-09-02 16:24:58] [INFO] Settings saved successfully.
+[2026-09-02 16:24:58] [INFO] Active AI Prompt changed to ID: default_literal
+[2026-09-02 16:47:33] [INFO] Global Low-Level Keyboard Hook thread stopped.
+[2026-09-02 16:47:33] [INFO] Global Low-Level Keyboard Hook thread stopped.
+[2026-09-02 17:14:06] [INFO] Starting VoxIA application...
+[2026-09-02 17:14:06] [INFO] Background RetryService started.
+[2026-09-02 17:14:06] [INFO] Settings saved successfully.
+[2026-09-02 17:14:06] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-02 17:14:06] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-02 17:14:06] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 1364)
+[2026-09-02 17:14:08] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-02 17:14:14] [INFO] Groq API key securely saved.
+[2026-09-02 17:14:14] [INFO] AutoStart registry key set.
+[2026-09-02 17:14:14] [INFO] Settings saved successfully.
+[2026-09-02 17:14:22] [INFO] Groq API key securely saved.
+[2026-09-02 17:14:22] [INFO] AutoStart registry key set.
+[2026-09-02 17:14:22] [INFO] Settings saved successfully.
+[2026-09-02 17:20:19] [INFO] Captured Target Context: Process='msedge', Title='Nova guia e mais 2 páginas - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 17:20:21] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_fed0d6073c85468191a58c3647e5315c.m4a
+[2026-09-02 17:20:33] [INFO] Audio recording stopped and saved (148247 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_fed0d6073c85468191a58c3647e5315c.m4a
+[2026-09-02 17:20:33] [INFO] Added recording to persistent queue. ID: e3b12d066465455c93a561d85b0533e0
+[2026-09-02 17:20:33] [INFO] Processing queue item e3b12d066465455c93a561d85b0533e0 (Attempt 1)...
+[2026-09-02 17:20:33] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_fed0d6073c85468191a58c3647e5315c.m4a
+[2026-09-02 17:20:34] [INFO] Groq Whisper transcription success (raw: 181 chars, cleaned: 180 chars).
+[2026-09-02 17:20:34] [INFO] Whisper Raw Transcript: "Eu tenho um site aberto no celular e quero abrir no meu computador. Meu celular é Android, eu uso o Chrome e no meu computador é Windows e eu uso o Microsoft Edge. Qual é a maneira"
+[2026-09-02 17:20:34] [INFO] Sending raw transcript (180 chars, max_tokens: 616) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-02 17:20:36] [INFO] Groq LLM text correction completed successfully.
+[2026-09-02 17:20:36] [INFO] Final Post-Processed Text: "Eu tenho um site aberto no celular e quero abrir no meu computador. Meu celular é Android, eu uso o Chrome e no meu computador é Windows e eu uso o Microsoft Edge. Qual é a maneira?"
+[2026-09-02 17:20:36] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:20:36] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-02 17:20:36] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:20:36] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_fed0d6073c85468191a58c3647e5315c.m4a
+[2026-09-02 17:20:36] [INFO] Queue item e3b12d066465455c93a561d85b0533e0 fully completed and audio purged.
+[2026-09-02 17:27:37] [INFO] Settings saved successfully.
+[2026-09-02 17:27:37] [INFO] Active AI Prompt changed to ID: default_forms
+[2026-09-02 17:27:39] [INFO] Captured Target Context: Process='msedge', Title='PROMOÇÃO - ACLS - 08 e 09 de Outubro de 2026 - Dante Pazzanese e mais 3 páginas - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 17:27:40] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_4785c22f99384b5e9a746cbe78fcc70c.m4a
+[2026-09-02 17:27:42] [INFO] Audio recording stopped and saved (26350 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_4785c22f99384b5e9a746cbe78fcc70c.m4a
+[2026-09-02 17:27:42] [INFO] Added recording to persistent queue. ID: e4e82442ea57460cbac6f55627ae123c
+[2026-09-02 17:27:42] [INFO] Processing queue item e4e82442ea57460cbac6f55627ae123c (Attempt 1)...
+[2026-09-02 17:27:42] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_4785c22f99384b5e9a746cbe78fcc70c.m4a
+[2026-09-02 17:27:43] [INFO] Groq Whisper transcription success (raw: 20 chars, cleaned: 19 chars).
+[2026-09-02 17:27:43] [INFO] Whisper Raw Transcript: "Renata de Abreu Sá."
+[2026-09-02 17:27:43] [INFO] Sending raw transcript (19 chars, max_tokens: 294) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-02 17:27:44] [INFO] Groq LLM text correction completed successfully.
+[2026-09-02 17:27:44] [INFO] Final Post-Processed Text: "Renata de Abreu Sá"
+[2026-09-02 17:27:44] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:27:44] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-02 17:27:44] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:27:44] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_4785c22f99384b5e9a746cbe78fcc70c.m4a
+[2026-09-02 17:27:44] [INFO] Queue item e4e82442ea57460cbac6f55627ae123c fully completed and audio purged.
+[2026-09-02 17:31:15] [INFO] Captured Target Context: Process='msedge', Title='Finalizar pedido e mais 3 páginas - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 17:31:16] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_25071d36cf964bda8c5557c3d265c820.m4a
+[2026-09-02 17:31:19] [INFO] Audio recording stopped and saved (41509 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_25071d36cf964bda8c5557c3d265c820.m4a
+[2026-09-02 17:31:19] [INFO] Added recording to persistent queue. ID: aa65b06997544db3b7b3c77205a43634
+[2026-09-02 17:31:19] [INFO] Processing queue item aa65b06997544db3b7b3c77205a43634 (Attempt 1)...
+[2026-09-02 17:31:19] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_25071d36cf964bda8c5557c3d265c820.m4a
+[2026-09-02 17:31:20] [INFO] Groq Whisper transcription success (raw: 21 chars, cleaned: 20 chars).
+[2026-09-02 17:31:20] [INFO] Whisper Raw Transcript: "O AMARQUÊS DE OLINDA"
+[2026-09-02 17:31:20] [INFO] Sending raw transcript (20 chars, max_tokens: 296) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-02 17:31:21] [INFO] Groq LLM text correction completed successfully.
+[2026-09-02 17:31:21] [INFO] Final Post-Processed Text: "O Amarquês de Olinda"
+[2026-09-02 17:31:21] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:31:21] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-02 17:31:21] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:31:21] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_25071d36cf964bda8c5557c3d265c820.m4a
+[2026-09-02 17:31:21] [INFO] Queue item aa65b06997544db3b7b3c77205a43634 fully completed and audio purged.
+[2026-09-02 17:31:55] [INFO] Captured Target Context: Process='msedge', Title='Finalizar pedido e mais 3 páginas - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 17:31:56] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_78189dda76424d37b3bb9c13e50868e0.m4a
+[2026-09-02 17:32:00] [INFO] Audio recording stopped and saved (50973 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_78189dda76424d37b3bb9c13e50868e0.m4a
+[2026-09-02 17:32:00] [INFO] Added recording to persistent queue. ID: ebe4cf9ef1504a69ba8669a53e237541
+[2026-09-02 17:32:00] [INFO] Processing queue item ebe4cf9ef1504a69ba8669a53e237541 (Attempt 1)...
+[2026-09-02 17:32:00] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_78189dda76424d37b3bb9c13e50868e0.m4a
+[2026-09-02 17:32:01] [INFO] Groq Whisper transcription success (raw: 33 chars, cleaned: 32 chars).
+[2026-09-02 17:32:01] [INFO] Whisper Raw Transcript: "Próximo, a lanchonete de Turcão."
+[2026-09-02 17:32:01] [INFO] Sending raw transcript (32 chars, max_tokens: 320) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-02 17:32:02] [INFO] Groq LLM text correction completed successfully.
+[2026-09-02 17:32:02] [INFO] Final Post-Processed Text: "Próximo, a lanchonete de Turcão."
+[2026-09-02 17:32:02] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:32:02] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-02 17:32:02] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:32:02] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_78189dda76424d37b3bb9c13e50868e0.m4a
+[2026-09-02 17:32:02] [INFO] Queue item ebe4cf9ef1504a69ba8669a53e237541 fully completed and audio purged.
+[2026-09-02 17:33:26] [INFO] Captured Target Context: Process='msedge', Title='Finalizar pedido e mais 3 páginas - Pessoal — Microsoft​ Edge', HWnd=0x1005B8
+[2026-09-02 17:33:27] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_574cb1900ac64c4b94a67ff4804474c9.m4a
+[2026-09-02 17:33:32] [INFO] Audio recording stopped and saved (54544 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_574cb1900ac64c4b94a67ff4804474c9.m4a
+[2026-09-02 17:33:32] [INFO] Added recording to persistent queue. ID: 5a216b18c0ec4aac953eb955f0355ca4
+[2026-09-02 17:33:32] [INFO] Processing queue item 5a216b18c0ec4aac953eb955f0355ca4 (Attempt 1)...
+[2026-09-02 17:33:32] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_574cb1900ac64c4b94a67ff4804474c9.m4a
+[2026-09-02 17:33:33] [INFO] Groq Whisper transcription success (raw: 28 chars, cleaned: 27 chars).
+[2026-09-02 17:33:33] [INFO] Whisper Raw Transcript: "Domínio Kopenhagen, Casa 9."
+[2026-09-02 17:33:33] [INFO] Sending raw transcript (27 chars, max_tokens: 310) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-02 17:33:34] [INFO] Groq LLM text correction completed successfully.
+[2026-09-02 17:33:34] [INFO] Final Post-Processed Text: "Domínio Kopenhagen, Casa 9"
+[2026-09-02 17:33:34] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:33:34] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-02 17:33:34] [INFO] Text copied to clipboard successfully.
+[2026-09-02 17:33:34] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_574cb1900ac64c4b94a67ff4804474c9.m4a
+[2026-09-02 17:33:34] [INFO] Queue item 5a216b18c0ec4aac953eb955f0355ca4 fully completed and audio purged.
+[2026-09-02 17:33:44] [INFO] Settings saved successfully.
+[2026-09-02 17:33:44] [INFO] Active AI Prompt changed to ID: default_literal

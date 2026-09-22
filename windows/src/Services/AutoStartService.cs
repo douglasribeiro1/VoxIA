@@ -17,7 +17,18 @@ namespace VoxIA.Services
                     if (key != null)
                     {
                         object val = key.GetValue(AppName);
-                        return val != null;
+                        if (val != null)
+                        {
+                            string valStr = val.ToString().Trim('\"');
+                            string currentExe = System.Windows.Forms.Application.ExecutablePath;
+                            if (string.Equals(valStr, currentExe, StringComparison.OrdinalIgnoreCase))
+                                return true;
+
+                            if (valStr.EndsWith("VoxIA.exe", StringComparison.OrdinalIgnoreCase))
+                                return true;
+
+                            return true;
+                        }
                     }
                 }
             }
@@ -40,7 +51,7 @@ namespace VoxIA.Services
                         {
                             string exePath = System.Windows.Forms.Application.ExecutablePath;
                             key.SetValue(AppName, string.Format("\"{0}\"", exePath));
-                            Logger.LogInfo("AutoStart registry key set.");
+                            Logger.LogInfo("AutoStart registry key set to: " + exePath);
                         }
                         else
                         {

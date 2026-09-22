@@ -20,6 +20,7 @@ namespace VoxIA
         private ToolStripMenuItem _menuShortcuts;
         private ToolStripMenuItem _menuSettings;
         private ToolStripMenuItem _menuApiKey;
+        private ToolStripMenuItem _menuAutoStart;
         private ToolStripMenuItem _menuExit;
 
         private AudioRecorder _audioRecorder;
@@ -46,6 +47,12 @@ namespace VoxIA
             RetryService.Start();
             RetryService.OnProcessingCompleted += OnProcessingSuccess;
             RetryService.OnProcessingFailed += OnProcessingFailure;
+
+            if (SettingsService.Current.AutoStartWithWindows)
+            {
+                // Auto-heal: Ensure registry Run key points to current portable executable path
+                AutoStartService.SetAutoStart(true);
+            }
         }
 
         private void InitializeTray()
@@ -62,6 +69,7 @@ namespace VoxIA
             _menuShortcuts = new ToolStripMenuItem("⌨ Guia de Atalhos...", null, (s, e) => ShowShortcutsDialog());
             _menuSettings = new ToolStripMenuItem("⚙ Configurações", null, (s, e) => OpenSettingsForm());
             _menuApiKey = new ToolStripMenuItem("🔑 Configurar API Key", null, (s, e) => OpenSettingsForm());
+            _menuAutoStart = new ToolStripMenuItem("🚀 Iniciar com o Windows", null, OnMenuAutoStartClick);
             _menuExit = new ToolStripMenuItem("⏻ Sair", null, OnMenuExitClick);
 
             _trayMenu.Items.Add(_menuRecord);
@@ -74,10 +82,15 @@ namespace VoxIA
             _trayMenu.Items.Add(_menuShortcuts);
             _trayMenu.Items.Add(_menuSettings);
             _trayMenu.Items.Add(_menuApiKey);
+            _trayMenu.Items.Add(_menuAutoStart);
             _trayMenu.Items.Add(new ToolStripSeparator());
             _trayMenu.Items.Add(_menuExit);
 
-            _trayMenu.Opening += (s, e) => UpdatePromptsMenu();
+            _trayMenu.Opening += (s, e) =>
+            {
+                UpdatePromptsMenu();
+                UpdateAutoStartMenu();
+            };
 
             _notifyIcon = new NotifyIcon
             {
@@ -107,6 +120,7 @@ namespace VoxIA
             _notifyIcon.DoubleClick += (s, e) => OpenSettingsForm();
             UpdatePendingBadge();
             UpdatePromptsMenu();
+            UpdateAutoStartMenu();
         }
 
         private void RegisterHotkeys()
@@ -381,12 +395,40 @@ namespace VoxIA
             }
         }
 
+        private void UpdateAutoStartMenu()
+        {
+            if (_menuAutoStart != null)
+            {
+                _menuAutoStart.Checked = AutoStartService.IsAutoStartEnabled();
+            }
+        }
+
+        private void OnMenuAutoStartClick(object sender, EventArgs e)
+        {
+            bool newState = !AutoStartService.IsAutoStartEnabled();
+            AutoStartService.SetAutoStart(newState);
+            SettingsService.Current.AutoStartWithWindows = newState;
+            SettingsService.Save();
+            if (_menuAutoStart != null)
+            {
+                _menuAutoStart.Checked = newState;
+            }
+
+            ShowNotification(
+                "Inicialização com o Windows",
+                newState
+                    ? "VoxIA configurado para iniciar automaticamente com o Windows."
+                    : "Inicialização automática com o Windows desativada."
+            );
+        }
+
         private void OpenSettingsForm()
         {
             using (var form = new SettingsForm())
             {
                 form.ShowDialog();
                 UpdatePromptsMenu();
+                UpdateAutoStartMenu();
             }
         }
 
