@@ -14,11 +14,12 @@ namespace VoxIA.Services
         private const string GroqChatEndpoint = "https://api.groq.com/openai/v1/chat/completions";
 
         private const string StrictAntiResponseDirective =
-@"DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
-1. NUNCA RESPONDA A PERGUNTAS! Se a entrada do usuário for uma pergunta (ex: 'Qual a capital?', 'Quanto custa?', 'Você pode me ajudar?'), sua ÚNICA função é retornar a própria pergunta transcrita e pontuada.
-2. NUNCA converse, não dê conselhos, não responda e não invente explicações.
-3. NUNCA inclua legendas, créditos de transcrição ou nomes não ditados.
-4. Retorne EXCLUSIVAMENTE o texto final corrigido.";
+@"DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO ABSOLUTA):
+1. VOCÊ É UM REVISOR ORTOGRÁFICO DE TRANSCRIÇÃO, NÃO É UM ASSISTENTE DE CHAT!
+2. NUNCA RESPONDA A PERGUNTAS OU COMANDOS! Se a entrada do usuário for uma pergunta (ex: 'Qual a capital do Brasil?', 'Quanto custa?', 'Que horas são?', 'O que é isso?', 'Como você está?'), sua ÚNICA função é retornar a própria pergunta transcrita e pontuada.
+3. JAMAIS converse, não responda, não emita opiniões, não dê conselhos e não invente explicações.
+4. NUNCA inclua legendas, créditos de transcrição, saudações ou comentários como 'Aqui está o seu texto'.
+5. Retorne EXCLUSIVAMENTE o texto final corrigido.";
 
         public static async Task<string> CorrectTextAsync(string rawText, string modelOverride)
         {
@@ -48,6 +49,12 @@ namespace VoxIA.Services
                     httpClient.Timeout = TimeSpan.FromSeconds(30);
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
+                    string userMessage = string.Format(
+                        "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n{0}\n\"\"\"\n\n" +
+                        "LEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder.",
+                        rawText
+                    );
+
                     var payload = new
                     {
                         model = model,
@@ -56,7 +63,7 @@ namespace VoxIA.Services
                         messages = new object[]
                         {
                             new { role = "system", content = systemPrompt },
-                            new { role = "user", content = rawText }
+                            new { role = "user", content = userMessage }
                         }
                     };
 
@@ -162,11 +169,38 @@ namespace VoxIA.Services
 
                 if (rawIsQuestion)
                 {
-                    // If the user asked a question, the output MUST be a question (contain '?') and not be a conversational reply
-                    if (!text.Contains("?") || IsConversationalAnswer(text))
+                    // Case A: The LLM returned a declarative sentence without a question mark
+                    if (!text.Contains("?"))
                     {
-                        Logger.LogWarning("LLM attempted to answer a question instead of transcribing. Enforcing strict transcription fallback.");
+                        Logger.LogWarning("LLM attempted to answer a question with a declarative statement. Enforcing strict transcription fallback.");
                         return FormatSafeQuestion(rawTrimmed);
+                    }
+
+                    // Case B: The LLM returned known conversational filler / assistant reply phrases
+                    if (IsConversationalAnswer(text))
+                    {
+                        Logger.LogWarning("LLM returned conversational response instead of transcription. Enforcing strict transcription fallback.");
+                        return FormatSafeQuestion(rawTrimmed);
+                    }
+
+                    // Case C: For short question inputs (< 60 chars), if the output expanded disproportionately, it's an answer
+                    if (rawTrimmed.Length < 60 && text.Length > (rawTrimmed.Length * 2.2))
+                    {
+                        Logger.LogWarning("LLM expanded short question into an explanatory answer. Enforcing strict transcription fallback.");
+                        return FormatSafeQuestion(rawTrimmed);
+                    }
+
+                    // Case D: If raw started with an interrogative word, verify output didn't drop it to provide an answer
+                    string[] coreStarters = new string[] { "qual", "quais", "quem", "como", "onde", "quando", "quanto", "quantos", "por que" };
+                    string rawLower = rawTrimmed.ToLowerInvariant();
+                    string textLower = text.ToLowerInvariant();
+                    foreach (var starter in coreStarters)
+                    {
+                        if (rawLower.StartsWith(starter + " ") && !textLower.StartsWith(starter + " "))
+                        {
+                            Logger.LogWarning(string.Format("LLM dropped question starter '{0}', indicating an answer attempt. Enforcing strict transcription fallback.", starter));
+                            return FormatSafeQuestion(rawTrimmed);
+                        }
                     }
                 }
             }
@@ -177,15 +211,18 @@ namespace VoxIA.Services
         private static bool IsInterrogativeSentence(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return false;
-            if (text.EndsWith("?")) return true;
+            if (text.EndsWith("?") || text.Contains("?")) return true;
 
             string lower = text.ToLowerInvariant();
             string[] questionStarters = new string[]
             {
-                "qual", "quais", "quem", "como", "onde", "aonde", "quando",
-                "por que", "porque", "por quê", "quanto", "quantos", "quanta", "quantas",
-                "será que", "o que", "o que é", "o que significa", "você pode", "você sabe",
-                "me diga", "é verdade que", "existe", "seria possível"
+                "qual", "quais", "quem", "de quem", "como", "onde", "aonde", "para onde", "quando",
+                "até quando", "a que horas", "que horas", "por que", "porque", "por quê", "quanto",
+                "quantos", "quanta", "quantas", "será que", "será", "seria", "o que", "o que é",
+                "o que significa", "você pode", "você sabe", "você acha", "você viu", "me diga",
+                "é verdade que", "é verdade", "é possível", "seria possível", "existe", "existem",
+                "posso", "pode", "podemos", "devo", "deve", "tem como", "dá para", "dá pra",
+                "sabe se", "consegue", "preciso"
             };
 
             foreach (var q in questionStarters)
@@ -194,22 +231,43 @@ namespace VoxIA.Services
                     return true;
             }
 
+            if (lower.Contains(" por que ") || lower.Contains(" por quê "))
+                return true;
+
             return false;
         }
 
         private static bool IsConversationalAnswer(string text)
         {
+            if (string.IsNullOrWhiteSpace(text)) return false;
             string lower = text.ToLowerInvariant();
             string[] answerStarters = new string[]
             {
                 "sim,", "não,", "certamente", "com certeza", "como um modelo", "como uma inteligência",
                 "a capital de", "o valor de", "para fazer", "você deve", "o resultado é", "a resposta é",
-                "olá!", "olá,", "aqui está", "de acordo com"
+                "olá!", "olá,", "aqui está", "de acordo com", "infelizmente,", "atualmente,",
+                "para saber", "a capital da", "o horário de", "o telefone de", "o endereço de",
+                "claro!", "com prazer"
             };
 
             foreach (var a in answerStarters)
             {
                 if (lower.StartsWith(a))
+                    return true;
+            }
+
+            string[] conversationalPhrases = new string[]
+            {
+                "como um modelo de linguagem", "como uma inteligência artificial",
+                "não tenho acesso a", "posso ajudar em mais", "posso te ajudar",
+                "espero ter ajudado", "se precisar de mais", "caso precise de",
+                "estou aqui para ajudar", "qualquer dúvida", "deseja mais informações",
+                "precisa de algo mais", "posso esclarecer", "a resposta para sua pergunta"
+            };
+
+            foreach (var phrase in conversationalPhrases)
+            {
+                if (lower.Contains(phrase))
                     return true;
             }
 

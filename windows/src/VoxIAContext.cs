@@ -14,12 +14,13 @@ namespace VoxIA
         private ContextMenuStrip _trayMenu;
         private ToolStripMenuItem _menuRecord;
         private ToolStripMenuItem _menuPrompts;
+        private ToolStripMenuItem _menuModeParagraphs;
+        private ToolStripMenuItem _menuModeSingleLine;
         private ToolStripMenuItem _menuDict;
         private ToolStripMenuItem _menuPending;
         private ToolStripMenuItem _menuHistory;
         private ToolStripMenuItem _menuShortcuts;
         private ToolStripMenuItem _menuSettings;
-        private ToolStripMenuItem _menuApiKey;
         private ToolStripMenuItem _menuAutoStart;
         private ToolStripMenuItem _menuExit;
 
@@ -62,14 +63,18 @@ namespace VoxIA
             string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
 
             _menuRecord = new ToolStripMenuItem(string.Format("🎙 Iniciar Gravação ({0})", hotkey), null, OnMenuRecordClick);
-            _menuPrompts = new ToolStripMenuItem("🎯 Prompt de IA Ativo");
+            _menuPrompts = new ToolStripMenuItem("📝 Modo de Transcrição");
+            _menuModeParagraphs = new ToolStripMenuItem("¶ Em Parágrafos (Quebras de linha)", null, (s, e) => SetTranscriptionMode("default_paragraphs"));
+            _menuModeSingleLine = new ToolStripMenuItem("─ Linha Única (Sem quebras)", null, (s, e) => SetTranscriptionMode("default_single_line"));
+            _menuPrompts.DropDownItems.Add(_menuModeParagraphs);
+            _menuPrompts.DropDownItems.Add(_menuModeSingleLine);
+
             _menuDict = new ToolStripMenuItem("📖 Dicionário de Palavras (Ctrl + Shift + W)", null, (s, e) => OpenDictionaryQuickForm());
             _menuPending = new ToolStripMenuItem("📋 Áudios Pendentes", null, (s, e) => OpenPendingForm());
             _menuHistory = new ToolStripMenuItem("📜 Histórico & Estatísticas", null, (s, e) => OpenHistoryForm());
             _menuShortcuts = new ToolStripMenuItem("⌨ Guia de Atalhos...", null, (s, e) => ShowShortcutsDialog());
-            _menuSettings = new ToolStripMenuItem("⚙ Configurações", null, (s, e) => OpenSettingsForm());
-            _menuApiKey = new ToolStripMenuItem("🔑 Configurar API Key", null, (s, e) => OpenSettingsForm());
             _menuAutoStart = new ToolStripMenuItem("🚀 Iniciar com o Windows", null, OnMenuAutoStartClick);
+            _menuSettings = new ToolStripMenuItem("⚙ Configurações", null, (s, e) => OpenSettingsForm());
             _menuExit = new ToolStripMenuItem("⏻ Sair", null, OnMenuExitClick);
 
             _trayMenu.Items.Add(_menuRecord);
@@ -80,9 +85,8 @@ namespace VoxIA
             _trayMenu.Items.Add(_menuHistory);
             _trayMenu.Items.Add(new ToolStripSeparator());
             _trayMenu.Items.Add(_menuShortcuts);
-            _trayMenu.Items.Add(_menuSettings);
-            _trayMenu.Items.Add(_menuApiKey);
             _trayMenu.Items.Add(_menuAutoStart);
+            _trayMenu.Items.Add(_menuSettings);
             _trayMenu.Items.Add(new ToolStripSeparator());
             _trayMenu.Items.Add(_menuExit);
 
@@ -117,6 +121,13 @@ namespace VoxIA
                 _notifyIcon.Icon = SystemIcons.Application;
             }
 
+            _notifyIcon.MouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    OpenSettingsForm();
+                }
+            };
             _notifyIcon.DoubleClick += (s, e) => OpenSettingsForm();
             UpdatePendingBadge();
             UpdatePromptsMenu();
@@ -359,32 +370,19 @@ namespace VoxIA
 
         private void UpdatePromptsMenu()
         {
-            if (_menuPrompts == null) return;
+            if (_menuModeParagraphs == null || _menuModeSingleLine == null) return;
 
-            _menuPrompts.DropDownItems.Clear();
-            var profiles = SettingsService.Current.PromptProfiles;
-            string activeId = SettingsService.Current.ActivePromptId;
+            bool isSingleLine = SettingsService.Current.ActivePromptId == "default_single_line";
+            _menuModeParagraphs.Checked = !isSingleLine;
+            _menuModeSingleLine.Checked = isSingleLine;
+        }
 
-            if (profiles != null)
-            {
-                foreach (var profile in profiles)
-                {
-                    var item = new ToolStripMenuItem(profile.Title);
-                    string targetId = profile.Id;
-                    item.Checked = (profile.Id == activeId);
-                    item.Click += (s, e) =>
-                    {
-                        SettingsService.SetActivePrompt(targetId);
-                        UpdatePromptsMenu();
-                        ShowNotification("Prompt de IA Selecionado", string.Format("Prompt ativo alterado para: {0}", profile.Title));
-                    };
-                    _menuPrompts.DropDownItems.Add(item);
-                }
-            }
-
-            _menuPrompts.DropDownItems.Add(new ToolStripSeparator());
-            var manageItem = new ToolStripMenuItem("⚙ Gerenciar Prompts...", null, (s, e) => OpenSettingsForm());
-            _menuPrompts.DropDownItems.Add(manageItem);
+        private void SetTranscriptionMode(string modeId)
+        {
+            SettingsService.SetActivePrompt(modeId);
+            UpdatePromptsMenu();
+            string modeName = (modeId == "default_single_line") ? "Linha Única (sem quebras)" : "Parágrafos (com quebras de linha)";
+            ShowNotification("Modo de Transcrição", "Modo ativo alterado para: " + modeName);
         }
 
         private void ShowNotification(string title, string text)
@@ -422,14 +420,31 @@ namespace VoxIA
             );
         }
 
+        private SettingsForm _activeSettingsForm = null;
+
         private void OpenSettingsForm()
         {
-            using (var form = new SettingsForm())
+            if (_activeSettingsForm != null && !_activeSettingsForm.IsDisposed)
             {
-                form.ShowDialog();
+                if (_activeSettingsForm.WindowState == FormWindowState.Minimized)
+                    _activeSettingsForm.WindowState = FormWindowState.Normal;
+                _activeSettingsForm.SelectTab(0);
+                _activeSettingsForm.BringToFront();
+                _activeSettingsForm.Activate();
+                return;
+            }
+
+            _activeSettingsForm = new SettingsForm();
+            _activeSettingsForm.FormClosed += (s, e) =>
+            {
+                _activeSettingsForm = null;
                 UpdatePromptsMenu();
                 UpdateAutoStartMenu();
-            }
+            };
+            _activeSettingsForm.SelectTab(0);
+            _activeSettingsForm.Show();
+            _activeSettingsForm.BringToFront();
+            _activeSettingsForm.Activate();
         }
 
         private void OpenPendingForm()

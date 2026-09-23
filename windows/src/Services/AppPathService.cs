@@ -58,6 +58,11 @@ namespace VoxIA.Services
             get { return Path.Combine(_dataDirectory, "credentials.dat"); }
         }
 
+        public static string ApiKeyFilePath
+        {
+            get { return Path.Combine(_dataDirectory, "api_key.txt"); }
+        }
+
         public static void InitializePaths()
         {
             string appDir = AppDomain.CurrentDomain.BaseDirectory;

@@ -40,6 +40,7 @@ namespace VoxIA.Services
 
     public class AppSettings
     {
+        public string ApiKey { get; set; }
         public string WhisperModel { get; set; }
         public string CorrectionModel { get; set; }
         public string SelectedPromptPreset { get; set; }
@@ -68,9 +69,10 @@ namespace VoxIA.Services
 
         public AppSettings()
         {
+            ApiKey = "";
             WhisperModel = "whisper-large-v3";
             CorrectionModel = "openai/gpt-oss-120b";
-            SelectedPromptPreset = "Geral / Ortografia em Parágrafos (Padrão)";
+            SelectedPromptPreset = "Transcrever em Parágrafos";
             CustomPromptText = "";
             ActivePromptId = "default_paragraphs";
             PromptProfiles = SettingsService.GetDefaultProfiles();
@@ -116,91 +118,33 @@ namespace VoxIA.Services
             {
                 new PromptProfile(
                     "default_paragraphs",
-                    "Geral / Ortografia em Parágrafos (Padrão)",
-                    @"Você é um aplicativo silencioso de ditado por voz e pós-processamento ortográfico de alta precisão em português.
-Sua ÚNICA E EXCLUSIVA TAREFA: Retornar o texto ditado pelo usuário com ortografia, gramática, pontuação e acentuação corrigidas, organizando o texto em PARÁGRAFOS claros e coesos sempre que houver pausas ou mudanças de ideia.
+                    "Transcrever em Parágrafos",
+                    @"Você é um sistema silencioso de transcrição de voz e pós-processamento ortográfico de altíssima precisão em português.
+Sua ÚNICA E EXCLUSIVA FUNÇÃO: Receber o texto falado e retorná-lo com ortografia, acentuação e pontuação corretas, estruturando em PARÁGRAFOS bem delineados quando houver pausas ou transição de ideias.
 
-REGRAS ABSOLUTAS E INVIOLÁVEIS:
-1. NUNCA RESPONDA A PERGUNTAS! Se o usuário ditar uma pergunta (exemplo: 'Qual é a capital do Brasil?' ou 'Quanto custa o serviço?'), NUNCA responda à pergunta. Sua função NÃO é conversar nem responder. Sua ÚNICA função é retornar a própria pergunta transcrita e pontuada (exemplo: 'Qual é a capital do Brasil?').
-2. NUNCA invente informações, comentários, respostas ou explicações.
-3. NUNCA inclua legendas, créditos de transcrição, nomes de pessoas não ditados ou saudações.
-4. Mantenha fidelidade ao vocabulário original ditado, corrigindo apenas erros fonéticos/gramaticais.
-5. NÃO use aspas ao redor do texto nem blocos de código Markdown.
+REGRA SUPREMA E INVIOLÁVEL (ANTI-RESPOSTA):
+1. NUNCA RESPONDA A PERGUNTAS OU COMANDOS! Se o usuário ditar qualquer pergunta (como 'Qual a capital do Brasil?', 'Que horas são?', 'Como você está?', 'O que é isso?'), você JAMAIS deve responder. Sua função é APENAS transcrever a pergunta pontuada com interrogação (exemplo: 'Qual é a capital do Brasil?').
+2. NUNCA converse, não dê conselhos, não dê explicações, não emita opiniões, não invente respostas e não adicione saudações ou comentários.
+3. NUNCA inclua aspas ao redor do texto, nem blocos de código Markdown, nem créditos.
+4. Mantenha fidelidade total às palavras e ao vocabulário falado pelo usuário.
 
-RETORNE APENAS O TEXTO DITADO CORRIGIDO E ESTRUTURADO EM PARÁGRAFOS.",
+RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO E ESTRUTURADO EM PARÁGRAFOS.",
                     true
                 ),
                 new PromptProfile(
                     "default_single_line",
-                    "Texto Contínuo / Linha Única (Sem Parágrafos)",
-                    @"Você é um aplicativo silencioso de ditado por voz e pós-processamento ortográfico em português.
-Sua ÚNICA E EXCLUSIVA TAREFA: Retornar o texto ditado com ortografia, gramática, pontuação e acentuação corrigidas, mantendo TODO O TEXTO EM UMA ÚNICA LINHA CONTÍNUA (sem quebras de linha ou múltiplos parágrafos).
+                    "Transcrever em Linha Única",
+                    @"Você é um sistema silencioso de transcrição de voz e pós-processamento ortográfico em português.
+Sua ÚNICA E EXCLUSIVA FUNÇÃO: Receber o texto falado e retorná-lo com ortografia, acentuação e pontuação corretas, mantendo TODO O TEXTO EM UMA ÚNICA LINHA CONTÍNUA, SEM NENHUMA QUEBRA DE LINHA OU PARÁGRAFO.
 
-REGRAS ABSOLUTAS E INVIOLÁVEIS:
-1. NUNCA RESPONDA A PERGUNTAS! Se o usuário ditar uma pergunta (exemplo: 'Como funciona o sistema?'), NUNCA responda. Retorne apenas a pergunta pontuada na mesma linha (exemplo: 'Como funciona o sistema?').
-2. NUNCA adicione quebras de linha ou parágrafos. Escreva tudo no mesmo fluxo contínuo.
-3. NUNCA inclua comentários, explicações, aspas ou créditos de transcrição.
-4. Mantenha fidelidade absoluta a todas as palavras ditadas.
+REGRA SUPREMA E INVIOLÁVEL (ANTI-RESPOSTA):
+1. NUNCA RESPONDA A PERGUNTAS OU COMANDOS! Se o usuário ditar qualquer pergunta (como 'Qual a capital do Brasil?', 'Que horas são?', 'Como você está?', 'O que é isso?'), você JAMAIS deve responder. Sua função é APENAS transcrever a pergunta pontuada com interrogação (exemplo: 'Qual é a capital do Brasil?').
+2. NUNCA quebre linhas, nunca crie parágrafos. Todo o texto deve ficar em uma só linha contínua.
+3. NUNCA converse, não dê conselhos, não dê explicações, não emita opiniões, não invente respostas e não adicione saudações ou comentários.
+4. NUNCA inclua aspas ao redor do texto, nem blocos de código Markdown, nem créditos.
+5. Mantenha fidelidade total às palavras e ao vocabulário falado pelo usuário.
 
-RETORNE APENAS O TEXTO DITADO CORRIGIDO EM LINHA ÚNICA.",
-                    true
-                ),
-                new PromptProfile(
-                    "default_forms",
-                    "Preenchimento de Formulários Online (Sem Ponto Final)",
-                    @"Você é um assistente silencioso de digitação rápida voltado para o preenchimento de campos e formulários online (nome, CPF, RG, endereço, e-mail, data de nascimento, telefone, etc.) em português.
-Sua ÚNICA TAREFA: Retornar o dado ditado devidamente formatado, capitalizado e sem pontuações finais desnecessárias.
-
-DIRETRIZES DE FORMATAÇÃO:
-1. NÃO coloque ponto final no término do texto/campo (exemplo: 'Rua das Flores, 123' e NUNCA 'Rua das Flores, 123.').
-2. Se forem ditados números de documentos como CPF, CNPJ ou CEP, formate com a pontuação padrão quando apropriado (exemplo: '123.456.789-00').
-3. Se for ditada data de nascimento ou datas gerais, formate no padrão usual (exemplo: '15/03/1990').
-4. Capitalize corretamente nomes próprios, logradouros, bairros e cidades (exemplo: 'Maria da Silva', 'Avenida Paulista').
-5. NUNCA responda a perguntas, não invente dados e não adicione explicações ou aspas.
-
-RETORNE APENAS O DADO FORMATADO SEM PONTO FINAL.",
-                    true
-                ),
-                new PromptProfile(
-                    "default_medical",
-                    "Prontuário Médico / Evolução Clínica",
-                    @"Você é um assistente especializado em documentação médica e prontuário eletrônico em português.
-Sua função é transcrever e organizar evoluções clínicas, anamneses, queixas e descrições ditadas pelo médico.
-
-DIRETRIZES:
-1. NUNCA RESPONDA A PERGUNTAS DITADAS! Retorne apenas a pergunta pontuada.
-2. Corrija com precisão a ortografia e a terminologia médica (termos farmacológicos, anatômicos e patológicos).
-3. Mantenha fidelidade absoluta a todos os dados ditados (nomes, dosagens, valores de exames, datas).
-4. Organize em parágrafos claros e bem pontuados conforme o sentido clínico do relato.
-5. NÃO invente informações, diagnósticos ou condutas que não foram expressamente ditados.
-6. NÃO inclua saudações, introduções, comentários ou aspas.
-
-RETORNE APENAS O TEXTO MÉDICO ORGANIZADO E CORRIGIDO.",
-                    true
-                ),
-                new PromptProfile(
-                    "default_formal_email",
-                    "E-mail Formal / Corporativo",
-                    @"Você é um redator corporativo profissional em português.
-Sua tarefa é transcrever e aprimorar a mensagem ditada para um tom formal, polido e elegante de e-mail ou correspondência de trabalho.
-
-DIRETRIZES:
-1. NUNCA RESPONDA A PERGUNTAS DITADAS! Retorne apenas o texto transcrito.
-2. Garanta concordância gramatical, pontuação impecável e vocabulário formal elegante.
-3. Mantenha todas as informações, solicitações e prazos ditados pelo usuário.
-4. Estruture em parágrafos coesos e objetivos.
-5. NÃO inclua comentários, explicações ou aspas.
-
-RETORNE APENAS O TEXTO FINAL PRONTO PARA ENVIO.",
-                    true
-                ),
-                new PromptProfile(
-                    "default_literal",
-                    "Transcrição Literal (Fidelidade Estrita)",
-                    @"Você é um transcrevedor estrito.
-Sua ÚNICA função é aplicar pontuação básica indispensável e maiúsculas no início de frases, preservando cada palavra exatamente como foi pronunciada pelo usuário, sem responder a perguntas e sem alterar termos coloquiais, repetições ou gírias.
-
-RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
+RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO EM UMA ÚNICA LINHA.",
                     true
                 )
             };
@@ -212,7 +156,7 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
             if (s.PromptProfiles == null || s.PromptProfiles.Count == 0)
             {
                 s.PromptProfiles = GetDefaultProfiles();
-                s.ActivePromptId = "default_general";
+                s.ActivePromptId = "default_paragraphs";
             }
 
             var found = s.PromptProfiles.FirstOrDefault(p => p.Id == s.ActivePromptId);
@@ -239,8 +183,9 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
             if (s.PromptProfiles != null && s.PromptProfiles.Any(p => p.Id == promptId))
             {
                 s.ActivePromptId = promptId;
+                s.SelectedPromptPreset = GetActivePrompt().Title;
                 Save();
-                Logger.LogInfo(string.Format("Active AI Prompt changed to ID: {0}", promptId));
+                Logger.LogInfo(string.Format("Active transcription mode changed to: {0}", promptId));
             }
         }
 
@@ -265,61 +210,14 @@ RETORNE APENAS O TEXTO TRANSCRITO COM PONTUAÇÃO BÁSICA.",
                 _currentSettings = new AppSettings();
             }
 
-            if (_currentSettings.PromptProfiles == null || _currentSettings.PromptProfiles.Count == 0)
+            // Enforce the two streamlined transcription modes: Parágrafos or Linha Única
+            _currentSettings.PromptProfiles = GetDefaultProfiles();
+            if (_currentSettings.ActivePromptId != "default_single_line")
             {
-                _currentSettings.PromptProfiles = GetDefaultProfiles();
-
-                // Migrate legacy CustomPromptText if present
-                if (!string.IsNullOrWhiteSpace(_currentSettings.CustomPromptText))
-                {
-                    _currentSettings.PromptProfiles.Add(new PromptProfile(
-                        Guid.NewGuid().ToString("N"),
-                        "Meu Prompt Customizado",
-                        _currentSettings.CustomPromptText,
-                        false
-                    ));
-                    if (_currentSettings.SelectedPromptPreset == "Customizado")
-                    {
-                        _currentSettings.ActivePromptId = _currentSettings.PromptProfiles.Last().Id;
-                    }
-                }
+                _currentSettings.ActivePromptId = "default_paragraphs";
             }
-            else
-            {
-                // Self-healing: Ensure default templates exist and are never empty
-                var defaults = GetDefaultProfiles();
-                foreach (var def in defaults)
-                {
-                    var existing = _currentSettings.PromptProfiles.FirstOrDefault(p => p.Id == def.Id);
-                    if (existing != null)
-                    {
-                        existing.IsBuiltIn = true;
-                        if (string.IsNullOrWhiteSpace(existing.PromptText))
-                        {
-                            existing.PromptText = def.PromptText;
-                            existing.Title = def.Title;
-                        }
-                    }
-                    else
-                    {
-                        _currentSettings.PromptProfiles.Insert(0, def);
-                    }
-                }
-
-                // Remove obsolete default_general if replaced by default_paragraphs
-                _currentSettings.PromptProfiles.RemoveAll(p => p.Id == "default_general");
-
-                foreach (var p in _currentSettings.PromptProfiles)
-                {
-                    if (p.PromptText == null) p.PromptText = "";
-                    if (string.IsNullOrEmpty(p.UpdatedAt)) p.UpdatedAt = DateTime.UtcNow.ToString("o");
-                }
-            }
-
-            if (string.IsNullOrEmpty(_currentSettings.ActivePromptId) || _currentSettings.ActivePromptId == "default_general")
-            {
-                _currentSettings.ActivePromptId = _currentSettings.PromptProfiles[0].Id;
-            }
+            _currentSettings.SelectedPromptPreset = GetActivePrompt().Title;
+            _currentSettings.CustomPromptText = "";
 
             // Default hotkey migration to F8
             if (_currentSettings.HotkeyVirtualKey == 0 || _currentSettings.HotkeyDisplay == "Ctrl + Win" || string.IsNullOrEmpty(_currentSettings.HotkeyDisplay))

@@ -11,3 +11,176 @@
 [2026-09-22 18:35:14] [INFO] Dedicated High-Priority Keyboard Hook thread started.
 [2026-09-22 18:35:14] [INFO] VoxIA Context fully initialized and resident in System Tray.
 [2026-09-22 18:35:14] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 15556)
+[2026-09-22 18:36:15] [INFO] Starting VoxIA application...
+[2026-09-22 18:36:15] [INFO] Background RetryService started.
+[2026-09-22 18:36:15] [INFO] Settings saved successfully.
+[2026-09-22 18:36:15] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 18:36:15] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 18:36:15] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 18:36:15] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 16652)
+[2026-09-22 18:36:26] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-22 18:36:35] [INFO] Groq API key securely saved.
+[2026-09-22 18:36:35] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 18:36:35] [INFO] Settings saved successfully.
+[2026-09-22 18:36:48] [INFO] Captured Target Context: Process='msedge', Title='Speechnotes | Speech to Text Online Notepad - Pessoal — Microsoft​ Edge', HWnd=0x60490
+[2026-09-22 18:37:00] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_de2250d0d5564c02b2234a1990507115.m4a
+[2026-09-22 18:37:06] [INFO] Audio recording stopped and saved (68361 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_de2250d0d5564c02b2234a1990507115.m4a
+[2026-09-22 18:37:06] [INFO] Added recording to persistent queue. ID: 1855ea99f0d043c7ae8196de7e9ee3cb
+[2026-09-22 18:37:06] [INFO] Processing queue item 1855ea99f0d043c7ae8196de7e9ee3cb (Attempt 1)...
+[2026-09-22 18:37:06] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_de2250d0d5564c02b2234a1990507115.m4a
+[2026-09-22 18:37:08] [INFO] Groq Whisper transcription success (raw: 70 chars, cleaned: 69 chars).
+[2026-09-22 18:37:08] [INFO] Whisper Raw Transcript: "A questão é ter divitação por voz nesse aplicativo que eu desenvolvi."
+[2026-09-22 18:37:08] [INFO] Sending raw transcript (69 chars, max_tokens: 394) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-22 18:37:09] [INFO] Groq LLM text correction completed successfully.
+[2026-09-22 18:37:09] [INFO] Final Post-Processed Text: "A questão é ter divitação por voz nesse aplicativo que eu desenvolvi."
+[2026-09-22 18:37:09] [INFO] Text copied to clipboard successfully.
+[2026-09-22 18:37:09] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-22 18:37:09] [INFO] Text copied to clipboard successfully.
+[2026-09-22 18:37:09] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_de2250d0d5564c02b2234a1990507115.m4a
+[2026-09-22 18:37:09] [INFO] Queue item 1855ea99f0d043c7ae8196de7e9ee3cb fully completed and audio purged.
+[2026-09-22 19:59:24] [INFO] Starting VoxIA application...
+[2026-09-22 19:59:24] [INFO] Background RetryService started.
+[2026-09-22 19:59:24] [INFO] Settings saved successfully.
+[2026-09-22 19:59:24] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 19:59:24] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 19:59:24] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 19:59:24] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 28540)
+[2026-09-22 20:20:28] [INFO] Captured Target Context: Process='msedge', Title='Olá BRUNNA, confira os detalhes do seu seguro - douglasrgomes@gmail.com - Gmail e mais 3 páginas - Pessoal — Microsoft​ Edge', HWnd=0x10578
+[2026-09-22 20:20:30] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_ca24ab2a5fd149efa2fdd6aa4947a229.m4a
+[2026-09-22 20:20:41] [INFO] Audio recording stopped and saved (131108 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_ca24ab2a5fd149efa2fdd6aa4947a229.m4a
+[2026-09-22 20:20:41] [INFO] Added recording to persistent queue. ID: e942ed8e869c4ff2b872a29a065327e3
+[2026-09-22 20:20:41] [INFO] Processing queue item e942ed8e869c4ff2b872a29a065327e3 (Attempt 1)...
+[2026-09-22 20:20:41] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_ca24ab2a5fd149efa2fdd6aa4947a229.m4a
+[2026-09-22 20:20:43] [INFO] Groq Whisper transcription success (raw: 113 chars, cleaned: 112 chars).
+[2026-09-22 20:20:43] [INFO] Whisper Raw Transcript: "Eu não estou te enviando aquele e-mail, documentos do seguro do carro de 2026 para 2027, tá certo? Missão Kikis."
+[2026-09-22 20:20:43] [INFO] Sending raw transcript (112 chars, max_tokens: 480) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-22 20:20:44] [INFO] Groq LLM text correction completed successfully.
+[2026-09-22 20:20:44] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-22 20:20:44] [INFO] Final Post-Processed Text: "Eu não estou te enviando aquele e‑mail, documentos do seguro do carro de 2026 para 2027, tá certo"
+[2026-09-22 20:20:44] [INFO] Text copied to clipboard successfully.
+[2026-09-22 20:20:44] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-22 20:20:45] [INFO] Text copied to clipboard successfully.
+[2026-09-22 20:20:46] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_ca24ab2a5fd149efa2fdd6aa4947a229.m4a
+[2026-09-22 20:20:46] [INFO] Queue item e942ed8e869c4ff2b872a29a065327e3 fully completed and audio purged.
+[2026-09-22 20:30:33] [INFO] Groq API key securely saved.
+[2026-09-22 20:30:33] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:30:33] [INFO] Settings saved successfully.
+[2026-09-22 20:36:33] [INFO] Starting VoxIA application...
+[2026-09-22 20:36:33] [INFO] Background RetryService started.
+[2026-09-22 20:36:33] [INFO] Settings saved successfully.
+[2026-09-22 20:36:33] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:36:33] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:36:33] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:36:33] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 19028)
+[2026-09-22 20:41:12] [INFO] Starting VoxIA application...
+[2026-09-22 20:41:12] [INFO] Background RetryService started.
+[2026-09-22 20:41:12] [INFO] Settings saved successfully.
+[2026-09-22 20:41:12] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:41:13] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:41:13] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:41:13] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 24540)
+[2026-09-22 20:43:46] [INFO] Starting VoxIA application...
+[2026-09-22 20:43:46] [INFO] Background RetryService started.
+[2026-09-22 20:43:47] [INFO] Settings saved successfully.
+[2026-09-22 20:43:47] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:43:47] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:43:47] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:43:47] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 29784)
+[2026-09-22 20:44:42] [INFO] Starting VoxIA application...
+[2026-09-22 20:44:42] [INFO] Background RetryService started.
+[2026-09-22 20:44:42] [INFO] Settings saved successfully.
+[2026-09-22 20:44:42] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:44:42] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:44:42] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:44:42] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 9252)
+[2026-09-22 20:44:48] [INFO] Settings saved successfully.
+[2026-09-22 20:44:48] [INFO] Groq API key saved in plain text (unencrypted).
+[2026-09-22 20:44:48] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-22 20:45:17] [INFO] Settings saved successfully.
+[2026-09-22 20:45:17] [INFO] Groq API key saved in plain text (unencrypted).
+[2026-09-22 20:45:17] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:45:17] [INFO] Settings saved successfully.
+[2026-09-22 20:45:20] [INFO] Captured Target Context: Process='Antigravity', Title='Configurar Inicialização ...', HWnd=0x405C4
+[2026-09-22 20:45:25] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_50345f5771c344cf9b9914985beab809.m4a
+[2026-09-22 20:45:29] [INFO] Audio recording stopped and saved (52784 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_50345f5771c344cf9b9914985beab809.m4a
+[2026-09-22 20:45:29] [INFO] Added recording to persistent queue. ID: e40664f414394d61a3e551e237639de0
+[2026-09-22 20:45:29] [INFO] Processing queue item e40664f414394d61a3e551e237639de0 (Attempt 1)...
+[2026-09-22 20:45:29] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_50345f5771c344cf9b9914985beab809.m4a
+[2026-09-22 20:45:31] [INFO] Groq Whisper transcription success (raw: 12 chars, cleaned: 11 chars).
+[2026-09-22 20:45:31] [INFO] Whisper Raw Transcript: "Testando..."
+[2026-09-22 20:45:31] [INFO] Sending raw transcript (11 chars, max_tokens: 278) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-22 20:45:32] [INFO] Groq LLM text correction completed successfully.
+[2026-09-22 20:45:32] [INFO] Final Post-Processed Text: "Testando..."
+[2026-09-22 20:45:32] [INFO] Text copied to clipboard successfully.
+[2026-09-22 20:45:32] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-22 20:45:32] [INFO] Text copied to clipboard successfully.
+[2026-09-22 20:45:33] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_50345f5771c344cf9b9914985beab809.m4a
+[2026-09-22 20:45:33] [INFO] Queue item e40664f414394d61a3e551e237639de0 fully completed and audio purged.
+[2026-09-22 20:51:20] [INFO] Starting VoxIA application...
+[2026-09-22 20:51:20] [INFO] Background RetryService started.
+[2026-09-22 20:51:20] [INFO] Settings saved successfully.
+[2026-09-22 20:51:20] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:51:20] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:51:20] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:51:20] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 1108)
+[2026-09-22 20:54:26] [INFO] Starting VoxIA application...
+[2026-09-22 20:54:26] [INFO] Background RetryService started.
+[2026-09-22 20:54:26] [INFO] Settings saved successfully.
+[2026-09-22 20:54:26] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:54:26] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:54:26] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:54:26] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 8672)
+[2026-09-22 20:54:36] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-22 20:54:42] [INFO] Settings saved successfully.
+[2026-09-22 20:54:42] [INFO] Groq API key saved in plain text (unencrypted).
+[2026-09-22 20:54:42] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:54:42] [INFO] Settings saved successfully.
+[2026-09-22 20:54:44] [INFO] Captured Target Context: Process='Antigravity', Title='Configurar Inicialização ...', HWnd=0x405C4
+[2026-09-22 20:54:48] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_3a97f5ca83d74781bea3cf2640a0e1bd.m4a
+[2026-09-22 20:54:56] [INFO] Audio recording stopped and saved (89823 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_3a97f5ca83d74781bea3cf2640a0e1bd.m4a
+[2026-09-22 20:54:56] [INFO] Added recording to persistent queue. ID: 455d60c136f944b38ca4aeb1e5986d69
+[2026-09-22 20:54:56] [INFO] Processing queue item 455d60c136f944b38ca4aeb1e5986d69 (Attempt 1)...
+[2026-09-22 20:54:56] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_3a97f5ca83d74781bea3cf2640a0e1bd.m4a
+[2026-09-22 20:54:58] [INFO] Filtered pure silence hallucination: "Obrigado."
+[2026-09-22 20:54:58] [INFO] Groq Whisper transcription success (raw: 10 chars, cleaned: 0 chars).
+[2026-09-22 20:54:58] [INFO] Queue item 455d60c136f944b38ca4aeb1e5986d69 was silent or filtered as hallucination. Discarding cleanly.
+[2026-09-22 20:54:58] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_3a97f5ca83d74781bea3cf2640a0e1bd.m4a
+[2026-09-22 20:56:14] [INFO] Settings saved successfully.
+[2026-09-22 20:56:14] [INFO] Groq API key saved in plain text (unencrypted).
+[2026-09-22 20:56:14] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:56:14] [INFO] Settings saved successfully.
+[2026-09-22 20:57:47] [INFO] Starting VoxIA application...
+[2026-09-22 20:57:47] [INFO] Background RetryService started.
+[2026-09-22 20:57:48] [INFO] Settings saved successfully.
+[2026-09-22 20:57:48] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:57:48] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:57:48] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:57:48] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 9152)
+[2026-09-22 20:59:34] [INFO] Starting VoxIA application...
+[2026-09-22 20:59:34] [INFO] Background RetryService started.
+[2026-09-22 20:59:34] [INFO] Settings saved successfully.
+[2026-09-22 20:59:34] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:59:34] [INFO] Dedicated High-Priority Keyboard Hook thread started.
+[2026-09-22 20:59:34] [INFO] VoxIA Context fully initialized and resident in System Tray.
+[2026-09-22 20:59:34] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 13784)
+[2026-09-22 20:59:37] [INFO] Dictionary loaded successfully (4 entries).
+[2026-09-22 20:59:38] [INFO] Settings saved successfully.
+[2026-09-22 20:59:38] [INFO] Groq API key saved in plain text (unencrypted).
+[2026-09-22 20:59:38] [INFO] AutoStart registry key set to: C:\Users\drgom\Documents\antigravity\VoxIA\windows\VoxIA.exe
+[2026-09-22 20:59:39] [INFO] Settings saved successfully.
+[2026-09-22 20:59:40] [INFO] Captured Target Context: Process='Antigravity', Title='Configurar Inicialização ...', HWnd=0x405C4
+[2026-09-22 20:59:44] [INFO] Native M4A/AAC audio recording started (44100Hz Mono): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_47ab68a9096c4d5b86de785728510692.m4a
+[2026-09-22 20:59:49] [INFO] Audio recording stopped and saved (53977 bytes): C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_47ab68a9096c4d5b86de785728510692.m4a
+[2026-09-22 20:59:49] [INFO] Added recording to persistent queue. ID: c8e171928e994f11ba9c06e895278b9d
+[2026-09-22 20:59:49] [INFO] Processing queue item c8e171928e994f11ba9c06e895278b9d (Attempt 1)...
+[2026-09-22 20:59:49] [INFO] Initiating Groq Whisper transcription with model 'whisper-large-v3' for file: rec_47ab68a9096c4d5b86de785728510692.m4a
+[2026-09-22 20:59:50] [INFO] Groq Whisper transcription success (raw: 30 chars, cleaned: 29 chars).
+[2026-09-22 20:59:50] [INFO] Whisper Raw Transcript: "Esta é uma licitação por voz."
+[2026-09-22 20:59:50] [INFO] Sending raw transcript (29 chars, max_tokens: 314) to Groq LLM ('openai/gpt-oss-120b') for correction...
+[2026-09-22 20:59:51] [INFO] Groq LLM text correction completed successfully.
+[2026-09-22 20:59:51] [INFO] Final Post-Processed Text: "Esta é uma licitação por voz."
+[2026-09-22 20:59:51] [INFO] Text copied to clipboard successfully.
+[2026-09-22 20:59:51] [INFO] Text insertion succeeded via Strategy 1 (Clipboard Paste at cursor position).
+[2026-09-22 20:59:51] [INFO] Text copied to clipboard successfully.
+[2026-09-22 20:59:51] [INFO] Local audio file deleted after completion success: C:\Users\drgom\Documents\antigravity\VoxIA\windows\data\audio_queue\rec_47ab68a9096c4d5b86de785728510692.m4a
+[2026-09-22 20:59:51] [INFO] Queue item c8e171928e994f11ba9c06e895278b9d fully completed and audio purged.

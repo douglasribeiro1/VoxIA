@@ -21,46 +21,82 @@ namespace VoxIA.Services
 
         public static void SaveApiKey(string apiKey)
         {
-            if (string.IsNullOrEmpty(apiKey))
+            string cleanKey = !string.IsNullOrEmpty(apiKey) ? apiKey.Trim() : string.Empty;
+
+            try
             {
+                // Save unencrypted in SettingsService / settings.json
+                SettingsService.Current.ApiKey = cleanKey;
+                SettingsService.Save();
+
+                // Also save in plain text file api_key.txt
+                string plainPath = AppPathService.ApiKeyFilePath;
+                if (!string.IsNullOrEmpty(cleanKey))
+                {
+                    File.WriteAllText(plainPath, cleanKey);
+                }
+                else if (File.Exists(plainPath))
+                {
+                    try { File.Delete(plainPath); } catch { }
+                }
+
+                // Delete legacy encrypted credentials file if present
                 if (File.Exists(AppPathService.CredentialsFilePath))
                 {
                     try { File.Delete(AppPathService.CredentialsFilePath); } catch { }
                 }
-                return;
-            }
 
-            try
-            {
-                byte[] raw = Encoding.UTF8.GetBytes(apiKey.Trim());
-                byte[] encrypted = EncryptBytes(raw);
-                File.WriteAllBytes(AppPathService.CredentialsFilePath, encrypted);
-                Logger.LogInfo("Groq API key securely saved.");
+                Logger.LogInfo("Groq API key saved in plain text (unencrypted).");
             }
             catch (Exception ex)
             {
-                Logger.LogError("Failed to encrypt and save Groq API key", ex);
+                Logger.LogError("Failed to save Groq API key", ex);
             }
         }
 
         public static string GetApiKey()
         {
-            if (!File.Exists(AppPathService.CredentialsFilePath))
-                return string.Empty;
+            // 1. Direct from settings.json
+            if (!string.IsNullOrEmpty(SettingsService.Current.ApiKey))
+                return SettingsService.Current.ApiKey.Trim();
 
-            try
+            // 2. Direct from plain text file api_key.txt
+            string plainPath = AppPathService.ApiKeyFilePath;
+            if (File.Exists(plainPath))
             {
-                byte[] encrypted = File.ReadAllBytes(AppPathService.CredentialsFilePath);
-                byte[] raw = DecryptBytes(encrypted);
-                if (raw != null)
+                try
                 {
-                    string key = Encoding.UTF8.GetString(raw);
-                    return key != null ? key.Trim() : string.Empty;
+                    string key = File.ReadAllText(plainPath);
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        SettingsService.Current.ApiKey = key.Trim();
+                        return key.Trim();
+                    }
                 }
+                catch { }
             }
-            catch (Exception ex)
+
+            // 3. Migration: Decrypt legacy credentials.dat if it exists
+            if (File.Exists(AppPathService.CredentialsFilePath))
             {
-                Logger.LogError("Failed to decrypt Groq API key from storage", ex);
+                try
+                {
+                    byte[] encrypted = File.ReadAllBytes(AppPathService.CredentialsFilePath);
+                    byte[] raw = DecryptBytes(encrypted);
+                    if (raw != null)
+                    {
+                        string legacyKey = Encoding.UTF8.GetString(raw);
+                        if (!string.IsNullOrWhiteSpace(legacyKey))
+                        {
+                            SaveApiKey(legacyKey.Trim());
+                            return legacyKey.Trim();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("Failed to migrate legacy credentials.dat", ex);
+                }
             }
 
             return string.Empty;
