@@ -73,6 +73,9 @@ namespace VoxIA.Services
                 // Step 2.5: Deterministic Local Dictionary & Custom Vocabulary Replacements
                 finalText = DictionaryService.ApplyReplacements(finalText);
 
+                // Step 2.6: Compatibilidade com sistemas legados (hífens Unicode, aspas curvas, espaços especiais -> ANSI)
+                finalText = TextSanitizer.NormalizeForLegacyApps(finalText);
+
                 Logger.LogInfo(string.Format("Final Post-Processed Text: \"{0}\"", finalText));
 
                 // Step 3: Text Insertion & Clipboard

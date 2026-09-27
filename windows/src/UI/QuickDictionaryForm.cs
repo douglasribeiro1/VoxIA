@@ -21,81 +21,55 @@ namespace VoxIA.UI
 
         private void InitializeComponent()
         {
-            this.Text = "Adicionar ao Dicionário — VoxIA";
-            this.Size = new Size(460, 290);
-            this.StartPosition = FormStartPosition.CenterScreen;
+            const int W = 460;
+            const int M = 22;
+            Theme.ApplyForm(this, "Adicionar ao Dicionário — VoxIA", new Size(W, 296));
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.FromArgb(248, 249, 252);
-            this.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
             this.TopMost = true;
 
-            Panel header = new Panel
-            {
-                Location = new Point(0, 0),
-                Size = new Size(460, 55),
-                BackColor = Color.White
-            };
+            string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
+            Panel header = Theme.CreateHeader("Dicionário de palavras", string.Format("Atalho rápido: Ctrl + Shift + W  ·  Ditado: {0}", hotkey));
+            Panel footer = Theme.CreateFooter();
+            footer.Width = W;
+            Panel body = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
 
-            Label lblTitle = new Label
-            {
-                Text = "📖 Dicionário de Palavras & Substituições",
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(33, 37, 41),
-                Location = new Point(16, 10),
-                AutoSize = true
-            };
-
-            Label lblSubtitle = new Label
-            {
-                Text = "Atalho rápido: Ctrl + Shift + W | Ditado: Ctrl + Win",
-                Font = new Font("Segoe UI", 8.25F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(108, 117, 125),
-                Location = new Point(17, 31),
-                AutoSize = true
-            };
-
-            header.Controls.Add(lblTitle);
-            header.Controls.Add(lblSubtitle);
-
-            // Labels and TextBoxes
             Label lblOrig = new Label
             {
-                Text = "Palavra ou Erro de Transcrição (De):",
-                Location = new Point(20, 68),
+                Text = "Palavra ou erro de transcrição (de)",
+                Location = new Point(M, 16),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
+                Font = Theme.BodyBold
             };
 
             _txtOriginal = new TextBox
             {
-                Location = new Point(20, 88),
-                Size = new Size(405, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Location = new Point(M, 38),
+                Width = W - M * 2
             };
+            Theme.StyleTextBox(_txtOriginal);
 
             Label lblRepl = new Label
             {
-                Text = "Substituição Correta (Para):",
-                Location = new Point(20, 122),
+                Text = "Substituição correta (para)",
+                Location = new Point(M, 74),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
+                Font = Theme.BodyBold
             };
 
             _txtReplacement = new TextBox
             {
-                Location = new Point(20, 142),
-                Size = new Size(405, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Location = new Point(M, 96),
+                Width = W - M * 2
             };
+            Theme.StyleTextBox(_txtReplacement);
 
             _chkVocabularyOnly = new CheckBox
             {
                 Text = "Apenas termo de vocabulário (sem substituição direta)",
-                Location = new Point(20, 175),
+                Location = new Point(M, 134),
                 AutoSize = true,
-                ForeColor = Color.FromArgb(73, 80, 87)
+                ForeColor = Theme.TextMuted,
+                Cursor = Cursors.Hand
             };
             _chkVocabularyOnly.CheckedChanged += (s, e) =>
             {
@@ -110,42 +84,25 @@ namespace VoxIA.UI
                 }
             };
 
-            // Buttons
-            _btnSave = new Button
-            {
-                Text = "Salvar (Enter)",
-                Location = new Point(220, 210),
-                Size = new Size(110, 32),
-                BackColor = Color.FromArgb(0, 122, 255),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            _btnSave.FlatAppearance.BorderSize = 0;
-            _btnSave.Click += BtnSave_Click;
+            body.Controls.AddRange(new Control[] { lblOrig, _txtOriginal, lblRepl, _txtReplacement, _chkVocabularyOnly });
 
-            _btnCancel = new Button
-            {
-                Text = "Cancelar (Esc)",
-                Location = new Point(340, 210),
-                Size = new Size(85, 32),
-                BackColor = Color.FromArgb(230, 233, 240),
-                ForeColor = Color.FromArgb(33, 37, 41),
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            _btnCancel.FlatAppearance.BorderSize = 0;
+            // Buttons
+            _btnCancel = new Button { Text = "Cancelar (Esc)", Size = new Size(110, 34) };
+            Theme.StyleSecondary(_btnCancel);
+            _btnCancel.Location = new Point(W - M - _btnCancel.Width, 12);
             _btnCancel.Click += (s, e) => this.Close();
 
+            _btnSave = new Button { Text = "Salvar (Enter)", Size = new Size(120, 34) };
+            Theme.StylePrimary(_btnSave);
+            _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 10, 12);
+            _btnSave.Click += BtnSave_Click;
+
+            footer.Controls.Add(_btnSave);
+            footer.Controls.Add(_btnCancel);
+
+            this.Controls.Add(body);
+            this.Controls.Add(footer);
             this.Controls.Add(header);
-            this.Controls.Add(lblOrig);
-            this.Controls.Add(_txtOriginal);
-            this.Controls.Add(lblRepl);
-            this.Controls.Add(_txtReplacement);
-            this.Controls.Add(_chkVocabularyOnly);
-            this.Controls.Add(_btnSave);
-            this.Controls.Add(_btnCancel);
 
             this.AcceptButton = _btnSave;
             this.CancelButton = _btnCancel;
