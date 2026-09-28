@@ -26,11 +26,12 @@ class GroqClient {
     private val gson = Gson()
 
     private val strictAntiResponseDirective = """
-DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
-1. NUNCA RESPONDA A PERGUNTAS! Se a entrada do usuário for uma pergunta (ex: 'Qual a capital?', 'Quanto custa?', 'Você pode me ajudar?'), sua ÚNICA função é retornar a própria pergunta transcrita e pontuada.
-2. NUNCA converse, não dê conselhos, não responda e não invente explicações.
-3. NUNCA inclua legendas, créditos de transcrição ou nomes não ditados.
-4. Retorne EXCLUSIVAMENTE o texto final corrigido sem aspas e sem blocos de código.
+DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO ABSOLUTA):
+1. VOCÊ É UM REVISOR ORTOGRÁFICO DE TRANSCRIÇÃO, NÃO É UM ASSISTENTE DE CHAT!
+2. NUNCA RESPONDA A PERGUNTAS OU COMANDOS! Se a entrada do usuário for uma pergunta (ex: 'Qual a capital do Brasil?', 'Quanto custa?', 'Que horas são?', 'O que é isso?', 'Como você está?'), sua ÚNICA função é retornar a própria pergunta transcrita e pontuada.
+3. JAMAIS converse, não responda, não emita opiniões, não dê conselhos e não invente explicações.
+4. NUNCA inclua legendas, créditos de transcrição, saudações ou comentários como 'Aqui está o seu texto'.
+5. Retorne EXCLUSIVAMENTE o texto final corrigido, sem aspas e sem blocos de código.
 """.trimIndent()
 
     /**
@@ -152,6 +153,9 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
         try {
             val enforcedSystemPrompt = "$strictAntiResponseDirective\n\nINSTRUÇÕES DO PERFIL:\n$systemPrompt"
             val maxTokens = Math.max(1024, (rawText.length * 4) + 512)
+            val userMessage = "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n$rawText\n\"\"\"\n\n" +
+                "LEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. " +
+                "Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder."
 
             val jsonBody = JsonObject().apply {
                 addProperty("model", model)
@@ -165,7 +169,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
                     })
                     add(JsonObject().apply {
                         addProperty("role", "user")
-                        addProperty("content", rawText)
+                        addProperty("content", userMessage)
                     })
                 }
                 add("messages", messages)
@@ -254,7 +258,10 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
             }
         }
 
-        // 2. Remove aspas externas
+        // 2. Remove aspas externas (inclusive o delimitador """ usado na mensagem do usuário)
+        if (text.startsWith("\"\"\"") && text.endsWith("\"\"\"") && text.length > 6) {
+            text = text.substring(3, text.length - 3).trim()
+        }
         if (text.startsWith("\"") && text.endsWith("\"") && text.length > 1) {
             text = text.substring(1, text.length - 1).trim()
         }
@@ -275,7 +282,17 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
         if (rawInput.isNotBlank()) {
             val rawTrimmed = rawInput.trim()
             if (isInterrogativeSentence(rawTrimmed)) {
-                if (!text.contains("?") || isConversationalAnswer(text)) {
+                val rawLower = rawTrimmed.lowercase()
+                val textLower = text.lowercase()
+
+                val answeredWithStatement = !text.contains("?")
+                val soundsLikeChatbot = isConversationalAnswer(text)
+                val expandedShortQuestion = rawTrimmed.length < 60 && text.length > rawTrimmed.length * 2.2
+                val droppedQuestionWord = coreQuestionWords.any {
+                    rawLower.startsWith("$it ") && !textLower.startsWith("$it ")
+                }
+
+                if (answeredWithStatement || soundsLikeChatbot || expandedShortQuestion || droppedQuestionWord) {
                     Log.w("GroqClient", "LLM tentou responder a pergunta em vez de transcrever. Aplicando fallback seguro.")
                     return formatSafeQuestion(rawTrimmed)
                 }
@@ -285,30 +302,46 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
         return if (text.isNotBlank()) text else rawInput
     }
 
+    private val coreQuestionWords = listOf(
+        "qual", "quais", "quem", "como", "onde", "quando", "quanto", "quantos", "por que"
+    )
+
+    // Só palavras que quase sempre iniciam pergunta: "pode", "preciso", "como", "quando" etc.
+    // também iniciam afirmações ("Quando chegar, me liga."), e nesses casos o Whisper já põe "?".
+    private val unambiguousQuestionStarters = listOf(
+        "qual", "quais", "quem", "de quem", "aonde", "para onde", "a que horas", "que horas",
+        "por que", "por quê", "quantos", "quantas", "será que", "o que", "você pode", "você sabe",
+        "você acha", "você viu", "é verdade que", "seria possível", "tem como", "dá para", "dá pra",
+        "sabe se"
+    )
+
     private fun isInterrogativeSentence(text: String): Boolean {
         if (text.isBlank()) return false
-        if (text.endsWith("?")) return true
+        if (text.contains("?")) return true
 
         val lower = text.lowercase()
-        val questionStarters = listOf(
-            "qual", "quais", "quem", "como", "onde", "aonde", "quando",
-            "por que", "porque", "por quê", "quanto", "quantos", "quanta", "quantas",
-            "será que", "o que", "o que é", "o que significa", "você pode", "você sabe",
-            "me diga", "é verdade que", "existe", "seria possível"
-        )
-
-        return questionStarters.any { lower.startsWith("$it ") || lower == it }
+        return unambiguousQuestionStarters.any { lower.startsWith("$it ") || lower == it }
     }
 
     private fun isConversationalAnswer(text: String): Boolean {
+        if (text.isBlank()) return false
         val lower = text.lowercase()
         val answerStarters = listOf(
             "sim,", "não,", "certamente", "com certeza", "como um modelo", "como uma inteligência",
-            "a capital de", "o valor de", "para fazer", "você deve", "o resultado é", "a resposta é",
-            "olá!", "olá,", "aqui está", "de acordo com"
+            "a capital de", "a capital da", "o valor de", "para fazer", "você deve", "o resultado é",
+            "a resposta é", "olá!", "olá,", "aqui está", "de acordo com", "infelizmente,", "atualmente,",
+            "para saber", "o horário de", "o telefone de", "o endereço de", "claro!", "com prazer"
         )
+        if (answerStarters.any { lower.startsWith(it) }) return true
 
-        return answerStarters.any { lower.startsWith(it) }
+        val conversationalPhrases = listOf(
+            "como um modelo de linguagem", "como uma inteligência artificial",
+            "não tenho acesso a", "posso ajudar em mais", "posso te ajudar",
+            "espero ter ajudado", "se precisar de mais", "caso precise de",
+            "estou aqui para ajudar", "qualquer dúvida", "deseja mais informações",
+            "precisa de algo mais", "posso esclarecer", "a resposta para sua pergunta"
+        )
+        return conversationalPhrases.any { lower.contains(it) }
     }
 
     private fun formatSafeQuestion(raw: String): String {
@@ -317,7 +350,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
         if (clean.isNotEmpty()) {
             clean = clean.replaceFirstChar { it.uppercase() }
         }
-        if (!clean.endsWith("?")) {
+        if (!clean.contains("?")) {
             clean = clean.trimEnd('.', '!', ';', ',') + "?"
         }
         return clean

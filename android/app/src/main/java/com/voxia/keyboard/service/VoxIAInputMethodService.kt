@@ -27,6 +27,7 @@ import android.widget.Toast
 import com.voxia.keyboard.R
 import com.voxia.keyboard.api.GroqClient
 import com.voxia.keyboard.audio.AudioRecorder
+import com.voxia.keyboard.data.ApiKeyStore
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
 import com.voxia.keyboard.data.PromptProfile
@@ -34,6 +35,8 @@ import com.voxia.keyboard.ui.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,13 +45,26 @@ import java.io.File
 class VoxIAInputMethodService : InputMethodService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
     private var backspaceRepeatJob: Job? = null
+    private var micPulseJob: Job? = null
     private var isProcessingAudio = false
-    private var pendingAudioFile: File? = null
+    private var isStoppingRecording = false
+    private var lastDictatedText: String? = null
+    private var pendingAudioFile: File?
+        get() = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
+            .getString("pending_audio_path", null)
+            ?.let { File(it) }
+            ?.takeIf { it.exists() }
+        set(value) {
+            getSharedPreferences("voxia_settings", Context.MODE_PRIVATE).edit()
+                .putString("pending_audio_path", value?.absolutePath)
+                .apply()
+        }
 
     private lateinit var audioRecorder: AudioRecorder
     private lateinit var groqClient: GroqClient
     private lateinit var promptManager: PromptManager
     private lateinit var dictionaryManager: DictionaryManager
+    private lateinit var apiKeyStore: ApiKeyStore
 
     // Layout Containers
     private var layoutMainVoiceView: LinearLayout? = null
@@ -57,6 +73,8 @@ class VoxIAInputMethodService : InputMethodService() {
 
     // Main Voice Views
     private var btnMicRecord: ImageButton? = null
+    private var viewMicPulse: View? = null
+    private var btnUndoDictation: ImageButton? = null
     private var tvStatusMessage: TextView? = null
     private var btnRetryAudio: Button? = null
     private var spinnerPromptProfile: Spinner? = null
@@ -98,6 +116,7 @@ class VoxIAInputMethodService : InputMethodService() {
         groqClient = GroqClient()
         promptManager = PromptManager(this)
         dictionaryManager = DictionaryManager(this)
+        apiKeyStore = ApiKeyStore(this)
     }
 
     override fun onCreateInputView(): View {
@@ -110,6 +129,8 @@ class VoxIAInputMethodService : InputMethodService() {
 
         // 2. Main Voice Views
         btnMicRecord = view.findViewById(R.id.btnMicRecord)
+        viewMicPulse = view.findViewById(R.id.viewMicPulse)
+        btnUndoDictation = view.findViewById(R.id.btnUndoDictation)
         tvStatusMessage = view.findViewById(R.id.tvStatusMessage)
         btnRetryAudio = view.findViewById(R.id.btnRetryAudio)
         spinnerPromptProfile = view.findViewById(R.id.spinnerPromptProfile)
@@ -152,7 +173,14 @@ class VoxIAInputMethodService : InputMethodService() {
         super.onStartInputView(info, restarting)
         showMainVoiceView()
         setupPromptSpinner()
-        if (pendingAudioFile != null && pendingAudioFile!!.exists()) {
+        if (!restarting) {
+            lastDictatedText = null
+            btnUndoDictation?.visibility = View.GONE
+        }
+        if (audioRecorder.isRecordingNow()) {
+            return
+        }
+        if (pendingAudioFile != null) {
             btnRetryAudio?.visibility = View.VISIBLE
             tvStatusMessage?.text = "Áudio gravado guardado. Toque para reenviar."
         } else {
@@ -198,12 +226,17 @@ class VoxIAInputMethodService : InputMethodService() {
         btnRetryAudio?.setOnClickListener {
             vibrateFeedback()
             val file = pendingAudioFile
-            if (file != null && file.exists()) {
+            if (file != null) {
                 processAudioFile(file)
             } else {
                 btnRetryAudio?.visibility = View.GONE
                 tvStatusMessage?.text = getString(R.string.status_ready)
             }
+        }
+
+        btnUndoDictation?.setOnClickListener {
+            vibrateFeedback()
+            undoLastDictation()
         }
 
         btnSwitchKeyboard?.setOnClickListener {
@@ -357,6 +390,12 @@ class VoxIAInputMethodService : InputMethodService() {
         }
     }
 
+    private fun commitDictation(text: String) {
+        commitTextToInput(text)
+        lastDictatedText = text
+        btnUndoDictation?.visibility = View.VISIBLE
+    }
+
     private fun performSendAction() {
         val editorInfo = currentInputEditorInfo
         val ic = currentInputConnection
@@ -460,8 +499,8 @@ class VoxIAInputMethodService : InputMethodService() {
 
     private fun handleMicToggle() {
         vibrateFeedback()
-        val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
-        val apiKey = prefs.getString("groq_api_key", "") ?: ""
+        if (isStoppingRecording || isProcessingAudio) return
+        val apiKey = apiKeyStore.get()
 
         if (apiKey.isBlank()) {
             tvStatusMessage?.text = "⚠ Configure sua Chave da Groq nas Configurações!"
@@ -479,23 +518,80 @@ class VoxIAInputMethodService : InputMethodService() {
                 btnMicRecord?.setBackgroundResource(R.drawable.bg_mic_recording)
                 btnMicRecord?.setImageResource(R.drawable.ic_stop)
                 tvStatusMessage?.text = getString(R.string.status_recording)
+                startMicPulse()
             } else {
                 tvStatusMessage?.text = "⚠ Erro ao acessar o microfone."
             }
         } else {
-            val audioFile = audioRecorder.stopRecording()
+            isStoppingRecording = true
+            stopMicPulse()
             btnMicRecord?.setBackgroundResource(R.drawable.bg_mic_button)
             btnMicRecord?.setImageResource(R.drawable.ic_mic)
 
-            if (audioFile == null || !audioFile.exists() || audioFile.length() < 100) {
-                tvStatusMessage?.text = "⚠ Fale um pouco mais (áudio vazio)."
-                resetStatusAfterDelay(2500)
-                return
-            }
+            serviceScope.launch {
+                val audioFile = audioRecorder.stopRecording()
+                isStoppingRecording = false
 
-            pendingAudioFile = audioFile
-            processAudioFile(audioFile)
+                if (audioFile == null || !audioFile.exists() || audioFile.length() < 100) {
+                    tvStatusMessage?.text = "⚠ Fale um pouco mais (áudio vazio)."
+                    resetStatusAfterDelay(2500)
+                    return@launch
+                }
+
+                pendingAudioFile?.takeIf { it != audioFile }?.delete()
+                pendingAudioFile = audioFile
+                processAudioFile(audioFile)
+            }
         }
+    }
+
+    private fun startMicPulse() {
+        val pulse = viewMicPulse ?: return
+        micPulseJob?.cancel()
+        pulse.visibility = View.VISIBLE
+        micPulseJob = serviceScope.launch {
+            var smoothed = 0f
+            while (isActive && audioRecorder.isRecordingNow()) {
+                val level = audioRecorder.currentLevel()
+                // Sobe rápido e desce devagar, para o anel não "piscar"
+                smoothed = if (level > smoothed) smoothed + (level - smoothed) * 0.6f else smoothed * 0.85f
+                val scale = 1f + smoothed * 0.18f
+                pulse.scaleX = scale
+                pulse.scaleY = scale
+                pulse.alpha = 0.35f + smoothed * 0.65f
+                delay(40)
+            }
+        }
+    }
+
+    private fun stopMicPulse() {
+        micPulseJob?.cancel()
+        micPulseJob = null
+        viewMicPulse?.apply {
+            visibility = View.INVISIBLE
+            scaleX = 1f
+            scaleY = 1f
+        }
+    }
+
+    private fun undoLastDictation() {
+        val inserted = lastDictatedText
+        val ic = currentInputConnection
+        if (inserted.isNullOrEmpty() || ic == null) {
+            btnUndoDictation?.visibility = View.GONE
+            return
+        }
+
+        val before = ic.getTextBeforeCursor(inserted.length, 0)?.toString()
+        if (before == inserted) {
+            ic.deleteSurroundingText(inserted.length, 0)
+            tvStatusMessage?.text = "↶ Último ditado desfeito."
+            resetStatusAfterDelay(2000)
+        } else {
+            Toast.makeText(this, "O texto foi alterado depois do ditado; não é possível desfazer.", Toast.LENGTH_SHORT).show()
+        }
+        lastDictatedText = null
+        btnUndoDictation?.visibility = View.GONE
     }
 
     /**
@@ -506,7 +602,7 @@ class VoxIAInputMethodService : InputMethodService() {
         isProcessingAudio = true
 
         val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
-        val apiKey = prefs.getString("groq_api_key", "") ?: ""
+        val apiKey = apiKeyStore.get()
 
         tvStatusMessage?.text = getString(R.string.status_transcribing)
         btnRetryAudio?.visibility = View.GONE
@@ -552,7 +648,7 @@ class VoxIAInputMethodService : InputMethodService() {
 
                     withContext(Dispatchers.Main) {
                         if (finalText.isNotBlank()) {
-                            commitTextToInput(finalText + " ")
+                            commitDictation(finalText + " ")
                             tvStatusMessage?.text = getString(R.string.status_done)
 
                             val autoSend = prefs.getBoolean("auto_send_enabled", false)
@@ -561,7 +657,7 @@ class VoxIAInputMethodService : InputMethodService() {
                                 performSendAction()
                             }
                         } else {
-                            commitTextToInput(rawTranscript + " ")
+                            commitDictation(rawTranscript + " ")
                             tvStatusMessage?.text = getString(R.string.status_done)
                         }
 
@@ -618,5 +714,6 @@ class VoxIAInputMethodService : InputMethodService() {
         super.onDestroy()
         backspaceRepeatJob?.cancel()
         audioRecorder.cancelRecording()
+        serviceScope.cancel()
     }
 }
