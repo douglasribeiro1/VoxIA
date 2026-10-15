@@ -51,9 +51,13 @@ namespace VoxIA.Services
                     httpClient.Timeout = TimeSpan.FromSeconds(90);
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
+                    string paragraphReminder = (IsParagraphMode() && rawText.Length >= 300)
+                        ? "\nORGANIZAÇÃO: este é um texto longo. Separe-o em parágrafos por MUDANÇA DE ASSUNTO (linha em branco entre os parágrafos), sem alterar, omitir ou acrescentar nenhuma palavra."
+                        : "";
+
                     string userMessage = string.Format(
                         "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n{0}\n\"\"\"\n\n" +
-                        "LEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder.",
+                        "LEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder." + paragraphReminder,
                         rawText
                     );
 
@@ -99,7 +103,7 @@ namespace VoxIA.Services
                             if (finishReason == "length")
                             {
                                 Logger.LogWarning("LLM output was truncated (finish_reason=length). Using raw transcript to avoid losing content.");
-                                return FallbackText(rawText);
+                                return rawText;
                             }
 
                             if (firstChoice != null && firstChoice.ContainsKey("message"))
@@ -112,12 +116,11 @@ namespace VoxIA.Services
                                     if (rawText.Length >= 200 && corrected.Length < rawText.Length * 0.75)
                                     {
                                         Logger.LogWarning(string.Format("LLM output suspiciously shorter than input ({0} vs {1} chars). Using raw transcript to avoid losing content.", corrected.Length, rawText.Length));
-                                        return FallbackText(rawText);
+                                        return rawText;
                                     }
                                     if (IsParagraphMode() && corrected.Length > 500 && corrected.IndexOf('\n') < 0)
                                     {
-                                        Logger.LogWarning("LLM returned a long text without paragraph breaks; splitting paragraphs locally.");
-                                        corrected = SplitIntoParagraphs(corrected);
+                                        Logger.LogWarning("Long LLM output came back without paragraph breaks.");
                                     }
                                     Logger.LogInfo("Groq LLM text correction completed successfully.");
                                     return corrected;
@@ -141,44 +144,6 @@ namespace VoxIA.Services
         {
             var cur = SettingsService.Current;
             return cur == null || cur.ActivePromptId == "default_paragraphs";
-        }
-
-        // Used when the LLM result can't be trusted: keep every word from Whisper, but still honour paragraph mode.
-        private static string FallbackText(string rawText)
-        {
-            return IsParagraphMode() ? SplitIntoParagraphs(rawText) : rawText;
-        }
-
-        private static readonly Regex AbbreviationEnd = new Regex(@"(?:\b(?:Dr|Dra|Drs|Sr|Sra|Prof|Profa|Av|Ex|Exa|Ilmo|Ilma|Obs|Fig|Tab|Pág|Pag|Cap|Ref|Aprox|etc|vs|nº|n|no)|\b[A-Za-z])\.$", RegexOptions.IgnoreCase);
-
-        // Only inserts line breaks between sentences; never changes, adds or removes words.
-        private static string SplitIntoParagraphs(string text)
-        {
-            if (string.IsNullOrEmpty(text) || text.Length < 400) return text;
-            string[] sentences = Regex.Split(text.Trim(), @"(?<=[.!?])\s+(?=[A-ZÀ-Ú""])");
-            var sb = new StringBuilder();
-            int paraLen = 0;
-            for (int i = 0; i < sentences.Length; i++)
-            {
-                string sentence = sentences[i];
-                if (i > 0)
-                {
-                    bool prevIsAbbrev = AbbreviationEnd.IsMatch(sentences[i - 1]);
-                    bool longEnough = paraLen >= 350;
-                    if (longEnough && !prevIsAbbrev)
-                    {
-                        sb.Append("\n\n");
-                        paraLen = 0;
-                    }
-                    else
-                    {
-                        sb.Append(' ');
-                    }
-                }
-                sb.Append(sentence);
-                paraLen += sentence.Length + 1;
-            }
-            return sb.ToString();
         }
 
         public static Task<string> CorrectTextAsync(string rawText)
