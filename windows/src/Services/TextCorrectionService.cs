@@ -22,7 +22,7 @@ namespace VoxIA.Services
 5. Retorne EXCLUSIVAMENTE o texto final corrigido.
 6. Use SOMENTE caracteres simples de teclado: hífen comum (-) em vez de travessões ou hífens especiais, aspas retas ("") e espaços normais.";
 
-        public static async Task<string> CorrectTextAsync(string rawText, string modelOverride)
+        public static async Task<string> CorrectTextAsync(string rawText, string modelOverride, string contextText)
         {
             if (string.IsNullOrWhiteSpace(rawText))
                 return string.Empty;
@@ -55,9 +55,17 @@ namespace VoxIA.Services
                         ? "\nORGANIZAÇÃO: este é um texto longo. Separe-o em parágrafos por MUDANÇA DE ASSUNTO (linha em branco entre os parágrafos), sem alterar, omitir ou acrescentar nenhuma palavra."
                         : "";
 
-                    string userMessage = string.Format(
+                    string markerReminder = TopicFormatter.HasMarkers(rawText)
+                        ? "\nMARCADORES: códigos como [[T0]] são títulos já formatados pelo aplicativo. Mantenha cada um exatamente como está, sozinho e na mesma posição, sem traduzir, remover, repetir ou juntar ao texto."
+                        : "";
+
+                    string contextBlock = string.IsNullOrWhiteSpace(contextText) ? "" : string.Format(
+                        "CONTEXTO (trecho que já está escrito antes do cursor; use SOMENTE para conferir a grafia de termos, nomes e siglas; NUNCA repita, copie ou inclua este trecho na resposta):\n\"\"\"\n{0}\n\"\"\"\n\n",
+                        contextText);
+
+                    string userMessage = contextBlock + string.Format(
                         "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n{0}\n\"\"\"\n\n" +
-                        "LEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder." + paragraphReminder,
+                        "LEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder." + paragraphReminder + markerReminder,
                         rawText
                     );
 
@@ -113,6 +121,11 @@ namespace VoxIA.Services
                                 {
                                     string corrected = msg["content"] != null ? msg["content"].ToString() : rawText;
                                     corrected = CleanOutput(corrected, rawText);
+                                    if (EchoesContext(corrected, rawText, contextText))
+                                    {
+                                        Logger.LogWarning("LLM output repeated the document context. Using raw transcript.");
+                                        return rawText;
+                                    }
                                     if (rawText.Length >= 200 && corrected.Length < rawText.Length * 0.75)
                                     {
                                         Logger.LogWarning(string.Format("LLM output suspiciously shorter than input ({0} vs {1} chars). Using raw transcript to avoid losing content.", corrected.Length, rawText.Length));
@@ -138,6 +151,20 @@ namespace VoxIA.Services
                 Logger.LogError("Error in Groq LLM text correction, using raw transcript fallback", ex);
                 return rawText;
             }
+        }
+
+        public static Task<string> CorrectTextAsync(string rawText, string modelOverride)
+        {
+            return CorrectTextAsync(rawText, modelOverride, null);
+        }
+
+        // True when the model copied the (reference-only) context into its answer
+        private static bool EchoesContext(string corrected, string rawText, string contextText)
+        {
+            if (string.IsNullOrWhiteSpace(contextText) || string.IsNullOrEmpty(corrected)) return false;
+            string probe = contextText.Length > 40 ? contextText.Substring(contextText.Length - 40) : contextText;
+            return corrected.IndexOf(probe, StringComparison.OrdinalIgnoreCase) >= 0
+                && rawText.IndexOf(probe, StringComparison.OrdinalIgnoreCase) < 0;
         }
 
         private static bool IsParagraphMode()

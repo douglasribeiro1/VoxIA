@@ -67,6 +67,9 @@ namespace VoxIA.Services
         public bool SilenceAutoStop { get; set; }
         public int SilenceAutoStopSeconds { get; set; }
 
+        public bool EnableAudioPreprocessing { get; set; }
+        public bool EnableFieldContext { get; set; }
+
         public AppSettings()
         {
             ApiKey = "";
@@ -95,6 +98,9 @@ namespace VoxIA.Services
             PushToTalkMode = false;
             SilenceAutoStop = false;
             SilenceAutoStopSeconds = 3;
+
+            EnableAudioPreprocessing = true;
+            EnableFieldContext = true;
         }
     }
 

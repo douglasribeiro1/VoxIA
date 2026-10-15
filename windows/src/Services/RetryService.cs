@@ -48,7 +48,8 @@ namespace VoxIA.Services
 
                 // Step 1: Transcribe with Groq Whisper
                 PendingAudioRepository.UpdateStatus(item.Id, AudioQueueStatus.TRANSCRIBING);
-                string rawText = await TranscriptionService.TranscribeAudioAsync(item.FilePath);
+                string fieldContext = item.TargetContext != null ? item.TargetContext.ContextText : null;
+                string rawText = await TranscriptionService.TranscribeAudioAsync(item.FilePath, null, fieldContext);
 
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
@@ -63,15 +64,30 @@ namespace VoxIA.Services
 
                 // Step 2: Correct text with Groq LLM
                 PendingAudioRepository.UpdateStatus(item.Id, AudioQueueStatus.CORRECTING);
-                string finalText = await TextCorrectionService.CorrectTextAsync(rawText);
+                // Spoken "abrir tópico ... fechar tópico" commands become markers the LLM must not touch
+                var headings = new System.Collections.Generic.List<TopicHeading>();
+                string markedRaw = TopicFormatter.ExtractMarkers(rawText, headings);
+                if (headings.Count > 0)
+                {
+                    Logger.LogInfo(string.Format("Detected {0} spoken heading command(s).", headings.Count));
+                }
+
+                string finalText = TopicFormatter.IsOnlyMarkers(markedRaw)
+                    ? markedRaw
+                    : await TextCorrectionService.CorrectTextAsync(markedRaw, null, fieldContext);
 
                 if (string.IsNullOrWhiteSpace(finalText))
                 {
-                    finalText = rawText;
+                    finalText = markedRaw;
                 }
 
                 // Step 2.5: Deterministic Local Dictionary & Custom Vocabulary Replacements
                 finalText = DictionaryService.ApplyReplacements(finalText);
+
+                if (headings.Count > 0)
+                {
+                    finalText = TopicFormatter.Restore(finalText, headings, DictionaryService.ApplyReplacements(markedRaw), DictionaryService.ApplyReplacements);
+                }
 
                 // Step 2.6: Compatibilidade com sistemas legados (hífens Unicode, aspas curvas, espaços especiais -> ANSI)
                 finalText = TextSanitizer.NormalizeForLegacyApps(finalText);

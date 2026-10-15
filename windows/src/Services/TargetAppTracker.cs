@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Windows.Automation;
+using System.Windows.Automation.Text;
 
 namespace VoxIA.Services
 {
@@ -29,6 +30,10 @@ namespace VoxIA.Services
 
         [ScriptIgnore]
         public AutomationElement AutomationElement { get; set; }
+
+        // Text already written before the cursor (kept in memory only, never persisted)
+        [ScriptIgnore]
+        public string ContextText { get; set; }
     }
 
     public static class TargetAppTracker
@@ -122,8 +127,91 @@ namespace VoxIA.Services
                 Logger.LogError("Error capturing target active context", ex);
             }
 
-            Logger.LogInfo(string.Format("Captured Target Context: Process='{0}', Title='{1}', HWnd=0x{2:X}", ctx.ProcessName, ctx.WindowTitle, ctx.WindowHandle.ToInt64()));
+            if (SettingsService.Current.EnableFieldContext && ctx.AutomationElement != null)
+            {
+                ctx.ContextText = ReadTextBeforeCaret(ctx.AutomationElement);
+            }
+
+            Logger.LogInfo(string.Format("Captured Target Context: Process='{0}', Title='{1}', HWnd=0x{2:X}, FieldContext={3} chars", ctx.ProcessName, ctx.WindowTitle, ctx.WindowHandle.ToInt64(), ctx.ContextText != null ? ctx.ContextText.Length : 0));
             return ctx;
+        }
+
+        private const int MaxContextChars = 400;
+
+        /// <summary>
+        /// Reads (at most) the last 400 characters written before the cursor in the focused field.
+        /// Runs with a short timeout because some applications answer UI Automation very slowly.
+        /// Returns null when nothing can be read.
+        /// </summary>
+        private static string ReadTextBeforeCaret(AutomationElement element)
+        {
+            try
+            {
+                string result = null;
+                var task = System.Threading.Tasks.Task.Run(() => { result = ReadTextBeforeCaretCore(element); });
+                if (!task.Wait(600)) return null;
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string ReadTextBeforeCaretCore(AutomationElement element)
+        {
+            try
+            {
+                if (element.Current.IsPassword) return null;
+
+                string text = null;
+                object patternObj;
+                if (element.TryGetCurrentPattern(TextPattern.Pattern, out patternObj))
+                {
+                    var tp = (TextPattern)patternObj;
+                    var sel = tp.GetSelection();
+                    if (sel != null && sel.Length > 0)
+                    {
+                        var range = sel[0].Clone();
+                        range.MoveEndpointByUnit(TextPatternRangeEndpoint.Start, TextUnit.Character, -MaxContextChars);
+                        range.MoveEndpointByRange(TextPatternRangeEndpoint.End, sel[0], TextPatternRangeEndpoint.Start);
+                        text = range.GetText(MaxContextChars);
+                    }
+                }
+
+                if (string.IsNullOrEmpty(text) && element.TryGetCurrentPattern(ValuePattern.Pattern, out patternObj))
+                {
+                    // No caret information: assume the user is dictating at the end of the field
+                    var vp = (ValuePattern)patternObj;
+                    string value = vp.Current.Value;
+                    if (!string.IsNullOrEmpty(value))
+                        text = value.Length > MaxContextChars ? value.Substring(value.Length - MaxContextChars) : value;
+                }
+
+                if (string.IsNullOrWhiteSpace(text)) return null;
+
+                var sb = new StringBuilder(text.Length);
+                bool lastSpace = false;
+                foreach (char c in text)
+                {
+                    if (char.IsControl(c) || char.IsWhiteSpace(c))
+                    {
+                        if (!lastSpace) sb.Append(' ');
+                        lastSpace = true;
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                        lastSpace = false;
+                    }
+                }
+                string clean = sb.ToString().Trim();
+                return clean.Length >= 8 ? clean : null;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
