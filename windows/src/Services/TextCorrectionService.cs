@@ -99,7 +99,7 @@ namespace VoxIA.Services
                             if (finishReason == "length")
                             {
                                 Logger.LogWarning("LLM output was truncated (finish_reason=length). Using raw transcript to avoid losing content.");
-                                return rawText;
+                                return FallbackText(rawText);
                             }
 
                             if (firstChoice != null && firstChoice.ContainsKey("message"))
@@ -112,7 +112,12 @@ namespace VoxIA.Services
                                     if (rawText.Length >= 200 && corrected.Length < rawText.Length * 0.75)
                                     {
                                         Logger.LogWarning(string.Format("LLM output suspiciously shorter than input ({0} vs {1} chars). Using raw transcript to avoid losing content.", corrected.Length, rawText.Length));
-                                        return rawText;
+                                        return FallbackText(rawText);
+                                    }
+                                    if (IsParagraphMode() && corrected.Length > 500 && corrected.IndexOf('\n') < 0)
+                                    {
+                                        Logger.LogWarning("LLM returned a long text without paragraph breaks; splitting paragraphs locally.");
+                                        corrected = SplitIntoParagraphs(corrected);
                                     }
                                     Logger.LogInfo("Groq LLM text correction completed successfully.");
                                     return corrected;
@@ -130,6 +135,43 @@ namespace VoxIA.Services
                 Logger.LogError("Error in Groq LLM text correction, using raw transcript fallback", ex);
                 return rawText;
             }
+        }
+
+        private static bool IsParagraphMode()
+        {
+            var cur = SettingsService.Current;
+            return cur == null || cur.ActivePromptId == "default_paragraphs";
+        }
+
+        // Used when the LLM result can't be trusted: keep every word from Whisper, but still honour paragraph mode.
+        private static string FallbackText(string rawText)
+        {
+            return IsParagraphMode() ? SplitIntoParagraphs(rawText) : rawText;
+        }
+
+        private static string SplitIntoParagraphs(string text)
+        {
+            if (string.IsNullOrEmpty(text) || text.Length < 400) return text;
+            string[] sentences = Regex.Split(text.Trim(), @"(?<=[.!?])\s+");
+            var sb = new StringBuilder();
+            int paraLen = 0, count = 0;
+            foreach (string sentence in sentences)
+            {
+                if (count > 0 && paraLen >= 350)
+                {
+                    sb.Append("\n\n");
+                    paraLen = 0;
+                    count = 0;
+                }
+                else if (count > 0)
+                {
+                    sb.Append(' ');
+                }
+                sb.Append(sentence);
+                paraLen += sentence.Length + 1;
+                count++;
+            }
+            return sb.ToString();
         }
 
         public static Task<string> CorrectTextAsync(string rawText)
