@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 class GroqClient {
     private val client = OkHttpClient.Builder()
         .connectTimeout(25, TimeUnit.SECONDS)
-        .readTimeout(45, TimeUnit.SECONDS)
+        .readTimeout(90, TimeUnit.SECONDS)
         .writeTimeout(45, TimeUnit.SECONDS)
         .build()
 
@@ -151,12 +151,15 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
 
         try {
             val enforcedSystemPrompt = "$strictAntiResponseDirective\n\nINSTRUÇÕES DO PERFIL:\n$systemPrompt"
-            val maxTokens = Math.max(1024, (rawText.length * 4) + 512)
+            val maxTokens = Math.max(1024, Math.min(7000, (rawText.length * 2) + 1500))
 
             val jsonBody = JsonObject().apply {
                 addProperty("model", model)
                 addProperty("temperature", 0.0)
                 addProperty("max_tokens", maxTokens)
+                if (model.contains("gpt-oss", ignoreCase = true)) {
+                    addProperty("reasoning_effort", "low")
+                }
 
                 val messages = com.google.gson.JsonArray().apply {
                     add(JsonObject().apply {
@@ -189,9 +192,19 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
             val json = gson.fromJson(bodyString, JsonObject::class.java)
             val choices = json.getAsJsonArray("choices")
             if (choices != null && choices.size() > 0) {
-                val message = choices[0].asJsonObject.getAsJsonObject("message")
+                val firstChoice = choices[0].asJsonObject
+                val finishReason = firstChoice.get("finish_reason")?.takeIf { !it.isJsonNull }?.asString
+                if (finishReason == "length") {
+                    Log.w("GroqClient", "Saída da LLM truncada (finish_reason=length). Usando texto bruto para não perder conteúdo.")
+                    return@withContext Result.success(rawText)
+                }
+                val message = firstChoice.getAsJsonObject("message")
                 val content = message?.get("content")?.asString ?: rawText
                 val cleaned = cleanOutput(content, rawText)
+                if (rawText.length >= 200 && cleaned.length < rawText.length * 0.75) {
+                    Log.w("GroqClient", "Saída da LLM muito menor que a entrada (${cleaned.length} vs ${rawText.length}). Usando texto bruto.")
+                    return@withContext Result.success(rawText)
+                }
                 val finalText = if (cleaned.isNotBlank()) cleaned else rawText
                 Result.success(finalText)
             } else {

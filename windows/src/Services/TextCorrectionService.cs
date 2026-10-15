@@ -38,8 +38,9 @@ namespace VoxIA.Services
             string activePrompt = SettingsService.GetActivePromptText();
             string systemPrompt = StrictAntiResponseDirective + "\n\nINSTRUÇÕES DO PERFIL:\n" + activePrompt;
 
-            // Dynamically calculate max_tokens to strictly respect Groq TPM rate limits (8000 TPM limit on free tier)
-            int maxTokens = Math.Max(256, Math.Min(2048, (rawText.Length * 2) + 256));
+            // max_tokens also covers the reasoning tokens of gpt-oss models, so it must be generous for long dictations
+            // (otherwise the corrected text is silently cut). Capped to stay within Groq TPM limits.
+            int maxTokens = Math.Max(1024, Math.Min(7000, (rawText.Length * 2) + 1500));
 
             Logger.LogInfo(string.Format("Sending raw transcript ({0} chars, max_tokens: {1}) to Groq LLM ('{2}') for correction...", rawText.Length, maxTokens, model));
 
@@ -47,7 +48,7 @@ namespace VoxIA.Services
             {
                 using (var httpClient = new HttpClient())
                 {
-                    httpClient.Timeout = TimeSpan.FromSeconds(30);
+                    httpClient.Timeout = TimeSpan.FromSeconds(90);
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
                     string userMessage = string.Format(
@@ -56,17 +57,22 @@ namespace VoxIA.Services
                         rawText
                     );
 
-                    var payload = new
+                    var payload = new Dictionary<string, object>
                     {
-                        model = model,
-                        temperature = 0.0,
-                        max_tokens = maxTokens,
-                        messages = new object[]
-                        {
-                            new { role = "system", content = systemPrompt },
-                            new { role = "user", content = userMessage }
+                        { "model", model },
+                        { "temperature", 0.0 },
+                        { "max_tokens", maxTokens },
+                        { "messages", new object[]
+                            {
+                                new { role = "system", content = systemPrompt },
+                                new { role = "user", content = userMessage }
+                            }
                         }
                     };
+                    if (model.IndexOf("gpt-oss", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        payload["reasoning_effort"] = "low";
+                    }
 
                     var serializer = new JavaScriptSerializer();
                     string jsonBody = serializer.Serialize(payload);
@@ -88,6 +94,14 @@ namespace VoxIA.Services
                         if (choices != null && choices.Count > 0)
                         {
                             var firstChoice = choices[0] as Dictionary<string, object>;
+                            string finishReason = (firstChoice != null && firstChoice.ContainsKey("finish_reason") && firstChoice["finish_reason"] != null)
+                                ? firstChoice["finish_reason"].ToString() : "";
+                            if (finishReason == "length")
+                            {
+                                Logger.LogWarning("LLM output was truncated (finish_reason=length). Using raw transcript to avoid losing content.");
+                                return rawText;
+                            }
+
                             if (firstChoice != null && firstChoice.ContainsKey("message"))
                             {
                                 var msg = firstChoice["message"] as Dictionary<string, object>;
@@ -95,6 +109,11 @@ namespace VoxIA.Services
                                 {
                                     string corrected = msg["content"] != null ? msg["content"].ToString() : rawText;
                                     corrected = CleanOutput(corrected, rawText);
+                                    if (rawText.Length >= 200 && corrected.Length < rawText.Length * 0.75)
+                                    {
+                                        Logger.LogWarning(string.Format("LLM output suspiciously shorter than input ({0} vs {1} chars). Using raw transcript to avoid losing content.", corrected.Length, rawText.Length));
+                                        return rawText;
+                                    }
                                     Logger.LogInfo("Groq LLM text correction completed successfully.");
                                     return corrected;
                                 }

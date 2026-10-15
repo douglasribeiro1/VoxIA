@@ -19,19 +19,26 @@ public class TextCorrectionService {
         let systemPrompt = getSystemPrompt(preset: SettingsService.current.selectedPromptPreset, custom: SettingsService.current.customPromptText)
 
         var request = URLRequest(url: endpoint)
+        request.timeoutInterval = 90
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let payload: [String: Any] = [
+        // max_tokens also covers the reasoning tokens of gpt-oss models; keep it generous for long dictations
+        let maxTokens = max(1024, min(7000, rawText.count * 2 + 1500))
+        var payload: [String: Any] = [
             "model": model,
             "temperature": 0.0,
-            "max_tokens": 2048,
+            "max_tokens": maxTokens,
             "messages": [
                 ["role": "system", "content": systemPrompt],
                 ["role": "user", "content": rawText]
             ]
         ]
+
+        if model.lowercased().contains("gpt-oss") {
+            payload["reasoning_effort"] = "low"
+        }
 
         guard let bodyData = try? JSONSerialization.data(withJSONObject: payload) else {
             completion(.success(rawText))
@@ -58,7 +65,18 @@ public class TextCorrectionService {
                 return
             }
 
+            if let finish = firstChoice["finish_reason"] as? String, finish == "length" {
+                Logger.info("LLM output truncated (finish_reason=length); using raw transcript to avoid losing content.")
+                completion(.success(rawText))
+                return
+            }
+
             let cleaned = cleanOutput(content)
+            if rawText.count >= 200 && Double(cleaned.count) < Double(rawText.count) * 0.75 {
+                Logger.info("LLM output suspiciously shorter than input (\(cleaned.count) vs \(rawText.count) chars); using raw transcript.")
+                completion(.success(rawText))
+                return
+            }
             completion(.success(cleaned))
         }
         task.resume()
