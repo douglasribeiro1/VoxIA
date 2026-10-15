@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import com.voxia.keyboard.data.TopicFormatter
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -41,7 +42,8 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
         apiKey: String,
         model: String = "whisper-large-v3",
         initialPrompt: String = "",
-        maxRetries: Int = 3
+        maxRetries: Int = 3,
+        contextText: String = ""
     ): Result<String> = withContext(Dispatchers.IO) {
         val trimmedKey = apiKey.trim()
         if (trimmedKey.isBlank()) {
@@ -52,11 +54,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
             return@withContext Result.failure(Exception("Arquivo de áudio inválido ou vazio."))
         }
 
-        val basePrompt = if (initialPrompt.isNotBlank()) {
-            "Ditado por voz em português brasileiro sem legendas. Vocabulário: $initialPrompt"
-        } else {
-            "Ditado por voz em português brasileiro sem legendas."
-        }
+        val basePrompt = buildWhisperPrompt(initialPrompt, contextText)
 
         var lastException: Exception = Exception("Erro desconhecido de transcrição")
 
@@ -113,6 +111,10 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
                 val rawText = json.get("text")?.asString ?: ""
                 val sanitized = sanitizeWhisperText(rawText)
                 val resultText = if (sanitized.isNotBlank()) sanitized else rawText.trim()
+                if (isPromptEcho(resultText, contextText)) {
+                    Log.i("GroqClient", "Whisper devolveu apenas o contexto recebido (sem fala real). Descartando.")
+                    return@withContext Result.success("")
+                }
                 return@withContext Result.success(resultText)
 
             } catch (e: IOException) {
@@ -138,7 +140,9 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
         rawText: String,
         apiKey: String,
         systemPrompt: String,
-        model: String = "openai/gpt-oss-120b"
+        model: String = "openai/gpt-oss-120b",
+        contextText: String = "",
+        paragraphMode: Boolean = false
     ): Result<String> = withContext(Dispatchers.IO) {
         if (rawText.isBlank()) {
             return@withContext Result.success("")
@@ -168,7 +172,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
                     })
                     add(JsonObject().apply {
                         addProperty("role", "user")
-                        addProperty("content", rawText)
+                        addProperty("content", buildUserMessage(rawText, contextText, paragraphMode))
                     })
                 }
                 add("messages", messages)
@@ -201,6 +205,10 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
                 val message = firstChoice.getAsJsonObject("message")
                 val content = message?.get("content")?.asString ?: rawText
                 val cleaned = cleanOutput(content, rawText)
+                if (echoesContext(cleaned, rawText, contextText)) {
+                    Log.w("GroqClient", "Saída da LLM repetiu o contexto do campo. Usando texto bruto.")
+                    return@withContext Result.success(rawText)
+                }
                 if (rawText.length >= 200 && cleaned.length < rawText.length * 0.75) {
                     Log.w("GroqClient", "Saída da LLM muito menor que a entrada (${cleaned.length} vs ${rawText.length}). Usando texto bruto.")
                     return@withContext Result.success(rawText)
@@ -214,6 +222,51 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA):
             Log.e("GroqClient", "Falha na correção de texto, usando fallback para transcrição bruta", e)
             Result.success(rawText)
         }
+    }
+
+    /**
+     * O Whisper se apoia no FINAL do prompt, então o texto já escrito no campo vai por último.
+     */
+    private fun buildWhisperPrompt(vocabulary: String, contextText: String): String {
+        val base = if (vocabulary.isNotBlank()) {
+            "Ditado por voz em português brasileiro sem legendas. Vocabulário: $vocabulary"
+        } else {
+            "Ditado por voz em português brasileiro sem legendas."
+        }
+        if (contextText.isBlank()) return base
+        var tail = if (contextText.length > 220) contextText.substring(contextText.length - 220) else contextText
+        val firstSpace = tail.indexOf(' ')
+        if (contextText.length > 220 && firstSpace in 1..39) tail = tail.substring(firstSpace + 1)
+        return "$base $tail"
+    }
+
+    private fun isPromptEcho(transcript: String, contextText: String): Boolean {
+        if (transcript.isBlank() || contextText.isBlank()) return false
+        val t = transcript.trim().trimEnd('.', '!', '?', ' ')
+        if (t.length < 30) return false
+        return contextText.contains(t, ignoreCase = true)
+    }
+
+    private fun echoesContext(corrected: String, rawText: String, contextText: String): Boolean {
+        if (contextText.isBlank() || corrected.isEmpty()) return false
+        val probe = if (contextText.length > 40) contextText.substring(contextText.length - 40) else contextText
+        return corrected.contains(probe, ignoreCase = true) && !rawText.contains(probe, ignoreCase = true)
+    }
+
+    private fun buildUserMessage(rawText: String, contextText: String, paragraphMode: Boolean): String {
+        val paragraphReminder = if (paragraphMode && rawText.length >= 300) {
+            "\nORGANIZAÇÃO: este é um texto longo. Separe-o em parágrafos por MUDANÇA DE ASSUNTO (linha em branco entre os parágrafos), sem alterar, omitir ou acrescentar nenhuma palavra."
+        } else ""
+        val markerReminder = if (TopicFormatter.hasMarkers(rawText)) {
+            "\nMARCADORES: códigos como [[T0]] são títulos já formatados pelo aplicativo. Mantenha cada um exatamente como está, sozinho e na mesma posição, sem traduzir, remover, repetir ou juntar ao texto."
+        } else ""
+        if (paragraphReminder.isEmpty() && markerReminder.isEmpty() && contextText.isBlank()) return rawText
+
+        val contextBlock = if (contextText.isBlank()) "" else
+            "CONTEXTO (trecho que já está escrito antes do cursor; use SOMENTE para conferir a grafia de termos, nomes e siglas; NUNCA repita, copie ou inclua este trecho na resposta):\n\"\"\"\n$contextText\n\"\"\"\n\n"
+        return contextBlock + "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n" + rawText + "\n\"\"\"" +
+            "\n\nLEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder." +
+            paragraphReminder + markerReminder
     }
 
     /**

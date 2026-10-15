@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -30,6 +31,8 @@ import com.voxia.keyboard.audio.AudioRecorder
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
 import com.voxia.keyboard.data.PromptProfile
+import com.voxia.keyboard.data.TopicFormatter
+import com.voxia.keyboard.data.TopicHeading
 import com.voxia.keyboard.ui.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +47,8 @@ class VoxIAInputMethodService : InputMethodService() {
     private var backspaceRepeatJob: Job? = null
     private var isProcessingAudio = false
     private var pendingAudioFile: File? = null
+    // Texto já escrito antes do cursor (só em memória) para ajudar a grafia; vazio em campos de senha
+    private var fieldContext: String = ""
 
     private lateinit var audioRecorder: AudioRecorder
     private lateinit var groqClient: GroqClient
@@ -346,6 +351,34 @@ class VoxIAInputMethodService : InputMethodService() {
         }
     }
 
+    /**
+     * Lê até 400 caracteres antes do cursor para servir de contexto ao Whisper e à LLM.
+     * Campos de senha nunca são lidos.
+     */
+    private fun readFieldContext(): String {
+        return try {
+            val info = currentInputEditorInfo
+            if (info != null) {
+                val cls = info.inputType and InputType.TYPE_MASK_CLASS
+                val variation = info.inputType and InputType.TYPE_MASK_VARIATION
+                val isPassword = when (cls) {
+                    InputType.TYPE_CLASS_TEXT ->
+                        variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                            variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
+                            variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
+                    InputType.TYPE_CLASS_NUMBER -> variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
+                    else -> false
+                }
+                if (isPassword) return ""
+            }
+            val before = currentInputConnection?.getTextBeforeCursor(400, 0)?.toString() ?: ""
+            before.replace(Regex("""\s+"""), " ").trim()
+        } catch (e: Exception) {
+            Log.w("VoxIA", "Não foi possível ler o contexto do campo: ${e.message}")
+            ""
+        }
+    }
+
     private fun commitTextToInput(text: String) {
         val ic = currentInputConnection
         if (ic != null) {
@@ -473,6 +506,7 @@ class VoxIAInputMethodService : InputMethodService() {
         }
 
         if (!audioRecorder.isRecordingNow()) {
+            fieldContext = readFieldContext()
             val started = audioRecorder.startRecording()
             if (started) {
                 btnRetryAudio?.visibility = View.GONE
@@ -515,10 +549,12 @@ class VoxIAInputMethodService : InputMethodService() {
             val whisperTerms = dictionaryManager.getWhisperPromptTerms()
             Log.d("VoxIA", "Enviando para Whisper (${audioFile.length()} bytes, termos: $whisperTerms)...")
 
+            val contextForRequest = fieldContext
             val transcriptionResult = groqClient.transcribeAudio(
                 audioFile = audioFile,
                 apiKey = apiKey,
-                initialPrompt = whisperTerms
+                initialPrompt = whisperTerms,
+                contextText = contextForRequest
             )
 
             transcriptionResult.onSuccess { rawTranscript ->
@@ -537,17 +573,34 @@ class VoxIAInputMethodService : InputMethodService() {
                     }
 
                     val activePrompt = promptManager.getActivePrompt()
-                    Log.d("VoxIA", "Enviando para LLM (openai/gpt-oss-120b) com prompt '${activePrompt.title}'...")
-                    val correctedResult = groqClient.correctText(
-                        rawText = rawTranscript,
-                        apiKey = apiKey,
-                        systemPrompt = activePrompt.promptText,
-                        model = "openai/gpt-oss-120b"
-                    )
 
-                    val correctedText = correctedResult.getOrNull()
-                    val finalRawText = if (!correctedText.isNullOrBlank()) correctedText else rawTranscript
-                    val finalText = dictionaryManager.applyReplacements(finalRawText)
+                    // Comandos "abrir tópico ... fechar tópico" viram marcadores que a LLM não altera
+                    val headings = mutableListOf<TopicHeading>()
+                    val markedRaw = TopicFormatter.extractMarkers(rawTranscript, headings)
+
+                    val correctedText: String? = if (headings.isNotEmpty() && TopicFormatter.isOnlyMarkers(markedRaw)) {
+                        markedRaw
+                    } else {
+                        Log.d("VoxIA", "Enviando para LLM (openai/gpt-oss-120b) com prompt '${activePrompt.title}'...")
+                        groqClient.correctText(
+                            rawText = markedRaw,
+                            apiKey = apiKey,
+                            systemPrompt = activePrompt.promptText,
+                            model = "openai/gpt-oss-120b",
+                            contextText = contextForRequest,
+                            paragraphMode = activePrompt.id == "default_paragraphs"
+                        ).getOrNull()
+                    }
+
+                    val finalRawText = if (!correctedText.isNullOrBlank()) correctedText else markedRaw
+                    var finalText = dictionaryManager.applyReplacements(finalRawText)
+                    if (headings.isNotEmpty()) {
+                        finalText = TopicFormatter.restore(
+                            finalText,
+                            headings,
+                            dictionaryManager.applyReplacements(markedRaw)
+                        ) { dictionaryManager.applyReplacements(it) }
+                    }
                     Log.d("VoxIA", "Texto final formatado: '$finalText'")
 
                     withContext(Dispatchers.Main) {
