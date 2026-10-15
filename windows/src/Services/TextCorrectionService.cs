@@ -149,27 +149,34 @@ namespace VoxIA.Services
             return IsParagraphMode() ? SplitIntoParagraphs(rawText) : rawText;
         }
 
+        private static readonly Regex AbbreviationEnd = new Regex(@"(?:\b(?:Dr|Dra|Drs|Sr|Sra|Prof|Profa|Av|Ex|Exa|Ilmo|Ilma|Obs|Fig|Tab|Pág|Pag|Cap|Ref|Aprox|etc|vs|nº|n|no)|\b[A-Za-z])\.$", RegexOptions.IgnoreCase);
+
+        // Only inserts line breaks between sentences; never changes, adds or removes words.
         private static string SplitIntoParagraphs(string text)
         {
             if (string.IsNullOrEmpty(text) || text.Length < 400) return text;
-            string[] sentences = Regex.Split(text.Trim(), @"(?<=[.!?])\s+");
+            string[] sentences = Regex.Split(text.Trim(), @"(?<=[.!?])\s+(?=[A-ZÀ-Ú""])");
             var sb = new StringBuilder();
-            int paraLen = 0, count = 0;
-            foreach (string sentence in sentences)
+            int paraLen = 0;
+            for (int i = 0; i < sentences.Length; i++)
             {
-                if (count > 0 && paraLen >= 350)
+                string sentence = sentences[i];
+                if (i > 0)
                 {
-                    sb.Append("\n\n");
-                    paraLen = 0;
-                    count = 0;
-                }
-                else if (count > 0)
-                {
-                    sb.Append(' ');
+                    bool prevIsAbbrev = AbbreviationEnd.IsMatch(sentences[i - 1]);
+                    bool longEnough = paraLen >= 350;
+                    if (longEnough && !prevIsAbbrev)
+                    {
+                        sb.Append("\n\n");
+                        paraLen = 0;
+                    }
+                    else
+                    {
+                        sb.Append(' ');
+                    }
                 }
                 sb.Append(sentence);
                 paraLen += sentence.Length + 1;
-                count++;
             }
             return sb.ToString();
         }
