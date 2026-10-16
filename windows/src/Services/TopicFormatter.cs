@@ -194,10 +194,10 @@ namespace VoxIA.Services
             int p = i + 1;
             if (p < toks.Count && toks[p].Norm == "o") p++;
             if (p >= toks.Count) return 0;
-            string kind = toks[p].Norm;
-            if (kind == "topico" || kind == "topicos") { isTitle = false; return p - i + 1; }
-            if (kind == "titulo" || kind == "titulos") { isTitle = true; return p - i + 1; }
-            return 0;
+            int kind = HeadingKind(toks[p].Norm);
+            if (kind == 0) return 0;
+            isTitle = kind == 2;
+            return p - i + 1;
         }
 
         private static int MatchClose(List<Tok> toks, int k)
@@ -208,8 +208,19 @@ namespace VoxIA.Services
             int p = k + 1;
             if (p < toks.Count && toks[p].Norm == "o") p++;
             if (p >= toks.Count) return 0;
-            string kind = toks[p].Norm;
-            if (kind == "topico" || kind == "topicos" || kind == "titulo" || kind == "titulos") return p - k + 1;
+            if (HeadingKind(toks[p].Norm) == 0) return 0;
+            return p - k + 1;
+        }
+
+        // 1 = tópico, 2 = título, 0 = nenhum. O Whisper às vezes corta a palavra
+        // ("abrir t exames complementares fechar t"); aceita os pedaços iniciais.
+        // Como sempre é preciso o par abrir/fechar, o risco de falso positivo é baixo.
+        private static int HeadingKind(string w)
+        {
+            if (w == "topico" || w == "topicos") return 1;
+            if (w == "titulo" || w == "titulos") return 2;
+            if (w.Length >= 2 && w.Length <= 5 && "titulo".StartsWith(w, StringComparison.Ordinal)) return 2;
+            if (w.Length >= 1 && w.Length <= 5 && "topico".StartsWith(w, StringComparison.Ordinal)) return 1;
             return 0;
         }
 

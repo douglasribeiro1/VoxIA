@@ -167,9 +167,9 @@ object TopicFormatter {
         var p = i + 1
         if (p < toks.size && toks[p].norm == "o") p++
         if (p >= toks.size) return null
-        return when (toks[p].norm) {
-            "topico", "topicos" -> Pair(p - i + 1, false)
-            "titulo", "titulos" -> Pair(p - i + 1, true)
+        return when (headingKind(toks[p].norm)) {
+            1 -> Pair(p - i + 1, false)
+            2 -> Pair(p - i + 1, true)
             else -> null
         }
     }
@@ -181,10 +181,20 @@ object TopicFormatter {
         var p = k + 1
         if (p < toks.size && toks[p].norm == "o") p++
         if (p >= toks.size) return 0
-        return when (toks[p].norm) {
-            "topico", "topicos", "titulo", "titulos" -> p - k + 1
-            else -> 0
-        }
+        return if (headingKind(toks[p].norm) != 0) p - k + 1 else 0
+    }
+
+    /**
+     * 1 = tópico, 2 = título, 0 = nenhum. O Whisper às vezes corta a palavra
+     * ("abrir t exames complementares fechar t"); aceita os pedaços iniciais.
+     * Como sempre é preciso o par abrir/fechar, o risco de falso positivo é baixo.
+     */
+    private fun headingKind(w: String): Int = when {
+        w == "topico" || w == "topicos" -> 1
+        w == "titulo" || w == "titulos" -> 2
+        w.length in 2..5 && "titulo".startsWith(w) -> 2
+        w.length in 1..5 && "topico".startsWith(w) -> 1
+        else -> 0
     }
 
     private fun cleanHeading(raw: String): String {
