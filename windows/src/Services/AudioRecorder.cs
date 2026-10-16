@@ -317,6 +317,15 @@ namespace VoxIA.Services
                         }
                     }
                     AudioEncoderService.SaveAudioFile(pcmData, _currentFilePath, _format.nSamplesPerSec);
+                    try
+                    {
+                        AudioChunker.SaveParts(pcmData, (int)_format.nSamplesPerSec, _currentFilePath);
+                    }
+                    catch (Exception chunkEx)
+                    {
+                        AudioChunker.DeleteParts(_currentFilePath);
+                        Logger.LogError("Could not split the recording into blocks; it will be sent whole", chunkEx);
+                    }
                 }
 
                 CleanupWaveIn();

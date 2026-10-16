@@ -71,6 +71,7 @@ namespace VoxIA.Services
                 {
                     Logger.LogWarning(string.Format("Discarded too short or empty audio recording ({0} bytes, {1:F2}s): {2}", fi.Length, durationSeconds, filePath));
                     try { File.Delete(filePath); } catch { }
+                    AudioChunker.DeleteParts(filePath);
                     return null;
                 }
             }
@@ -137,6 +138,7 @@ namespace VoxIA.Services
                     SaveQueue();
 
                     // Only delete local audio file AFTER complete success
+                    AudioChunker.DeleteParts(item.FilePath);
                     if (File.Exists(item.FilePath))
                     {
                         try
@@ -168,6 +170,7 @@ namespace VoxIA.Services
                     {
                         try { File.Delete(item.FilePath); } catch { }
                     }
+                    AudioChunker.DeleteParts(item.FilePath);
                     _items.Remove(item);
                     SaveQueue();
                     Logger.LogInfo(string.Format("Queue item manually deleted: {0}", id));
