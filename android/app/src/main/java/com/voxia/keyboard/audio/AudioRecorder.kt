@@ -4,12 +4,15 @@ import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class AudioRecorder(private val context: Context) {
-    private var recorder: MediaRecorder? = null
+    @Volatile private var recorder: MediaRecorder? = null
     private var currentOutputFile: File? = null
-    private var isRecording = false
+    @Volatile private var isRecording = false
     private var recordingStartTime = 0L
 
     fun startRecording(): Boolean {
@@ -47,16 +50,16 @@ class AudioRecorder(private val context: Context) {
         }
     }
 
-    fun stopRecording(): File? {
-        if (!isRecording || recorder == null) return null
+    suspend fun stopRecording(): File? = withContext(Dispatchers.IO) {
+        if (!isRecording || recorder == null) return@withContext null
 
         val elapsed = System.currentTimeMillis() - recordingStartTime
         if (elapsed < 600) {
             // Pequena pausa para evitar o erro stop failed do MediaRecorder em gravações ultracurtas
-            try { Thread.sleep(600 - elapsed) } catch (ignored: Exception) {}
+            delay(600 - elapsed)
         }
 
-        return try {
+        try {
             recorder?.apply {
                 try {
                     stop()
@@ -87,6 +90,16 @@ class AudioRecorder(private val context: Context) {
     }
 
     fun isRecordingNow(): Boolean = isRecording
+
+    /** Nível do microfone desde a última chamada, de 0.0 a 1.0. */
+    fun currentLevel(): Float {
+        val amplitude = try {
+            if (isRecording) recorder?.maxAmplitude ?: 0 else 0
+        } catch (ignored: Exception) {
+            0
+        }
+        return (amplitude / 18000f).coerceIn(0f, 1f)
+    }
 
     private fun cleanup() {
         try {

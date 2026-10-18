@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.voxia.keyboard.R
+import com.voxia.keyboard.data.ApiKeyStore
 import com.voxia.keyboard.data.DictionaryEntry
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
@@ -95,9 +96,12 @@ class SettingsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Por favor, insira a chave da Groq.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
-            prefs.edit().putString("groq_api_key", key).apply()
-            Toast.makeText(this, "✓ Chave Groq salva com sucesso!", Toast.LENGTH_SHORT).show()
+            try {
+                ApiKeyStore(this).save(key)
+                Toast.makeText(this, "✓ Chave Groq salva com sucesso!", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this, "⚠ Não foi possível salvar a chave: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
 
         btnAddDictEntry.setOnClickListener {
@@ -192,7 +196,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun loadSavedData() {
         val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
-        val apiKey = prefs.getString("groq_api_key", "") ?: ""
+        val apiKey = ApiKeyStore(this).get()
         val autoSend = prefs.getBoolean("auto_send_enabled", false)
 
         etGroqApiKey.setText(apiKey)

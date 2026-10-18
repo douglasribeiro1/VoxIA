@@ -37,5 +37,6 @@
     <string name="btn_save_dict">Salvar Palavra</string>
     
     <string name="btn_send_desc">Enviar mensagem</string>
+    <string name="btn_undo_desc">Desfazer último ditado</string>
     <string name="setting_auto_send">Auto-enviar mensagem após ditar</string>
 </resources>
