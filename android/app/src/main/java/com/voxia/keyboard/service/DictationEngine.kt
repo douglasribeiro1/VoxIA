@@ -20,6 +20,10 @@ class DictationEngine(context: Context) {
     private val promptManager = PromptManager(context)
     private val dictionaryManager = DictionaryManager(context)
 
+    /** Preenchido quando o último ditado saiu sem a correção da IA (ex.: limite de uso da Groq). */
+    var lastCorrectionIssue: String? = null
+        private set
+
     /**
      * Devolve o texto pronto para inserir, ou "" quando não houve fala.
      * Falha = problema de rede/API: quem chamou deve guardar o áudio para reenviar.
@@ -30,6 +34,7 @@ class DictationEngine(context: Context) {
         contextText: String,
         onStage: (Stage) -> Unit = {}
     ): Result<String> {
+        lastCorrectionIssue = null
         onStage(Stage.TRANSCRIBING)
         val whisperTerms = dictionaryManager.getWhisperPromptTerms()
         Log.d("VoxIA", "Enviando para Whisper (${audioFile.length()} bytes, termos: $whisperTerms)...")
@@ -62,7 +67,11 @@ class DictationEngine(context: Context) {
                 model = "openai/gpt-oss-120b",
                 contextText = contextText,
                 paragraphMode = activePrompt.id == "default_paragraphs"
-            ).getOrNull()
+            ).getOrElse {
+                lastCorrectionIssue = it.message ?: "falha desconhecida"
+                Log.w("VoxIA", "Correção pela IA não aplicada: $lastCorrectionIssue")
+                null
+            }
         }
 
         val finalRawText = if (!correctedText.isNullOrBlank()) correctedText else markedRaw

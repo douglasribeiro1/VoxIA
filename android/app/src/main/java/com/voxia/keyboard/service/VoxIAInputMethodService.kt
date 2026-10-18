@@ -597,14 +597,15 @@ class VoxIAInputMethodService : InputMethodService() {
                     resetStatusAfterDelay(2500)
                 } else {
                     commitDictation(finalText + " ")
-                    tvStatusMessage?.text = getString(R.string.status_done)
+                    val issue = dictationEngine.lastCorrectionIssue
+                    tvStatusMessage?.text = if (issue != null) "⚠ Sem correção da IA: $issue" else getString(R.string.status_done)
 
                     val autoSend = prefs.getBoolean("auto_send_enabled", false)
-                    if (autoSend) {
+                    if (autoSend && issue == null) {
                         delay(200)
                         performSendAction()
                     }
-                    resetStatusAfterDelay(2000)
+                    resetStatusAfterDelay(if (issue != null) 5000 else 2000)
                 }
                 // Sucesso (com ou sem fala): limpa arquivo pendente
                 pendingAudioFile = null

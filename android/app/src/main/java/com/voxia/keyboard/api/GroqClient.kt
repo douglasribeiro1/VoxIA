@@ -18,6 +18,11 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+private const val CORRECTION_ATTEMPTS = 3
+
+/** Motivo legível de a correção pela IA não ter sido aplicada. */
+class CorrectionException(message: String) : Exception(message)
+
 class GroqClient {
     private val client = OkHttpClient.Builder()
         .connectTimeout(25, TimeUnit.SECONDS)
@@ -192,75 +197,104 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
             return@withContext Result.success(rawText)
         }
 
-        try {
-            val enforcedSystemPrompt = "$strictAntiResponseDirective\n\nINSTRUÇÕES DO PERFIL:\n$systemPrompt"
-            val maxTokens = Math.max(1024, Math.min(7000, (rawText.length * 2) + 1500))
+        val enforcedSystemPrompt = "$strictAntiResponseDirective\n\nINSTRUÇÕES DO PERFIL:\n$systemPrompt"
+        var maxTokens = Math.max(1024, Math.min(7000, (rawText.length * 2) + 1500))
+        var lastIssue = "falha desconhecida"
 
-            val jsonBody = JsonObject().apply {
-                addProperty("model", model)
-                addProperty("temperature", 0.0)
-                addProperty("max_tokens", maxTokens)
-                if (model.contains("gpt-oss", ignoreCase = true)) {
-                    addProperty("reasoning_effort", "low")
+        // Falha na correção não pode virar texto bruto em silêncio: tenta de novo nos erros
+        // passageiros (limite de uso, servidor, rede) e, se não der, devolve o motivo.
+        for (attempt in 1..CORRECTION_ATTEMPTS) {
+            try {
+                val jsonBody = JsonObject().apply {
+                    addProperty("model", model)
+                    addProperty("temperature", 0.0)
+                    addProperty("max_tokens", maxTokens)
+                    if (model.contains("gpt-oss", ignoreCase = true)) {
+                        addProperty("reasoning_effort", "low")
+                    }
+
+                    val messages = com.google.gson.JsonArray().apply {
+                        add(JsonObject().apply {
+                            addProperty("role", "system")
+                            addProperty("content", enforcedSystemPrompt)
+                        })
+                        add(JsonObject().apply {
+                            addProperty("role", "user")
+                            addProperty("content", buildUserMessage(rawText, contextText, paragraphMode))
+                        })
+                    }
+                    add("messages", messages)
                 }
 
-                val messages = com.google.gson.JsonArray().apply {
-                    add(JsonObject().apply {
-                        addProperty("role", "system")
-                        addProperty("content", enforcedSystemPrompt)
-                    })
-                    add(JsonObject().apply {
-                        addProperty("role", "user")
-                        addProperty("content", buildUserMessage(rawText, contextText, paragraphMode))
-                    })
+                val request = Request.Builder()
+                    .url("https://api.groq.com/openai/v1/chat/completions")
+                    .addHeader("Authorization", "Bearer $trimmedKey")
+                    .addHeader("Content-Type", "application/json")
+                    .post(jsonBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val bodyString = response.body?.string() ?: ""
+
+                if (!response.isSuccessful) {
+                    Log.w("GroqClient", "LLM Correction HTTP Error ${response.code} (tentativa $attempt): $bodyString")
+                    lastIssue = when (response.code) {
+                        429 -> "limite de uso da Groq atingido"
+                        401, 403 -> "chave da Groq recusada"
+                        in 500..599 -> "servidor da Groq instável"
+                        else -> "erro ${response.code} da Groq"
+                    }
+                    if (response.code == 429 || response.code >= 500) {
+                        delay(retryDelayMs(response.header("retry-after"), attempt))
+                        continue
+                    }
+                    break
                 }
-                add("messages", messages)
-            }
 
-            val request = Request.Builder()
-                .url("https://api.groq.com/openai/v1/chat/completions")
-                .addHeader("Authorization", "Bearer $trimmedKey")
-                .addHeader("Content-Type", "application/json")
-                .post(jsonBody.toString().toRequestBody("application/json".toMediaTypeOrNull()))
-                .build()
-
-            val response = client.newCall(request).execute()
-            val bodyString = response.body?.string() ?: ""
-
-            if (!response.isSuccessful) {
-                Log.w("GroqClient", "LLM Correction HTTP Error ${response.code}: $bodyString. Usando texto bruto.")
-                return@withContext Result.success(rawText)
-            }
-
-            val json = gson.fromJson(bodyString, JsonObject::class.java)
-            val choices = json.getAsJsonArray("choices")
-            if (choices != null && choices.size() > 0) {
+                val json = gson.fromJson(bodyString, JsonObject::class.java)
+                val choices = json.getAsJsonArray("choices")
+                if (choices == null || choices.size() == 0) {
+                    lastIssue = "resposta vazia da IA"
+                    continue
+                }
                 val firstChoice = choices[0].asJsonObject
                 val finishReason = firstChoice.get("finish_reason")?.takeIf { !it.isJsonNull }?.asString
                 if (finishReason == "length") {
-                    Log.w("GroqClient", "Saída da LLM truncada (finish_reason=length). Usando texto bruto para não perder conteúdo.")
-                    return@withContext Result.success(rawText)
+                    // O raciocínio do modelo também consome max_tokens: tenta de novo com folga maior
+                    Log.w("GroqClient", "Saída da LLM truncada (max_tokens=$maxTokens). Tentando com mais espaço.")
+                    lastIssue = "resposta da IA cortada"
+                    maxTokens = Math.min(16000, maxTokens * 2)
+                    continue
                 }
                 val message = firstChoice.getAsJsonObject("message")
-                val content = message?.get("content")?.asString ?: rawText
+                val content = message?.get("content")?.takeIf { !it.isJsonNull }?.asString ?: ""
+                if (content.isBlank()) {
+                    lastIssue = "resposta vazia da IA"
+                    continue
+                }
                 val cleaned = cleanOutput(content, rawText)
                 if (echoesContext(cleaned, rawText, contextText)) {
                     Log.w("GroqClient", "Saída da LLM repetiu o contexto do campo. Usando texto bruto.")
-                    return@withContext Result.success(rawText)
+                    return@withContext Result.failure(CorrectionException("a IA repetiu o texto do campo"))
                 }
                 if (rawText.length >= 200 && cleaned.length < rawText.length * 0.75) {
                     Log.w("GroqClient", "Saída da LLM muito menor que a entrada (${cleaned.length} vs ${rawText.length}). Usando texto bruto.")
-                    return@withContext Result.success(rawText)
+                    return@withContext Result.failure(CorrectionException("a IA encurtou demais o texto"))
                 }
-                val finalText = if (cleaned.isNotBlank()) cleaned else rawText
-                Result.success(finalText)
-            } else {
-                Result.success(rawText)
+                return@withContext Result.success(if (cleaned.isNotBlank()) cleaned else rawText)
+            } catch (e: Exception) {
+                Log.e("GroqClient", "Falha na correção de texto (tentativa $attempt)", e)
+                lastIssue = if (e is java.io.InterruptedIOException) "a IA demorou demais" else "falha de conexão"
+                if (attempt < CORRECTION_ATTEMPTS) delay(retryDelayMs(null, attempt))
             }
-        } catch (e: Exception) {
-            Log.e("GroqClient", "Falha na correção de texto, usando fallback para transcrição bruta", e)
-            Result.success(rawText)
         }
+        Result.failure(CorrectionException(lastIssue))
+    }
+
+    /** Espera antes de nova tentativa: respeita o retry-after da Groq até 8 s. */
+    private fun retryDelayMs(retryAfter: String?, attempt: Int): Long {
+        val seconds = retryAfter?.toDoubleOrNull()
+        return if (seconds != null) (seconds * 1000).toLong().coerceIn(500, 8000) else 1500L * attempt
     }
 
     /**

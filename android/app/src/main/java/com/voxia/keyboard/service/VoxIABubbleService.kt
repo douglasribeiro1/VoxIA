@@ -484,6 +484,7 @@ class VoxIABubbleService : AccessibilityService() {
                     toast("Nenhuma fala detectada.")
                 } else {
                     insertText("$text ")
+                    dictationEngine.lastCorrectionIssue?.let { toast("Texto sem correção da IA: $it.", long = true) }
                 }
                 fieldContext = ""
                 targetNode = null
