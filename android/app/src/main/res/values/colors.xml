@@ -14,4 +14,18 @@
     <color name="key_pressed">#3E4C66</color>
     <color name="mic_idle">#6366F1</color>
     <color name="mic_recording">#EF4444</color>
+
+    <!-- Tela de configurações (Material 3) -->
+    <color name="m3_bg">#0B0F1A</color>
+    <color name="m3_surface">#141A2A</color>
+    <color name="m3_surface_high">#1C2438</color>
+    <color name="m3_outline">#2A3350</color>
+    <color name="m3_primary">#8B93FF</color>
+    <color name="m3_on_primary">#0B0F1A</color>
+    <color name="m3_primary_container">#2B2F6B</color>
+    <color name="m3_on_primary_container">#DDE0FF</color>
+    <color name="m3_text">#EEF1F8</color>
+    <color name="m3_text_muted">#8F99B3</color>
+    <color name="m3_success">#34D399</color>
+    <color name="m3_warning">#FBBF24</color>
 </resources>

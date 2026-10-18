@@ -10,4 +10,47 @@
         <item name="android:navigationBarColor">@color/background_dark</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <!-- Só a tela de configurações; o teclado continua com o tema acima -->
+    <style name="Theme.VoxIA.Settings" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/m3_primary</item>
+        <item name="colorOnPrimary">@color/m3_on_primary</item>
+        <item name="colorPrimaryContainer">@color/m3_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/m3_on_primary_container</item>
+        <item name="colorSecondaryContainer">@color/m3_primary_container</item>
+        <item name="colorOnSecondaryContainer">@color/m3_on_primary_container</item>
+        <item name="colorSurface">@color/m3_surface</item>
+        <item name="colorOnSurface">@color/m3_text</item>
+        <item name="colorOnSurfaceVariant">@color/m3_text_muted</item>
+        <item name="colorOutline">@color/m3_outline</item>
+        <item name="android:colorBackground">@color/m3_bg</item>
+        <item name="android:windowBackground">@color/m3_bg</item>
+        <item name="android:statusBarColor">@color/m3_bg</item>
+        <item name="android:navigationBarColor">@color/m3_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="VoxIA.SectionTitle" parent="">
+        <item name="android:textColor">@color/m3_text</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="VoxIA.Body" parent="">
+        <item name="android:textColor">@color/m3_text_muted</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+    </style>
+
+    <style name="VoxIA.Label" parent="">
+        <item name="android:textColor">@color/m3_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="VoxIA.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/m3_surface</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="contentPadding">18dp</item>
+    </style>
 </resources>

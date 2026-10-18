@@ -93,7 +93,11 @@ class VoxIABubbleService : AccessibilityService() {
     private val refreshRunnable = Runnable { refreshBubble() }
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == PREF_ENABLED) refreshBubble()
+        when (key) {
+            PREF_ENABLED -> refreshBubble()
+            PREF_COLOR, PREF_ALPHA -> setState(state)
+            PREF_SIZE -> rebuildBubble()
+        }
     }
 
     private var pendingAudioFile: File?
@@ -181,8 +185,9 @@ class VoxIABubbleService : AccessibilityService() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun createBubble() {
-        val outer = dp(64)
-        val inner = dp(50)
+        val inner = dp(bubbleDiameterDp(prefs.getInt(PREF_SIZE, 1)))
+        val outer = inner + dp(14)
+        val iconSize = inner * 52 / 100
 
         val root = FrameLayout(this)
 
@@ -201,7 +206,7 @@ class VoxIABubbleService : AccessibilityService() {
             elevation = dp(7).toFloat()
             scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
-        root.addView(icon, FrameLayout.LayoutParams(dp(26), dp(26), Gravity.CENTER))
+        root.addView(icon, FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER))
 
         val progress = ProgressBar(this).apply {
             isIndeterminate = true
@@ -209,7 +214,7 @@ class VoxIABubbleService : AccessibilityService() {
             elevation = dp(7).toFloat()
             visibility = View.GONE
         }
-        root.addView(progress, FrameLayout.LayoutParams(dp(28), dp(28), Gravity.CENTER))
+        root.addView(progress, FrameLayout.LayoutParams(iconSize + dp(2), iconSize + dp(2), Gravity.CENTER))
 
         root.contentDescription = "Ditado VoxIA"
         root.setOnTouchListener(BubbleTouchListener())
@@ -232,6 +237,15 @@ class VoxIABubbleService : AccessibilityService() {
         circleView = circle
         iconView = icon
         progressView = progress
+    }
+
+    /** Tamanho mudou nas configurações: recria o balão mantendo o estado atual. */
+    private fun rebuildBubble() {
+        val wasShown = bubbleShown
+        hideBubble()
+        createBubble()
+        setState(state)
+        if (wasShown) showBubble()
     }
 
     private fun showBubble() {
@@ -368,7 +382,7 @@ class VoxIABubbleService : AccessibilityService() {
         val progress = progressView ?: return
         when (newState) {
             State.IDLE -> {
-                circle.setBackgroundResource(R.drawable.bg_mic_button)
+                circle.background = bubbleBackground(prefs.getInt(PREF_COLOR, BUBBLE_COLORS[0]))
                 icon.setImageResource(R.drawable.ic_mic)
                 icon.visibility = View.VISIBLE
                 progress.visibility = View.GONE
@@ -390,6 +404,10 @@ class VoxIABubbleService : AccessibilityService() {
                 icon.visibility = View.VISIBLE
                 progress.visibility = View.GONE
             }
+        }
+        bubble?.alpha = when (newState) {
+            State.IDLE, State.PENDING -> prefs.getInt(PREF_ALPHA, 100).coerceIn(30, 100) / 100f
+            else -> 1f
         }
         if (newState != State.RECORDING) stopPulse()
     }
@@ -675,6 +693,38 @@ class VoxIABubbleService : AccessibilityService() {
 
     companion object {
         const val PREF_ENABLED = "bubble_enabled"
+        const val PREF_COLOR = "bubble_color"
+        const val PREF_ALPHA = "bubble_alpha"   // 30..100 (%), só quando parado
+        const val PREF_SIZE = "bubble_size"     // 0 pequeno, 1 médio, 2 grande
+
+        /** Cores oferecidas para o balão parado (gravando é sempre vermelho; processando, âmbar). */
+        val BUBBLE_COLORS = intArrayOf(
+            0xFF6366F1.toInt(), // índigo
+            0xFF0EA5E9.toInt(), // azul
+            0xFF10B981.toInt(), // verde
+            0xFF8B5CF6.toInt(), // violeta
+            0xFFEC4899.toInt(), // rosa
+            0xFF475569.toInt()  // grafite
+        )
+
+        fun bubbleDiameterDp(size: Int): Int = when (size) {
+            0 -> 42
+            2 -> 58
+            else -> 50
+        }
+
+        /** Círculo com leve degradê na cor escolhida; usado no balão e na prévia das configurações. */
+        fun bubbleBackground(color: Int): android.graphics.drawable.GradientDrawable {
+            val darker = Color.rgb(
+                (Color.red(color) * 0.8f).toInt(),
+                (Color.green(color) * 0.8f).toInt(),
+                (Color.blue(color) * 0.8f).toInt()
+            )
+            return android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                intArrayOf(color, darker)
+            ).apply { shape = android.graphics.drawable.GradientDrawable.OVAL }
+        }
         /** Compartilhada com o teclado: enviar o texto já escrito no campo como contexto. */
         const val PREF_SEND_CONTEXT = "send_field_context"
         private const val PREF_SIDE = "bubble_side"
