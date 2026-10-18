@@ -342,6 +342,22 @@
                     android:text="@string/setting_auto_send"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchSendContext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Enviar o texto já escrito no campo como contexto"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ligado: até 400 caracteres antes do cursor vão junto com o áudio para a Groq, o que ajuda a acertar nomes e termos. Desligado: só o áudio é enviado. Vale para o teclado e para o balão; campos de senha nunca são lidos."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

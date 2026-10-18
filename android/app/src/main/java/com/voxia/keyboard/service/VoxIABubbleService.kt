@@ -478,6 +478,7 @@ class VoxIABubbleService : AccessibilityService() {
     /** Até 400 caracteres antes do cursor, para ajudar a grafia. Campos de senha nunca são lidos. */
     private fun readFieldContext(node: AccessibilityNodeInfo?): String {
         if (node == null || node.isPassword) return ""
+        if (!prefs.getBoolean(PREF_SEND_CONTEXT, true)) return ""
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && node.isShowingHintText) return ""
             val text = node.text?.toString() ?: return ""
@@ -491,9 +492,11 @@ class VoxIABubbleService : AccessibilityService() {
 
     /**
      * Cola no cursor do campo onde o ditado começou (ou no campo com foco agora). Colar é o caminho
-     * mais seguro: não reescreve o resto do campo, então nunca apaga o que já estava escrito.
+     * preferido porque não reescreve o resto do campo. Como alguns apps aceitam o pedido de colar
+     * e não fazem nada (ou recusam), o resultado é conferido; se o campo não mudou, o texto é
+     * escrito diretamente na posição do cursor.
      */
-    private fun insertText(text: String) {
+    private suspend fun insertText(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val previousClip = try { clipboard.primaryClip } catch (e: Exception) { null }
         clipboard.setPrimaryClip(ClipData.newPlainText("VoxIA", text))
@@ -502,13 +505,17 @@ class VoxIABubbleService : AccessibilityService() {
         var inserted = false
         if (node != null && !node.isPassword) {
             if (!node.isFocused) node.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
-            inserted = node.performAction(AccessibilityNodeInfo.ACTION_PASTE)
-            if (!inserted && isFieldEmpty(node)) {
-                // Campo vazio: escrever o texto inteiro não arrisca apagar nada
-                val args = Bundle().apply {
-                    putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text)
-                }
-                inserted = node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)
+            val before = currentText(node)
+            delay(120) // dá tempo de o app perceber que a área de transferência mudou
+
+            inserted = pasteAndCheck(node, before)
+            if (!inserted) {
+                delay(250)
+                inserted = changedSince(node, before) || pasteAndCheck(node, before)
+            }
+            if (!inserted) {
+                inserted = changedSince(node, before) || setTextAtCursor(node, before, text)
+                if (inserted) Log.i("VoxIABubble", "Colar não funcionou neste app; texto escrito direto no campo.")
             }
         }
 
@@ -524,9 +531,47 @@ class VoxIABubbleService : AccessibilityService() {
         }
     }
 
-    private fun isFieldEmpty(node: AccessibilityNodeInfo): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && node.isShowingHintText) return true
-        return node.text.isNullOrEmpty()
+    private suspend fun pasteAndCheck(node: AccessibilityNodeInfo, before: String): Boolean {
+        if (!node.performAction(AccessibilityNodeInfo.ACTION_PASTE)) return false
+        delay(200)
+        return changedSince(node, before)
+    }
+
+    private fun changedSince(node: AccessibilityNodeInfo, before: String): Boolean {
+        node.refresh()
+        return currentText(node) != before
+    }
+
+    /** Monta o texto do campo com o ditado na posição do cursor (substituindo a seleção, se houver). */
+    private fun setTextAtCursor(node: AccessibilityNodeInfo, current: String, text: String): Boolean {
+        var start = node.textSelectionStart
+        var end = node.textSelectionEnd
+        if (start !in 0..current.length || end !in 0..current.length) {
+            start = current.length
+            end = current.length
+        }
+        if (start > end) start = end.also { end = start }
+
+        val args = Bundle().apply {
+            putCharSequence(
+                AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                current.substring(0, start) + text + current.substring(end)
+            )
+        }
+        if (!node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)) return false
+
+        val cursor = start + text.length
+        node.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, Bundle().apply {
+            putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, cursor)
+            putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, cursor)
+        })
+        return true
+    }
+
+    /** Texto real do campo ("" quando só mostra a dica cinza de campo vazio). */
+    private fun currentText(node: AccessibilityNodeInfo): String {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && node.isShowingHintText) return ""
+        return node.text?.toString() ?: ""
     }
 
     // ---------- Primeiro plano durante a gravação ----------
@@ -630,6 +675,8 @@ class VoxIABubbleService : AccessibilityService() {
 
     companion object {
         const val PREF_ENABLED = "bubble_enabled"
+        /** Compartilhada com o teclado: enviar o texto já escrito no campo como contexto. */
+        const val PREF_SEND_CONTEXT = "send_field_context"
         private const val PREF_SIDE = "bubble_side"
         private const val PREF_Y = "bubble_y"
         private const val PREF_PENDING = "bubble_pending_audio_path"

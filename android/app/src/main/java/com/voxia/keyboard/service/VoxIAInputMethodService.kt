@@ -385,6 +385,8 @@ class VoxIAInputMethodService : InputMethodService() {
      * Campos de senha nunca são lidos.
      */
     private fun readFieldContext(): String {
+        val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, true)) return ""
         return try {
             val info = currentInputEditorInfo
             if (info != null) {

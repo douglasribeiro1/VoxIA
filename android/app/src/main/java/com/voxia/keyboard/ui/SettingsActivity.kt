@@ -39,6 +39,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var btnEnableKeyboard: Button
     private lateinit var btnSelectKeyboard: Button
     private lateinit var switchAutoSend: SwitchMaterial
+    private lateinit var switchSendContext: SwitchMaterial
     private lateinit var etGroqApiKey: TextInputEditText
     private lateinit var btnSaveGroqKey: Button
 
@@ -73,6 +74,7 @@ class SettingsActivity : AppCompatActivity() {
         btnEnableKeyboard = findViewById(R.id.btnEnableKeyboard)
         btnSelectKeyboard = findViewById(R.id.btnSelectKeyboard)
         switchAutoSend = findViewById(R.id.switchAutoSend)
+        switchSendContext = findViewById(R.id.switchSendContext)
         etGroqApiKey = findViewById(R.id.etGroqApiKey)
         btnSaveGroqKey = findViewById(R.id.btnSaveGroqKey)
 
@@ -112,6 +114,12 @@ class SettingsActivity : AppCompatActivity() {
         switchBubbleVisible.setOnCheckedChangeListener { _, isChecked ->
             getSharedPreferences("voxia_settings", Context.MODE_PRIVATE).edit()
                 .putBoolean(VoxIABubbleService.PREF_ENABLED, isChecked)
+                .apply()
+        }
+
+        switchSendContext.setOnCheckedChangeListener { _, isChecked ->
+            getSharedPreferences("voxia_settings", Context.MODE_PRIVATE).edit()
+                .putBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, isChecked)
                 .apply()
         }
 
@@ -231,6 +239,7 @@ class SettingsActivity : AppCompatActivity() {
 
         etGroqApiKey.setText(apiKey)
         switchAutoSend.isChecked = autoSend
+        switchSendContext.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, true)
         switchBubbleVisible.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_ENABLED, true)
     }
 
