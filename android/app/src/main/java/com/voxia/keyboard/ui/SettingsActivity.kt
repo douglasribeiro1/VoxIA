@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
@@ -27,6 +29,7 @@ import com.voxia.keyboard.data.ApiKeyStore
 import com.voxia.keyboard.data.DictionaryEntry
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
+import com.voxia.keyboard.service.VoxIABubbleService
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -38,6 +41,12 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var switchAutoSend: SwitchMaterial
     private lateinit var etGroqApiKey: TextInputEditText
     private lateinit var btnSaveGroqKey: Button
+
+    // Balão flutuante
+    private lateinit var tvBubbleStatus: TextView
+    private lateinit var btnEnableBubble: Button
+    private lateinit var btnBubbleRestricted: Button
+    private lateinit var switchBubbleVisible: SwitchMaterial
 
     // Dicionário UI
     private lateinit var etNewDictOriginal: TextInputEditText
@@ -67,6 +76,11 @@ class SettingsActivity : AppCompatActivity() {
         etGroqApiKey = findViewById(R.id.etGroqApiKey)
         btnSaveGroqKey = findViewById(R.id.btnSaveGroqKey)
 
+        tvBubbleStatus = findViewById(R.id.tvBubbleStatus)
+        btnEnableBubble = findViewById(R.id.btnEnableBubble)
+        btnBubbleRestricted = findViewById(R.id.btnBubbleRestricted)
+        switchBubbleVisible = findViewById(R.id.switchBubbleVisible)
+
         etNewDictOriginal = findViewById(R.id.etNewDictOriginal)
         etNewDictReplacement = findViewById(R.id.etNewDictReplacement)
         cbNewDictVocabOnly = findViewById(R.id.cbNewDictVocabOnly)
@@ -83,6 +97,22 @@ class SettingsActivity : AppCompatActivity() {
         btnSelectKeyboard.setOnClickListener {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showInputMethodPicker()
+        }
+
+        btnEnableBubble.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
+
+        btnBubbleRestricted.setOnClickListener {
+            startActivity(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+            )
+        }
+
+        switchBubbleVisible.setOnCheckedChangeListener { _, isChecked ->
+            getSharedPreferences("voxia_settings", Context.MODE_PRIVATE).edit()
+                .putBoolean(VoxIABubbleService.PREF_ENABLED, isChecked)
+                .apply()
         }
 
         switchAutoSend.setOnCheckedChangeListener { _, isChecked ->
@@ -201,11 +231,39 @@ class SettingsActivity : AppCompatActivity() {
 
         etGroqApiKey.setText(apiKey)
         switchAutoSend.isChecked = autoSend
+        switchBubbleVisible.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_ENABLED, true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateBubbleStatus()
+    }
+
+    private fun updateBubbleStatus() {
+        if (VoxIABubbleService.isEnabled(this)) {
+            tvBubbleStatus.text = "✓ Balão ativado"
+            tvBubbleStatus.setTextColor(Color.parseColor("#10B981"))
+            btnEnableBubble.text = "Configurações de Acessibilidade"
+        } else {
+            tvBubbleStatus.text = "Balão desativado"
+            tvBubbleStatus.setTextColor(Color.parseColor("#94A3B8"))
+            btnEnableBubble.text = "Ativar Balão (Acessibilidade)"
+        }
     }
 
     private fun checkPermissions() {
+        val missing = mutableListOf<String>()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 101)
+            missing.add(Manifest.permission.RECORD_AUDIO)
+        }
+        // Notificação "Gravando ditado…" do balão (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            missing.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        if (missing.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, missing.toTypedArray(), 101)
         }
     }
 }

@@ -39,4 +39,7 @@
     <string name="btn_send_desc">Enviar mensagem</string>
     <string name="btn_undo_desc">Desfazer último ditado</string>
     <string name="setting_auto_send">Auto-enviar mensagem após ditar</string>
+
+    <string name="bubble_service_label">Balão de ditado VoxIA</string>
+    <string name="bubble_accessibility_description">Mostra um balão de microfone quando o teclado está aberto numa caixa de texto. Toque para ditar; o texto corrigido é colado no campo. O VoxIA lê só o campo em que você está ditando (nunca campos de senha), para inserir o texto e conferir a grafia.</string>
 </resources>

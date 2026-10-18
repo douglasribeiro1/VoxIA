@@ -26,14 +26,11 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import com.voxia.keyboard.R
-import com.voxia.keyboard.api.GroqClient
 import com.voxia.keyboard.audio.AudioRecorder
 import com.voxia.keyboard.data.ApiKeyStore
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
 import com.voxia.keyboard.data.PromptProfile
-import com.voxia.keyboard.data.TopicFormatter
-import com.voxia.keyboard.data.TopicHeading
 import com.voxia.keyboard.ui.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +39,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class VoxIAInputMethodService : InputMethodService() {
@@ -66,7 +62,7 @@ class VoxIAInputMethodService : InputMethodService() {
     private var fieldContext: String = ""
 
     private lateinit var audioRecorder: AudioRecorder
-    private lateinit var groqClient: GroqClient
+    private lateinit var dictationEngine: DictationEngine
     private lateinit var promptManager: PromptManager
     private lateinit var dictionaryManager: DictionaryManager
     private lateinit var apiKeyStore: ApiKeyStore
@@ -118,7 +114,7 @@ class VoxIAInputMethodService : InputMethodService() {
     override fun onCreate() {
         super.onCreate()
         audioRecorder = AudioRecorder(this)
-        groqClient = GroqClient()
+        dictationEngine = DictationEngine(this)
         promptManager = PromptManager(this)
         dictionaryManager = DictionaryManager(this)
         apiKeyStore = ApiKeyStore(this)
@@ -642,99 +638,42 @@ class VoxIAInputMethodService : InputMethodService() {
         btnRetryAudio?.visibility = View.GONE
 
         serviceScope.launch {
-            val whisperTerms = dictionaryManager.getWhisperPromptTerms()
-            Log.d("VoxIA", "Enviando para Whisper (${audioFile.length()} bytes, termos: $whisperTerms)...")
-
-            val contextForRequest = fieldContext
-            val transcriptionResult = groqClient.transcribeAudio(
-                audioFile = audioFile,
-                apiKey = apiKey,
-                initialPrompt = whisperTerms,
-                contextText = contextForRequest
-            )
-
-            transcriptionResult.onSuccess { rawTranscript ->
-                Log.d("VoxIA", "Transcrição Whisper concluída: '$rawTranscript'")
-                if (rawTranscript.isBlank()) {
-                    withContext(Dispatchers.Main) {
-                        tvStatusMessage?.text = "Nenhuma fala detectada."
-                        resetStatusAfterDelay(2500)
-                    }
-                    // Áudio vazio com sucesso de transcrição pode ser limpo
-                    pendingAudioFile = null
-                    try { audioFile.delete() } catch (ignored: Exception) {}
-                } else {
-                    withContext(Dispatchers.Main) {
-                        tvStatusMessage?.text = getString(R.string.status_correcting)
-                    }
-
-                    val activePrompt = promptManager.getActivePrompt()
-
-                    // Comandos "abrir tópico ... fechar tópico" viram marcadores que a LLM não altera
-                    val headings = mutableListOf<TopicHeading>()
-                    val markedRaw = TopicFormatter.extractMarkers(rawTranscript, headings)
-
-                    val correctedText: String? = if (headings.isNotEmpty() && TopicFormatter.isOnlyMarkers(markedRaw)) {
-                        markedRaw
-                    } else {
-                        Log.d("VoxIA", "Enviando para LLM (openai/gpt-oss-120b) com prompt '${activePrompt.title}'...")
-                        groqClient.correctText(
-                            rawText = markedRaw,
-                            apiKey = apiKey,
-                            systemPrompt = activePrompt.promptText,
-                            model = "openai/gpt-oss-120b",
-                            contextText = contextForRequest,
-                            paragraphMode = activePrompt.id == "default_paragraphs"
-                        ).getOrNull()
-                    }
-
-                    val finalRawText = if (!correctedText.isNullOrBlank()) correctedText else markedRaw
-                    var finalText = dictionaryManager.applyReplacements(finalRawText)
-                    if (headings.isNotEmpty()) {
-                        finalText = TopicFormatter.restore(
-                            finalText,
-                            headings,
-                            dictionaryManager.applyReplacements(markedRaw)
-                        ) { dictionaryManager.applyReplacements(it) }
-                    }
-                    Log.d("VoxIA", "Texto final formatado: '$finalText'")
-
-                    withContext(Dispatchers.Main) {
-                        if (finalText.isNotBlank()) {
-                            commitDictation(finalText + " ")
-                            tvStatusMessage?.text = getString(R.string.status_done)
-
-                            val autoSend = prefs.getBoolean("auto_send_enabled", false)
-                            if (autoSend) {
-                                delay(200)
-                                performSendAction()
-                            }
-                        } else {
-                            commitDictation(rawTranscript + " ")
-                            tvStatusMessage?.text = getString(R.string.status_done)
-                        }
-
-                        // Sucesso total: limpa arquivo pendente
-                        pendingAudioFile = null
-                        btnRetryAudio?.visibility = View.GONE
-                        try { audioFile.delete() } catch (ignored: Exception) {}
-
-                        resetStatusAfterDelay(2000)
-                    }
+            val result = dictationEngine.process(audioFile, apiKey, fieldContext) { stage ->
+                if (stage == DictationEngine.Stage.CORRECTING) {
+                    tvStatusMessage?.text = getString(R.string.status_correcting)
                 }
+            }
+
+            result.onSuccess { finalText ->
+                if (finalText.isBlank()) {
+                    tvStatusMessage?.text = "Nenhuma fala detectada."
+                    resetStatusAfterDelay(2500)
+                } else {
+                    commitDictation(finalText + " ")
+                    tvStatusMessage?.text = getString(R.string.status_done)
+
+                    val autoSend = prefs.getBoolean("auto_send_enabled", false)
+                    if (autoSend) {
+                        delay(200)
+                        performSendAction()
+                    }
+                    resetStatusAfterDelay(2000)
+                }
+                // Sucesso (com ou sem fala): limpa arquivo pendente
+                pendingAudioFile = null
+                btnRetryAudio?.visibility = View.GONE
+                try { audioFile.delete() } catch (ignored: Exception) {}
             }.onFailure { error ->
                 Log.e("VoxIA", "Falha de rede ou processamento de áudio", error)
-                withContext(Dispatchers.Main) {
-                    // PRESERVA O ARQUIVO DE ÁUDIO NO DISCO PARA RETENTATIVA!
-                    pendingAudioFile = audioFile
-                    btnRetryAudio?.visibility = View.VISIBLE
-                    tvStatusMessage?.text = "⚠ Oscilação de rede. Áudio guardado!"
-                    Toast.makeText(
-                        this@VoxIAInputMethodService,
-                        "Sem internet: O áudio foi salvo! Toque em 'Reenviar' quando restabelecer a conexão.",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                // PRESERVA O ARQUIVO DE ÁUDIO NO DISCO PARA RETENTATIVA!
+                pendingAudioFile = audioFile
+                btnRetryAudio?.visibility = View.VISIBLE
+                tvStatusMessage?.text = "⚠ Oscilação de rede. Áudio guardado!"
+                Toast.makeText(
+                    this@VoxIAInputMethodService,
+                    "Sem internet: O áudio foi salvo! Toque em 'Reenviar' quando restabelecer a conexão.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
 
             isProcessingAudio = false

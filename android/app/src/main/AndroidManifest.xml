@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Balão flutuante: gravar enquanto outro app está na tela -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -41,6 +45,21 @@
             <meta-data
                 android:name="android.view.im"
                 android:resource="@xml/method" />
+        </service>
+
+        <!-- Balão flutuante de ditado (funciona com qualquer teclado) -->
+        <service
+            android:name=".service.VoxIABubbleService"
+            android:exported="true"
+            android:foregroundServiceType="microphone"
+            android:label="@string/bubble_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/bubble_accessibility" />
         </service>
 
     </application>

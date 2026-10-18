@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import com.voxia.keyboard.audio.AudioChunker
 import com.voxia.keyboard.data.TopicFormatter
 import java.io.File
 import java.io.IOException
@@ -36,7 +37,9 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
 """.trimIndent()
 
     /**
-     * Transcreve o arquivo de áudio usando Groq Whisper com anti-alucinação e retentativas de rede
+     * Transcreve o arquivo de áudio usando Groq Whisper com anti-alucinação e retentativas de rede.
+     * Gravações longas (WAV) vão em blocos cortados nas pausas; cada bloco recebe como prompt o texto
+     * dos anteriores, para manter a grafia e a continuidade.
      */
     suspend fun transcribeAudio(
         audioFile: File,
@@ -55,31 +58,71 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
             return@withContext Result.failure(Exception("Arquivo de áudio inválido ou vazio."))
         }
 
-        val basePrompt = buildWhisperPrompt(initialPrompt, contextText)
+        val parts = AudioChunker.split(audioFile)
+        try {
+            if (parts.isEmpty()) {
+                val text = sendToWhisper(audioFile, model, trimmedKey, buildWhisperPrompt(initialPrompt, contextText), maxRetries)
+                    .getOrElse { return@withContext Result.failure(it) }
+                if (isPromptEcho(text, contextText)) {
+                    Log.i("GroqClient", "Whisper devolveu apenas o contexto recebido (sem fala real). Descartando.")
+                    return@withContext Result.success("")
+                }
+                return@withContext Result.success(text)
+            }
 
+            val soFar = StringBuilder()
+            for ((index, part) in parts.withIndex()) {
+                val promptContext = if (index == 0) contextText else soFar.toString()
+                val text = sendToWhisper(part, model, trimmedKey, buildWhisperPrompt(initialPrompt, promptContext), maxRetries)
+                    .getOrElse { return@withContext Result.failure(it) }
+                if (isPromptEcho(text, promptContext)) {
+                    Log.i("GroqClient", "Bloco ${index + 1}/${parts.size} só repetiu o prompt. Ignorando.")
+                    continue
+                }
+                Log.d("GroqClient", "Whisper bloco ${index + 1}/${parts.size}: ${text.length} caracteres.")
+                if (text.isNotBlank()) {
+                    if (soFar.isNotEmpty()) soFar.append(' ')
+                    soFar.append(text)
+                }
+            }
+            Result.success(soFar.toString())
+        } finally {
+            AudioChunker.deleteParts(audioFile)
+        }
+    }
+
+    private suspend fun sendToWhisper(
+        audioFile: File,
+        model: String,
+        apiKey: String,
+        prompt: String,
+        maxRetries: Int
+    ): Result<String> {
         var lastException: Exception = Exception("Erro desconhecido de transcrição")
+        val mediaType = if (audioFile.name.endsWith(".wav", ignoreCase = true)) "audio/wav" else "audio/m4a"
 
         for (attempt in 1..maxRetries) {
             try {
                 Log.d("GroqClient", "Tentativa $attempt de transcrição Whisper (${audioFile.name})...")
 
-                val requestBodyBuilder = MultipartBody.Builder()
+                val requestBody = MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart(
                         "file",
                         audioFile.name,
-                        audioFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
+                        audioFile.asRequestBody(mediaType.toMediaTypeOrNull())
                     )
                     .addFormDataPart("model", model)
                     .addFormDataPart("language", "pt")
                     .addFormDataPart("temperature", "0.0")
-                    .addFormDataPart("prompt", basePrompt)
+                    .addFormDataPart("prompt", prompt)
                     .addFormDataPart("response_format", "json")
+                    .build()
 
                 val request = Request.Builder()
                     .url("https://api.groq.com/openai/v1/audio/transcriptions")
-                    .addHeader("Authorization", "Bearer $trimmedKey")
-                    .post(requestBodyBuilder.build())
+                    .addHeader("Authorization", "Bearer $apiKey")
+                    .post(requestBody)
                     .build()
 
                 val response = client.newCall(request).execute()
@@ -96,7 +139,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                     // Se for erro de cliente (401, 400), não adianta tentar novamente
                     if (response.code in 400..499 && response.code != 429) {
                         Log.e("GroqClient", "Whisper HTTP Client Error ${response.code}: $errorDetail")
-                        return@withContext Result.failure(Exception("Erro Whisper (${response.code}): $errorDetail"))
+                        return Result.failure(Exception("Erro Whisper (${response.code}): $errorDetail"))
                     }
 
                     // Se for 429 ou 5xx (servidor ocupado/falha), retenta se houver tentativas
@@ -105,18 +148,13 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                         delay(attempt * 1000L)
                         continue
                     }
-                    return@withContext Result.failure(lastException)
+                    return Result.failure(lastException)
                 }
 
                 val json = gson.fromJson(bodyString, JsonObject::class.java)
                 val rawText = json.get("text")?.asString ?: ""
                 val sanitized = sanitizeWhisperText(rawText)
-                val resultText = if (sanitized.isNotBlank()) sanitized else rawText.trim()
-                if (isPromptEcho(resultText, contextText)) {
-                    Log.i("GroqClient", "Whisper devolveu apenas o contexto recebido (sem fala real). Descartando.")
-                    return@withContext Result.success("")
-                }
-                return@withContext Result.success(resultText)
+                return Result.success(if (sanitized.isNotBlank()) sanitized else rawText.trim())
 
             } catch (e: IOException) {
                 Log.w("GroqClient", "Oscilação de rede na tentativa $attempt: ${e.message}")
@@ -131,7 +169,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
             }
         }
 
-        Result.failure(lastException)
+        return Result.failure(lastException)
     }
 
     /**
