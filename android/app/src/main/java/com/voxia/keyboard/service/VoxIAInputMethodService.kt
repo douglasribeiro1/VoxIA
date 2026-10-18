@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -28,9 +27,9 @@ import android.widget.Toast
 import com.voxia.keyboard.R
 import com.voxia.keyboard.audio.AudioRecorder
 import com.voxia.keyboard.data.ApiKeyStore
-import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
 import com.voxia.keyboard.data.PromptProfile
+import com.voxia.keyboard.ui.AddWordActivity
 import com.voxia.keyboard.ui.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,13 +63,11 @@ class VoxIAInputMethodService : InputMethodService() {
     private lateinit var audioRecorder: AudioRecorder
     private lateinit var dictationEngine: DictationEngine
     private lateinit var promptManager: PromptManager
-    private lateinit var dictionaryManager: DictionaryManager
     private lateinit var apiKeyStore: ApiKeyStore
 
     // Layout Containers
     private var layoutMainVoiceView: LinearLayout? = null
     private var layoutPromptEditor: LinearLayout? = null
-    private var layoutDictionaryQuickAdd: LinearLayout? = null
 
     // Main Voice Views
     private var btnMicRecord: ImageButton? = null
@@ -101,14 +98,6 @@ class VoxIAInputMethodService : InputMethodService() {
     private var btnSavePrompt: Button? = null
     private var currentEditingPromptId: String? = null
 
-    // Dictionary Quick Add Views
-    private var btnCloseDictEditor: ImageButton? = null
-    private var etDictOriginal: EditText? = null
-    private var etDictReplacement: EditText? = null
-    private var cbDictVocabOnly: CheckBox? = null
-    private var btnCancelDictEditor: Button? = null
-    private var btnSaveDictEntry: Button? = null
-
     private var promptProfilesList: List<PromptProfile> = emptyList()
 
     override fun onCreate() {
@@ -116,7 +105,6 @@ class VoxIAInputMethodService : InputMethodService() {
         audioRecorder = AudioRecorder(this)
         dictationEngine = DictationEngine(this)
         promptManager = PromptManager(this)
-        dictionaryManager = DictionaryManager(this)
         apiKeyStore = ApiKeyStore(this)
     }
 
@@ -126,7 +114,6 @@ class VoxIAInputMethodService : InputMethodService() {
         // 1. Containers
         layoutMainVoiceView = view.findViewById(R.id.layoutMainVoiceView)
         layoutPromptEditor = view.findViewById(R.id.layoutPromptEditor)
-        layoutDictionaryQuickAdd = view.findViewById(R.id.layoutDictionaryQuickAdd)
 
         // 2. Main Voice Views
         btnMicRecord = view.findViewById(R.id.btnMicRecord)
@@ -155,14 +142,6 @@ class VoxIAInputMethodService : InputMethodService() {
         btnCancelPromptEditor = view.findViewById(R.id.btnCancelPromptEditor)
         btnDeletePrompt = view.findViewById(R.id.btnDeletePrompt)
         btnSavePrompt = view.findViewById(R.id.btnSavePrompt)
-
-        // 4. Dictionary Views
-        btnCloseDictEditor = view.findViewById(R.id.btnCloseDictEditor)
-        etDictOriginal = view.findViewById(R.id.etDictOriginal)
-        etDictReplacement = view.findViewById(R.id.etDictReplacement)
-        cbDictVocabOnly = view.findViewById(R.id.cbDictVocabOnly)
-        btnCancelDictEditor = view.findViewById(R.id.btnCancelDictEditor)
-        btnSaveDictEntry = view.findViewById(R.id.btnSaveDictEntry)
 
         setupPromptSpinner()
         setupListeners()
@@ -363,20 +342,19 @@ class VoxIAInputMethodService : InputMethodService() {
             vibrateFeedback()
             openDictionaryQuickAdd()
         }
+    }
 
-        btnCloseDictEditor?.setOnClickListener {
-            vibrateFeedback()
-            showMainVoiceView()
-        }
-
-        btnCancelDictEditor?.setOnClickListener {
-            vibrateFeedback()
-            showMainVoiceView()
-        }
-
-        btnSaveDictEntry?.setOnClickListener {
-            vibrateFeedback()
-            saveDictionaryEntryFromEditor()
+    private fun isPasswordField(): Boolean {
+        val info = currentInputEditorInfo ?: return false
+        val cls = info.inputType and InputType.TYPE_MASK_CLASS
+        val variation = info.inputType and InputType.TYPE_MASK_VARIATION
+        return when (cls) {
+            InputType.TYPE_CLASS_TEXT ->
+                variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                    variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
+                    variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
+            InputType.TYPE_CLASS_NUMBER -> variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            else -> false
         }
     }
 
@@ -388,20 +366,7 @@ class VoxIAInputMethodService : InputMethodService() {
         val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
         if (!prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, true)) return ""
         return try {
-            val info = currentInputEditorInfo
-            if (info != null) {
-                val cls = info.inputType and InputType.TYPE_MASK_CLASS
-                val variation = info.inputType and InputType.TYPE_MASK_VARIATION
-                val isPassword = when (cls) {
-                    InputType.TYPE_CLASS_TEXT ->
-                        variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
-                            variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
-                            variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
-                    InputType.TYPE_CLASS_NUMBER -> variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                    else -> false
-                }
-                if (isPassword) return ""
-            }
+            if (isPasswordField()) return ""
             val before = currentInputConnection?.getTextBeforeCursor(400, 0)?.toString() ?: ""
             before.replace(Regex("""\s+"""), " ").trim()
         } catch (e: Exception) {
@@ -451,7 +416,6 @@ class VoxIAInputMethodService : InputMethodService() {
 
     private fun openPromptEditor(editingCurrent: Boolean) {
         layoutMainVoiceView?.visibility = View.GONE
-        layoutDictionaryQuickAdd?.visibility = View.GONE
         layoutPromptEditor?.visibility = View.VISIBLE
 
         if (editingCurrent) {
@@ -497,34 +461,15 @@ class VoxIAInputMethodService : InputMethodService() {
         }
     }
 
+    /** Abre a janelinha de cadastro; a palavra selecionada no texto já entra como "como sai errado". */
     private fun openDictionaryQuickAdd() {
-        layoutMainVoiceView?.visibility = View.GONE
-        layoutPromptEditor?.visibility = View.GONE
-        layoutDictionaryQuickAdd?.visibility = View.VISIBLE
-
-        etDictOriginal?.setText("")
-        etDictReplacement?.setText("")
-        cbDictVocabOnly?.isChecked = false
-    }
-
-    private fun saveDictionaryEntryFromEditor() {
-        val orig = etDictOriginal?.text?.toString()?.trim() ?: ""
-        val repl = etDictReplacement?.text?.toString()?.trim() ?: ""
-        val isVocab = cbDictVocabOnly?.isChecked ?: false
-
-        if (orig.isBlank()) {
-            Toast.makeText(this, "Informe o termo falado.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        dictionaryManager.addOrUpdateEntry(null, orig, repl, isVocab)
-        showMainVoiceView()
-        Toast.makeText(this, "Termo '$orig' adicionado ao Dicionário!", Toast.LENGTH_SHORT).show()
+        val selected = if (isPasswordField()) "" else
+            currentInputConnection?.getSelectedText(0)?.toString() ?: ""
+        AddWordActivity.open(this, selected)
     }
 
     private fun showMainVoiceView() {
         layoutPromptEditor?.visibility = View.GONE
-        layoutDictionaryQuickAdd?.visibility = View.GONE
         layoutMainVoiceView?.visibility = View.VISIBLE
     }
 

@@ -21,6 +21,15 @@
 
         <!-- Tela Principal de Configurações -->
         <activity
+            android:name=".ui.AddWordActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:label="Adicionar ao dicionário"
+            android:taskAffinity="com.voxia.keyboard.addword"
+            android:theme="@style/Theme.VoxIA.AddWord"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+
+        <activity
             android:name=".ui.SettingsActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"

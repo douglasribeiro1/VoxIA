@@ -95,6 +95,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatus()
+        renderDictionaryList()
     }
 
     private fun initViews() {

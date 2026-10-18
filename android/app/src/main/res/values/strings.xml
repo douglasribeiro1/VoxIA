@@ -30,10 +30,6 @@
     <string name="btn_delete_prompt">Excluir</string>
     <string name="btn_cancel">Cancelar</string>
     
-    <string name="dict_quick_title">Adicionar ao Dicionário</string>
-    <string name="dict_orig_hint">Palavra ou termo falado (ex: Vóxia)</string>
-    <string name="dict_repl_hint">Substituir por (ex: VoxIA)</string>
-    <string name="dict_vocab_only">Apenas vocabulário técnico para o Whisper</string>
     <string name="btn_save_dict">Salvar Palavra</string>
     
     <string name="btn_send_desc">Enviar mensagem</string>

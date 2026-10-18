@@ -44,6 +44,7 @@ import androidx.core.content.ContextCompat
 import com.voxia.keyboard.R
 import com.voxia.keyboard.audio.AudioRecorder
 import com.voxia.keyboard.data.ApiKeyStore
+import com.voxia.keyboard.ui.AddWordActivity
 import com.voxia.keyboard.ui.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -370,7 +371,10 @@ class VoxIABubbleService : AccessibilityService() {
                 setState(State.IDLE)
                 toast("Áudio guardado descartado.")
             }
-            State.IDLE -> openSettings()
+            State.IDLE -> {
+                val selected = selectedWord()
+                if (selected.isNotEmpty()) AddWordActivity.open(this, selected) else openSettings()
+            }
             else -> {}
         }
     }
@@ -662,6 +666,17 @@ class VoxIABubbleService : AccessibilityService() {
             scaleX = 1f
             scaleY = 1f
         }
+    }
+
+    /** Trecho selecionado no campo em foco (nunca de campo de senha); vazio se não há seleção. */
+    private fun selectedWord(): String {
+        val node = findFocus(AccessibilityNodeInfo.FOCUS_INPUT) ?: return ""
+        if (node.isPassword) return ""
+        val text = currentText(node)
+        val start = minOf(node.textSelectionStart, node.textSelectionEnd)
+        val end = maxOf(node.textSelectionStart, node.textSelectionEnd)
+        if (start < 0 || end > text.length || start == end) return ""
+        return text.substring(start, end).trim()
     }
 
     private fun openSettings() {
