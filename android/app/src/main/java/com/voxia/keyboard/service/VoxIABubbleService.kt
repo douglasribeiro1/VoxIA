@@ -61,7 +61,7 @@ import kotlin.math.hypot
  * Balão flutuante de ditado, no estilo do Wispr Flow: aparece quando um teclado qualquer
  * (Gboard, Samsung...) está aberto numa caixa de texto e some quando o teclado fecha.
  * Toque = gravar / parar. Arrastar = mudar de lugar. Toque longo = abrir o VoxIA
- * (ou, com um áudio guardado, descartá-lo).
+ * (ou, com um áudio guardado, descartá-lo). Enquanto grava ou processa, um "X" ao lado cancela.
  */
 class VoxIABubbleService : AccessibilityService() {
 
@@ -82,6 +82,10 @@ class VoxIABubbleService : AccessibilityService() {
     private var iconView: ImageView? = null
     private var progressView: ProgressBar? = null
     private var pulseView: View? = null
+    private var cancelView: View? = null
+    private var cancelParams: WindowManager.LayoutParams? = null
+    private var cancelShown = false
+    private var workJob: Job? = null
     private var bubbleShown = false
     private var dragging = false
 
@@ -233,6 +237,31 @@ class VoxIABubbleService : AccessibilityService() {
             gravity = Gravity.TOP or Gravity.START
         }
 
+        val cancelSize = dp(34)
+        cancelView = ImageView(this).apply {
+            setImageResource(R.drawable.ic_close)
+            setBackgroundResource(R.drawable.bg_bubble_busy)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            setPadding(dp(7), dp(7), dp(7), dp(7))
+            elevation = dp(6).toFloat()
+            contentDescription = "Cancelar ditado"
+            setOnClickListener {
+                vibrate()
+                cancelDictation()
+            }
+        }
+        cancelParams = WindowManager.LayoutParams(
+            cancelSize,
+            cancelSize,
+            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.TOP or Gravity.START
+        }
+
         bubble = root
         pulseView = pulse
         circleView = circle
@@ -244,6 +273,7 @@ class VoxIABubbleService : AccessibilityService() {
     private fun rebuildBubble() {
         val wasShown = bubbleShown
         hideBubble()
+        hideCancel()
         createBubble()
         setState(state)
         if (wasShown) showBubble()
@@ -262,6 +292,7 @@ class VoxIABubbleService : AccessibilityService() {
         } catch (e: Exception) {
             Log.e("VoxIABubble", "Não foi possível mostrar o balão", e)
         }
+        updateCancel()
     }
 
     private fun hideBubble() {
@@ -272,12 +303,49 @@ class VoxIABubbleService : AccessibilityService() {
         } catch (ignored: Exception) {}
         bubbleShown = false
         dragging = false
+        hideCancel()
+    }
+
+    // ---------- Botão "X" de cancelar, ao lado do balão (lado de dentro da tela) ----------
+
+    private fun updateCancel() {
+        val view = cancelView ?: return
+        val params = cancelParams ?: return
+        val bp = bubbleParams ?: return
+        val wanted = bubbleShown && (state == State.RECORDING || state == State.PROCESSING)
+        if (!wanted) {
+            hideCancel()
+            return
+        }
+        val onRight = bp.x + bp.width / 2 > resources.displayMetrics.widthPixels / 2
+        params.x = if (onRight) bp.x - params.width - dp(4) else bp.x + bp.width + dp(4)
+        params.y = bp.y + (bp.height - params.height) / 2
+        try {
+            if (!cancelShown) {
+                windowManager.addView(view, params)
+                cancelShown = true
+            } else {
+                windowManager.updateViewLayout(view, params)
+            }
+        } catch (e: Exception) {
+            Log.w("VoxIABubble", "Não foi possível mostrar o botão de cancelar: ${e.message}")
+        }
+    }
+
+    private fun hideCancel() {
+        val view = cancelView ?: return
+        if (!cancelShown) return
+        try {
+            windowManager.removeView(view)
+        } catch (ignored: Exception) {}
+        cancelShown = false
     }
 
     private fun updateLayout() {
         try {
             if (bubbleShown) windowManager.updateViewLayout(bubble, bubbleParams)
         } catch (ignored: Exception) {}
+        updateCancel()
     }
 
     /** Encostado na borda escolhida, na altura salva, mas sempre acima do teclado. */
@@ -371,11 +439,11 @@ class VoxIABubbleService : AccessibilityService() {
                 setState(State.IDLE)
                 toast("Áudio guardado descartado.")
             }
+            State.RECORDING, State.PROCESSING -> cancelDictation()
             State.IDLE -> {
                 val selected = selectedWord()
                 if (selected.isNotEmpty()) AddWordActivity.open(this, selected) else openSettings()
             }
-            else -> {}
         }
     }
 
@@ -414,6 +482,7 @@ class VoxIABubbleService : AccessibilityService() {
             else -> 1f
         }
         if (newState != State.RECORDING) stopPulse()
+        updateCancel()
     }
 
     // ---------- Ditado ----------
@@ -448,7 +517,7 @@ class VoxIABubbleService : AccessibilityService() {
     private fun stopDictation() {
         vibrate()
         setState(State.PROCESSING)
-        scope.launch {
+        workJob = scope.launch {
             val file = audioRecorder.stopRecording()
             val muted = audioRecorder.lastRecordingWasMuted()
             leaveForeground()
@@ -475,7 +544,7 @@ class VoxIABubbleService : AccessibilityService() {
 
     private fun processAudio(file: File) {
         setState(State.PROCESSING)
-        scope.launch {
+        workJob = scope.launch {
             val result = dictationEngine.process(file, apiKeyStore.get(), fieldContext)
             result.onSuccess { text ->
                 pendingAudioFile = null
@@ -499,6 +568,30 @@ class VoxIABubbleService : AccessibilityService() {
     }
 
     /** Até 400 caracteres antes do cursor, para ajudar a grafia. Campos de senha nunca são lidos. */
+    /** "X" ou toque longo durante o ditado: descarta tudo sem inserir nada. */
+    private fun cancelDictation() {
+        when (state) {
+            State.RECORDING -> {
+                audioRecorder.cancelRecording()
+                leaveForeground()
+            }
+            State.PROCESSING -> {
+                workJob?.cancel()
+                if (audioRecorder.isRecordingNow()) audioRecorder.cancelRecording()
+                leaveForeground()
+                pendingAudioFile?.delete()
+                pendingAudioFile = null
+            }
+            else -> return
+        }
+        workJob = null
+        fieldContext = ""
+        targetNode = null
+        setState(State.IDLE)
+        toast("Ditado cancelado.")
+        refreshBubble()
+    }
+
     private fun readFieldContext(node: AccessibilityNodeInfo?): String {
         if (node == null || node.isPassword) return ""
         if (!prefs.getBoolean(PREF_SEND_CONTEXT, true)) return ""

@@ -109,6 +109,58 @@ object AudioChunker {
         }
     }
 
+    private const val MIN_SPEECH_RMS = 250.0     // abaixo disso é silêncio/ruído de ambiente em qualquer celular
+    private const val SPEECH_OVER_NOISE = 3.0     // fala fica bem acima do ruído de fundo da própria gravação
+    private const val MIN_SPEECH_FRAMES = 12      // pelo menos ~240 ms somados de fala
+
+    /**
+     * Quantos quadros de 20 ms têm fala (bem acima do ruído de fundo). Silêncio enviado ao Whisper
+     * volta como "alucinação" (palavras do vocabulário do prompt, "VoxIA", frases de vídeo).
+     */
+    fun speechFrames(pcm: ByteArray, sampleRate: Int, startByte: Int = 0, endByte: Int = pcm.size): Int {
+        val frameLen = sampleRate * FRAME_MS / 1000
+        val first = startByte / 2
+        val frames = (endByte / 2 - first) / frameLen
+        if (frames <= 0) return 0
+        val rms = DoubleArray(frames)
+        for (f in 0 until frames) {
+            val s0 = first + f * frameLen
+            var sum = 0.0
+            var sumSq = 0.0
+            for (i in s0 until s0 + frameLen) {
+                val s = ((pcm[2 * i].toInt() and 0xFF) or (pcm[2 * i + 1].toInt() shl 8)).toShort().toDouble()
+                sum += s
+                sumSq += s * s
+            }
+            val mean = sum / frameLen // tira o deslocamento DC do microfone
+            rms[f] = sqrt(maxOf(0.0, sumSq / frameLen - mean * mean))
+        }
+        val noise = rms.sortedArray()[(frames * 0.10).toInt()]
+        val threshold = maxOf(MIN_SPEECH_RMS, noise * SPEECH_OVER_NOISE)
+        return rms.count { it > threshold }
+    }
+
+    fun hasSpeech(frames: Int): Boolean = frames >= MIN_SPEECH_FRAMES
+
+    /** speechFrames de um WAV do AudioRecorder; na dúvida (outro formato, erro de leitura) supõe que há fala. */
+    fun wavSpeechFrames(wavFile: File): Int {
+        if (!wavFile.name.endsWith(".wav", ignoreCase = true)) return Int.MAX_VALUE
+        return try {
+            val pcm = RandomAccessFile(wavFile, "r").use { raf ->
+                val len = (raf.length() - AudioRecorder.WAV_HEADER_SIZE).toInt() and 1.inv()
+                if (len <= 0) return 0
+                ByteArray(len).also {
+                    raf.seek(AudioRecorder.WAV_HEADER_SIZE.toLong())
+                    raf.readFully(it)
+                }
+            }
+            speechFrames(pcm, AudioRecorder.SAMPLE_RATE)
+        } catch (e: Exception) {
+            Log.w("AudioChunker", "Não foi possível medir a fala em ${wavFile.name}", e)
+            Int.MAX_VALUE
+        }
+    }
+
     fun deleteParts(wavFile: File) {
         var i = 1
         while (i < 1000) {

@@ -19,6 +19,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 private const val CORRECTION_ATTEMPTS = 3
+private const val CLEAR_SPEECH_FRAMES = 25 // 0,5 s de fala em quadros de 20 ms
 
 /** Motivo legível de a correção pela IA não ter sido aplicada. */
 class CorrectionException(message: String) : Exception(message)
@@ -63,13 +64,19 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
             return@withContext Result.failure(Exception("Arquivo de áudio inválido ou vazio."))
         }
 
+        if (!AudioChunker.hasSpeech(AudioChunker.wavSpeechFrames(audioFile))) {
+            Log.i("GroqClient", "Gravação sem fala detectável. Nada enviado ao Whisper.")
+            return@withContext Result.success("")
+        }
+
         val parts = AudioChunker.split(audioFile)
         try {
             if (parts.isEmpty()) {
-                val text = sendToWhisper(audioFile, model, trimmedKey, buildWhisperPrompt(initialPrompt, contextText), maxRetries)
+                val prompt = buildWhisperPrompt(initialPrompt, contextText)
+                val text = sendToWhisper(audioFile, model, trimmedKey, prompt, maxRetries)
                     .getOrElse { return@withContext Result.failure(it) }
-                if (isPromptEcho(text, contextText)) {
-                    Log.i("GroqClient", "Whisper devolveu apenas o contexto recebido (sem fala real). Descartando.")
+                if (isPromptEcho(text, contextText) || isVocabularyEcho(text, prompt, AudioChunker.wavSpeechFrames(audioFile))) {
+                    Log.i("GroqClient", "Whisper devolveu apenas palavras do prompt (sem fala real). Descartando.")
                     return@withContext Result.success("")
                 }
                 return@withContext Result.success(text)
@@ -77,10 +84,16 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
 
             val soFar = StringBuilder()
             for ((index, part) in parts.withIndex()) {
+                val speech = AudioChunker.wavSpeechFrames(part)
+                if (!AudioChunker.hasSpeech(speech)) {
+                    Log.i("GroqClient", "Bloco ${index + 1}/${parts.size} sem fala. Ignorando.")
+                    continue
+                }
                 val promptContext = if (index == 0) contextText else soFar.toString()
-                val text = sendToWhisper(part, model, trimmedKey, buildWhisperPrompt(initialPrompt, promptContext), maxRetries)
+                val prompt = buildWhisperPrompt(initialPrompt, promptContext)
+                val text = sendToWhisper(part, model, trimmedKey, prompt, maxRetries)
                     .getOrElse { return@withContext Result.failure(it) }
-                if (isPromptEcho(text, promptContext)) {
+                if (isPromptEcho(text, promptContext) || isVocabularyEcho(text, prompt, speech)) {
                     Log.i("GroqClient", "Bloco ${index + 1}/${parts.size} só repetiu o prompt. Ignorando.")
                     continue
                 }
@@ -137,7 +150,9 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                     val errorDetail = try {
                         val errJson = gson.fromJson(bodyString, JsonObject::class.java)
                         errJson.getAsJsonObject("error")?.get("message")?.asString ?: bodyString
-                    } catch (e: Exception) {
+                    } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
                         bodyString
                     }
 
@@ -167,6 +182,8 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                 if (attempt < maxRetries) {
                     delay(attempt * 1200L)
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Log.e("GroqClient", "Exceção inesperada no Whisper", e)
                 lastException = e
@@ -282,6 +299,8 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                     return@withContext Result.failure(CorrectionException("a IA encurtou demais o texto"))
                 }
                 return@withContext Result.success(if (cleaned.isNotBlank()) cleaned else rawText)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Log.e("GroqClient", "Falha na correção de texto (tentativa $attempt)", e)
                 lastIssue = if (e is java.io.InterruptedIOException) "a IA demorou demais" else "falha de conexão"
@@ -318,6 +337,20 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
         val t = transcript.trim().trimEnd('.', '!', '?', ' ')
         if (t.length < 30) return false
         return contextText.contains(t, ignoreCase = true)
+    }
+
+    /**
+     * Fala real não sai só com palavras do prompt. Uma resposta curta feita apenas delas
+     * ("VoxIA.", "Disartria.") com pouca fala no áudio é o Whisper repetindo o vocabulário diante
+     * de ruído. Com fala clara (meio segundo ou mais) a palavra foi dita de verdade e fica.
+     */
+    private fun isVocabularyEcho(transcript: String, prompt: String, speechFrames: Int): Boolean {
+        if (speechFrames >= CLEAR_SPEECH_FRAMES) return false
+        val words = Regex("[\\p{L}\\p{N}]+")
+        val spoken = words.findAll(transcript.lowercase()).map { it.value }.toList()
+        if (spoken.isEmpty() || spoken.size > 4) return false
+        val promptWords = words.findAll(prompt.lowercase()).map { it.value }.toSet()
+        return spoken.all { it in promptWords }
     }
 
     private fun echoesContext(corrected: String, rawText: String, contextText: String): Boolean {

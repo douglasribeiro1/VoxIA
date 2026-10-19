@@ -306,7 +306,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Aparece ao lado de qualquer teclado quando você toca numa caixa de texto. Toque para gravar e de novo para parar; arraste para mudar de lugar; toque longo abre o VoxIA. Com uma palavra selecionada no texto, o toque longo cadastra essa palavra no dicionário." />
+                    android:text="Aparece ao lado de qualquer teclado quando você toca numa caixa de texto. Toque para gravar e de novo para parar; o X ao lado cancela; arraste para mudar de lugar; toque longo abre o VoxIA. Com uma palavra selecionada no texto, o toque longo cadastra essa palavra no dicionário." />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEnableBubble"

@@ -79,6 +79,8 @@ class VoxIAInputMethodService : InputMethodService() {
     private var btnEditPrompt: ImageButton? = null
     private var btnAddPrompt: ImageButton? = null
     private var btnAddDict: ImageButton? = null
+    private var btnCancelRecording: ImageButton? = null
+    private var processingJob: Job? = null
     private var btnOpenSettings: ImageButton? = null
     private var btnSwitchKeyboard: ImageButton? = null
     private var btnBackspace: ImageButton? = null
@@ -125,6 +127,7 @@ class VoxIAInputMethodService : InputMethodService() {
         btnEditPrompt = view.findViewById(R.id.btnEditPrompt)
         btnAddPrompt = view.findViewById(R.id.btnAddPrompt)
         btnAddDict = view.findViewById(R.id.btnAddDict)
+        btnCancelRecording = view.findViewById(R.id.btnCancelRecording)
         btnOpenSettings = view.findViewById(R.id.btnOpenSettings)
         btnSwitchKeyboard = view.findViewById(R.id.btnSwitchKeyboard)
         btnBackspace = view.findViewById(R.id.btnBackspace)
@@ -338,6 +341,11 @@ class VoxIAInputMethodService : InputMethodService() {
             deleteCurrentEditingPrompt()
         }
 
+        btnCancelRecording?.setOnClickListener {
+            vibrateFeedback()
+            cancelDictation()
+        }
+
         btnAddDict?.setOnClickListener {
             vibrateFeedback()
             openDictionaryQuickAdd()
@@ -495,6 +503,7 @@ class VoxIAInputMethodService : InputMethodService() {
                 btnMicRecord?.setBackgroundResource(R.drawable.bg_mic_recording)
                 btnMicRecord?.setImageResource(R.drawable.ic_stop)
                 tvStatusMessage?.text = getString(R.string.status_recording)
+                btnCancelRecording?.visibility = View.VISIBLE
                 startMicPulse()
             } else {
                 tvStatusMessage?.text = "⚠ Erro ao acessar o microfone."
@@ -510,6 +519,7 @@ class VoxIAInputMethodService : InputMethodService() {
                 isStoppingRecording = false
 
                 if (audioFile == null || !audioFile.exists() || audioFile.length() < 100) {
+                    btnCancelRecording?.visibility = View.GONE
                     tvStatusMessage?.text = "⚠ Fale um pouco mais (áudio vazio)."
                     resetStatusAfterDelay(2500)
                     return@launch
@@ -584,7 +594,8 @@ class VoxIAInputMethodService : InputMethodService() {
         tvStatusMessage?.text = getString(R.string.status_transcribing)
         btnRetryAudio?.visibility = View.GONE
 
-        serviceScope.launch {
+        btnCancelRecording?.visibility = View.VISIBLE
+        processingJob = serviceScope.launch {
             val result = dictationEngine.process(audioFile, apiKey, fieldContext) { stage ->
                 if (stage == DictationEngine.Stage.CORRECTING) {
                     tvStatusMessage?.text = getString(R.string.status_correcting)
@@ -625,7 +636,32 @@ class VoxIAInputMethodService : InputMethodService() {
             }
 
             isProcessingAudio = false
+            btnCancelRecording?.visibility = View.GONE
         }
+    }
+
+    /** Descarta o ditado em andamento: para a gravação ou abandona o envio, sem inserir nada. */
+    private fun cancelDictation() {
+        when {
+            audioRecorder.isRecordingNow() -> {
+                audioRecorder.cancelRecording()
+                stopMicPulse()
+                btnMicRecord?.setBackgroundResource(R.drawable.bg_mic_button)
+                btnMicRecord?.setImageResource(R.drawable.ic_mic)
+            }
+            isProcessingAudio -> {
+                processingJob?.cancel()
+                processingJob = null
+                isProcessingAudio = false
+                pendingAudioFile?.delete()
+                pendingAudioFile = null
+                btnRetryAudio?.visibility = View.GONE
+            }
+            else -> return
+        }
+        btnCancelRecording?.visibility = View.GONE
+        tvStatusMessage?.text = "Ditado cancelado."
+        resetStatusAfterDelay(1500)
     }
 
     private fun resetStatusAfterDelay(delayMs: Long = 2500) {
