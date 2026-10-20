@@ -24,7 +24,7 @@ jobs:
           $uiaClient = (Get-ChildItem "C:\Windows\Microsoft.NET\assembly" -Recurse -Filter UIAutomationClient.dll | Select-Object -First 1).FullName
           $uiaTypes = (Get-ChildItem "C:\Windows\Microsoft.NET\assembly" -Recurse -Filter UIAutomationTypes.dll | Select-Object -First 1).FullName
           $sources = Get-ChildItem -Path windows\src -Recurse -Filter *.cs | ForEach-Object { $_.FullName }
-          & $csc /nologo /target:winexe /win32icon:windows\app.ico /out:windows\VoxIA.exe `
+          & $csc /nologo /target:winexe /win32icon:windows\app.ico /win32manifest:windows\app.manifest /out:windows\VoxIA.exe `
             /r:System.dll,System.Drawing.dll,System.Windows.Forms.dll,System.Web.Extensions.dll,System.Net.Http.dll `
             "/r:$uiaClient" "/r:$uiaTypes" $sources
           if ($LASTEXITCODE -ne 0) { throw "Falha na compilacao do VoxIA.exe" }
