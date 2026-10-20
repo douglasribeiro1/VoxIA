@@ -118,8 +118,8 @@ namespace VoxIA.UI
             }
         }
 
-        private const int RecordingWidth = 168;
-        private const int RecordingHeight = 52;
+        private const int RecordingWidth = 104;
+        private const int RecordingHeight = 32;
 
         private void InitializeComponent()
         {
@@ -353,8 +353,8 @@ namespace VoxIA.UI
         private void DrawWaveformEqualizer(Graphics g, int w, int h)
         {
             float centerY = h / 2f;
-            int numBars = 21;
-            float margin = 18f;
+            int numBars = 9;
+            float margin = 14f;
             float availableWidth = w - (margin * 2f);
             float step = availableWidth / (numBars - 1);
 
@@ -373,18 +373,18 @@ namespace VoxIA.UI
                 float rawWave = Math.Abs(h1 * 0.45f + h2 * 0.35f + h3 * 0.20f);
 
                 // Altura em repouso: pequena ondulação; com voz, chega quase à altura total da cápsula
-                float minHalfH = 3.0f + (rawWave * 4.0f * envelope);
-                float voiceHalfH = _smoothedAudioLevel * 21.0f * (0.35f + rawWave * 0.65f) * envelope;
+                float minHalfH = 2.0f + (rawWave * 2.0f * envelope);
+                float voiceHalfH = _smoothedAudioLevel * 11.0f * (0.35f + rawWave * 0.65f) * envelope;
 
                 float halfH = minHalfH + voiceHalfH;
-                halfH = Math.Min(halfH, (h / 2.0f) - 6.0f);
+                halfH = Math.Min(halfH, (h / 2.0f) - 4.0f);
 
                 float x = margin + (i * step);
                 float yTop = centerY - halfH;
                 float yBottom = centerY + halfH;
 
                 // Barra laranja arredondada, na cor do logotipo
-                using (Pen barPen = new Pen(Theme.Accent, 4f))
+                using (Pen barPen = new Pen(Theme.Accent, 3f))
                 {
                     barPen.StartCap = LineCap.Round;
                     barPen.EndCap = LineCap.Round;

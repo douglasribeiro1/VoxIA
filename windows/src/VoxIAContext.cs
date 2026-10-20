@@ -322,6 +322,16 @@ namespace VoxIA
                 return;
             }
 
+            // Sem fala: não envia nada ao Whisper (ele inventaria palavras)
+            if (_audioRecorder.LastRecordingWasSilent)
+            {
+                Logger.LogInfo("Recording had no speech; not sent to Whisper.");
+                AudioChunker.DeleteParts(filePath);
+                try { File.Delete(filePath); } catch { }
+                _hud.Hide();
+                return;
+            }
+
             _hud.ShowProcessing();
 
             // CRITICAL RULE: Save recording to persistent queue BEFORE any network upload attempt!

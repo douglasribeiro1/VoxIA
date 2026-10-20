@@ -79,6 +79,9 @@ namespace VoxIA.Services
         private Thread _recordThread;
         private volatile bool _isRecording = false;
         private string _currentFilePath = null;
+
+        /// <summary>Verdadeiro quando a última gravação não tinha fala (só silêncio ou ruído).</summary>
+        public bool LastRecordingWasSilent { get; private set; }
         private DateTime _recordingStartTime;
         private MemoryStream _recordedAudioStream;
         private List<IntPtr> _headerPointers = new List<IntPtr>();
@@ -293,6 +296,7 @@ namespace VoxIA.Services
                     _recordThread.Join(500);
                 }
 
+                LastRecordingWasSilent = false;
                 lock (_recordedAudioStream)
                 {
                     byte[] pcmData = _recordedAudioStream.ToArray();
@@ -301,6 +305,7 @@ namespace VoxIA.Services
                         try
                         {
                             var prep = AudioPreprocessor.Process(pcmData, (int)_format.nSamplesPerSec);
+                            LastRecordingWasSilent = prep.Silent;
                             if (prep.Changed)
                             {
                                 Logger.LogInfo(string.Format("Audio preprocessing: {0:F1}s -> {1:F1}s, gain x{2:F2} ({3}).", prep.OriginalSeconds, prep.NewSeconds, prep.Gain, prep.Note));

@@ -19,6 +19,7 @@ namespace VoxIA.Services
             public double NewSeconds;
             public double Gain;
             public string Note;
+            public bool Silent;   // true quando não há fala nenhuma (não deve ser enviado ao Whisper)
         }
 
         private const int FrameMs = 20;
@@ -31,6 +32,8 @@ namespace VoxIA.Services
         private const double QuietRms = 2200.0;
         private const double MaxGain = 4.0;
         private const double MaxPeak = 30000.0;
+        private const double MinSpeechRms = 150.0;  // abaixo disso é ruído ambiente, não fala
+        private const int MinSpeechFrames = 12;     // 240 ms de energia de fala no mínimo
 
         public static Result Process(byte[] pcm, int sampleRate)
         {
@@ -84,6 +87,21 @@ namespace VoxIA.Services
             if (loud < 60.0)
             {
                 res.Note = "recording is essentially silent; left untouched";
+                res.Silent = true;
+                return res;
+            }
+
+            // Sem fala de verdade (só ruído do ambiente), o Whisper inventa palavras: não enviar
+            double speechLevel = Math.Max(MinSpeechRms, noise * 3.0);
+            int speechFrames = 0;
+            for (int f = 0; f < frames; f++)
+            {
+                if (rms[f] > speechLevel) speechFrames++;
+            }
+            if (speechFrames < MinSpeechFrames)
+            {
+                res.Note = "no speech detected; left untouched";
+                res.Silent = true;
                 return res;
             }
 
