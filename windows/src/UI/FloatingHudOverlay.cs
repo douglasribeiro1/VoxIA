@@ -414,7 +414,7 @@ namespace VoxIA.UI
             }
 
             // Spinning blue arc
-            using (Pen spinPen = new Pen(Color.FromArgb(0, 162, 255), 2.4f))
+            using (Pen spinPen = new Pen(Color.FromArgb(255, 90, 54), 2.4f))
             {
                 spinPen.StartCap = LineCap.Round;
                 spinPen.EndCap = LineCap.Round;
