@@ -53,13 +53,22 @@ jobs:
 
       - name: Atualizar o APK no repositorio (somente master)
         if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          cp output/VoxIA-Teclado-Android.apk android/VoxIA-Teclado-Android.apk
+          APK="$PWD/output/VoxIA-Teclado-Android.apk"
+          REPO="$RUNNER_TEMP/repo"
+          rm -rf "$REPO"
+          git clone -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$REPO"
+          cd "$REPO"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp "$APK" android/VoxIA-Teclado-Android.apk
           git add android/VoxIA-Teclado-Android.apk
           if ! git diff --cached --quiet; then
-            git commit -m "Atualiza APK Android (build automatico) [skip ci]"
-            git pull --rebase origin master
-            git push origin HEAD:master
+            git commit -q -m "Atualiza APK Android (build automatico) [skip ci]"
+            for i in 1 2 3; do
+              git pull -q --rebase origin master && git push -q origin HEAD:master && break
+              sleep 5
+            done
           fi
