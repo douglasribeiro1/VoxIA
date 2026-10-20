@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -12,7 +14,9 @@ namespace VoxIA.Services
     {
         private const string GroqTranscriptionEndpoint = "https://api.groq.com/openai/v1/audio/transcriptions";
 
-        public static async Task<string> TranscribeAudioAsync(string audioFilePath, string modelOverride)
+        private const string BasePrompt = "Ditado por voz em português brasileiro sem legendas.";
+
+        public static async Task<string> TranscribeAudioAsync(string audioFilePath, string modelOverride, string contextText)
         {
             string apiKey = SecureCredentialService.GetApiKey();
             if (string.IsNullOrEmpty(apiKey))
@@ -29,6 +33,47 @@ namespace VoxIA.Services
 
             Logger.LogInfo(string.Format("Initiating Groq Whisper transcription with model '{0}' for file: {1}", model, Path.GetFileName(audioFilePath)));
 
+            List<string> parts = AudioChunker.GetParts(audioFilePath);
+            if (parts.Count == 0)
+            {
+                string rawText = await SendToWhisperAsync(audioFilePath, model, apiKey, BuildPrompt(contextText));
+                string cleaned = SanitizeWhisperText(rawText);
+                if (IsPromptEcho(cleaned, contextText))
+                {
+                    Logger.LogInfo("Whisper returned only the context it was given (no real speech). Discarding.");
+                    return string.Empty;
+                }
+                Logger.LogInfo(string.Format("Groq Whisper transcription success (raw: {0} chars, cleaned: {1} chars).", rawText.Length, cleaned.Length));
+                return cleaned;
+            }
+
+            // Blocks are sent one after the other; each one gets the end of the text so far
+            // as its prompt, so sentences and punctuation continue naturally across the cut.
+            var sb = new StringBuilder();
+            for (int i = 0; i < parts.Count; i++)
+            {
+                string soFar = sb.ToString();
+                string prompt = i == 0 ? BuildPrompt(contextText) : BuildPrompt(soFar);
+                string piece = StripSoundTags(await SendToWhisperAsync(parts[i], model, apiKey, prompt));
+                if (IsPromptEcho(piece, i == 0 ? contextText : soFar))
+                {
+                    Logger.LogInfo(string.Format("Whisper block {0}/{1} only repeated its prompt; ignored.", i + 1, parts.Count));
+                    continue;
+                }
+                Logger.LogInfo(string.Format("Whisper block {0}/{1}: {2} chars.", i + 1, parts.Count, piece.Length));
+                if (piece.Length == 0) continue;
+                if (sb.Length > 0) sb.Append(' ');
+                sb.Append(piece);
+            }
+
+            string joined = sb.ToString();
+            string result = SanitizeWhisperText(joined);
+            Logger.LogInfo(string.Format("Groq Whisper transcription success ({0} blocks, raw: {1} chars, cleaned: {2} chars).", parts.Count, joined.Length, result.Length));
+            return result;
+        }
+
+        private static async Task<string> SendToWhisperAsync(string audioFilePath, string model, string apiKey, string prompt)
+        {
             using (var httpClient = new HttpClient())
             {
                 httpClient.Timeout = TimeSpan.FromSeconds(120);
@@ -46,7 +91,7 @@ namespace VoxIA.Services
                     content.Add(new StringContent("pt"), "language");
                     content.Add(new StringContent("0.0"), "temperature");
                     // Guiding prompt to suppress subtitle / YouTube end-card hallucinations
-                    content.Add(new StringContent("Ditado por voz em português brasileiro sem legendas."), "prompt");
+                    content.Add(new StringContent(prompt), "prompt");
 
                     HttpResponseMessage response = await httpClient.PostAsync(GroqTranscriptionEndpoint, content);
                     string responseBody = await response.Content.ReadAsStringAsync();
@@ -58,26 +103,51 @@ namespace VoxIA.Services
                     }
 
                     var serializer = new JavaScriptSerializer();
-                    var dict = serializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(responseBody);
+                    var dict = serializer.Deserialize<Dictionary<string, object>>(responseBody);
 
                     if (dict != null && dict.ContainsKey("text"))
                     {
-                        string rawText = dict["text"] != null ? dict["text"].ToString() : string.Empty;
-                        string cleaned = SanitizeWhisperText(rawText);
-                        Logger.LogInfo(string.Format("Groq Whisper transcription success (raw: {0} chars, cleaned: {1} chars).", rawText.Length, cleaned.Length));
-                        return cleaned;
+                        return dict["text"] != null ? dict["text"].ToString() : string.Empty;
                     }
-                    else
-                    {
-                        throw new InvalidOperationException(string.Format("Invalid JSON response structure from Groq Whisper API: {0}", responseBody));
-                    }
+                    throw new InvalidOperationException(string.Format("Invalid JSON response structure from Groq Whisper API: {0}", responseBody));
                 }
             }
         }
 
+        private static string StripSoundTags(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+            string text = Regex.Replace(input.Trim(), @"\[[\s\S]*?\]", "", RegexOptions.IgnoreCase).Trim();
+            text = Regex.Replace(text, @"\((?:m[úu]sica|risos|aplausos|sil[êe]ncio|ru[íi]do|legendas?[^\)]*)\)", "", RegexOptions.IgnoreCase).Trim();
+            return text;
+        }
+
+        public static Task<string> TranscribeAudioAsync(string audioFilePath, string modelOverride)
+        {
+            return TranscribeAudioAsync(audioFilePath, modelOverride, null);
+        }
+
         public static Task<string> TranscribeAudioAsync(string audioFilePath)
         {
-            return TranscribeAudioAsync(audioFilePath, null);
+            return TranscribeAudioAsync(audioFilePath, null, null);
+        }
+
+        // Whisper conditions on the end of the prompt, so the text already written goes last.
+        private static string BuildPrompt(string contextText)
+        {
+            if (string.IsNullOrWhiteSpace(contextText)) return BasePrompt;
+            string tail = contextText.Length > 220 ? contextText.Substring(contextText.Length - 220) : contextText;
+            int firstSpace = tail.IndexOf(' ');
+            if (contextText.Length > 220 && firstSpace > 0 && firstSpace < 40) tail = tail.Substring(firstSpace + 1);
+            return BasePrompt + " " + tail;
+        }
+
+        private static bool IsPromptEcho(string transcript, string contextText)
+        {
+            if (string.IsNullOrWhiteSpace(transcript) || string.IsNullOrWhiteSpace(contextText)) return false;
+            string t = transcript.Trim().TrimEnd('.', '!', '?', ' ');
+            if (t.Length < 30) return false;
+            return contextText.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static string SanitizeWhisperText(string input)

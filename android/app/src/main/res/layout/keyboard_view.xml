@@ -70,6 +70,18 @@
                 android:src="@drawable/ic_book"
                 android:scaleType="centerInside" />
 
+            <!-- Botão Desfazer Último Ditado (visível após inserir um ditado) -->
+            <ImageButton
+                android:id="@+id/btnUndoDictation"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="@string/btn_undo_desc"
+                android:src="@drawable/ic_undo"
+                android:scaleType="centerInside"
+                android:visibility="gone" />
+
             <!-- Botão Configurações -->
             <ImageButton
                 android:id="@+id/btnOpenSettings"
@@ -114,6 +126,15 @@
             android:layout_height="78dp"
             android:gravity="center">
 
+            <!-- Anel que pulsa conforme o volume da voz durante a gravação -->
+            <View
+                android:id="@+id/viewMicPulse"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_mic_pulse"
+                android:visibility="invisible" />
+
             <ImageButton
                 android:id="@+id/btnMicRecord"
                 android:layout_width="66dp"
@@ -124,6 +145,19 @@
                 android:src="@drawable/ic_mic"
                 android:scaleType="centerInside"
                 android:elevation="4dp" />
+
+            <!-- Cancelar: descarta a gravação (ou o processamento) sem inserir nada -->
+            <ImageButton
+                android:id="@+id/btnCancelRecording"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center"
+                android:translationX="-80dp"
+                android:background="@drawable/bg_key"
+                android:contentDescription="Cancelar gravação"
+                android:src="@drawable/ic_close"
+                android:scaleType="centerInside"
+                android:visibility="gone" />
         </FrameLayout>
 
         <!-- Barra Inferior de Digitação & ENVIO DIRETO -->
@@ -323,118 +357,6 @@
                 android:layout_weight="1.2"
                 android:background="@drawable/bg_btn_send"
                 android:text="@string/btn_save_prompt"
-                android:textAllCaps="false"
-                android:textColor="@color/text_primary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- ========================================== -->
-    <!-- 3. DICIONÁRIO RÁPIDO DIRETO NO TECLADO     -->
-    <!-- ========================================== -->
-    <LinearLayout
-        android:id="@+id/layoutDictionaryQuickAdd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/bg_editor_box"
-        android:padding="10dp"
-        android:visibility="gone">
-
-        <!-- Topo do Dicionário Rápido -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="6dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dict_quick_title"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/btnCloseDictEditor"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Fechar"
-                android:src="@drawable/ic_close"
-                android:scaleType="centerInside" />
-        </LinearLayout>
-
-        <!-- Campo Palavra Original -->
-        <EditText
-            android:id="@+id/etDictOriginal"
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:background="@drawable/bg_input_field"
-            android:hint="@string/dict_orig_hint"
-            android:textColorHint="@color/text_secondary"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:singleLine="true"
-            android:layout_marginBottom="6dp" />
-
-        <!-- Campo Substituição -->
-        <EditText
-            android:id="@+id/etDictReplacement"
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:background="@drawable/bg_input_field"
-            android:hint="@string/dict_repl_hint"
-            android:textColorHint="@color/text_secondary"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:singleLine="true"
-            android:layout_marginBottom="6dp" />
-
-        <!-- Checkbox Vocabulário Técnico -->
-        <CheckBox
-            android:id="@+id/cbDictVocabOnly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/dict_vocab_only"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Botões de Ação do Dicionário -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <Button
-                android:id="@+id/btnCancelDictEditor"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_key"
-                android:text="@string/btn_cancel"
-                android:textAllCaps="false"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btnSaveDictEntry"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1.2"
-                android:background="@drawable/bg_btn_send"
-                android:text="@string/btn_save_dict"
                 android:textAllCaps="false"
                 android:textColor="@color/text_primary"
                 android:textSize="12sp"

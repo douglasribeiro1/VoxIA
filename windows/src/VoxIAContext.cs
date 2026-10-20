@@ -62,21 +62,27 @@ namespace VoxIA
 
             string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
 
-            _menuRecord = new ToolStripMenuItem(string.Format("🎙 Iniciar Gravação ({0})", hotkey), null, OnMenuRecordClick);
-            _menuPrompts = new ToolStripMenuItem("📝 Modo de Transcrição");
-            _menuModeParagraphs = new ToolStripMenuItem("¶ Em Parágrafos (Quebras de linha)", null, (s, e) => SetTranscriptionMode("default_paragraphs"));
-            _menuModeSingleLine = new ToolStripMenuItem("─ Linha Única (Sem quebras)", null, (s, e) => SetTranscriptionMode("default_single_line"));
+            Theme.StyleContextMenu(_trayMenu);
+
+            _menuRecord = new ToolStripMenuItem("Iniciar gravação", null, OnMenuRecordClick) { ShortcutKeyDisplayString = hotkey, Font = new Font(_trayMenu.Font, FontStyle.Bold) };
+            _menuPrompts = new ToolStripMenuItem("Modo de transcrição");
+            _menuModeParagraphs = new ToolStripMenuItem("Em parágrafos (com quebras de linha)", null, (s, e) => SetTranscriptionMode("default_paragraphs"));
+            _menuModeSingleLine = new ToolStripMenuItem("Em linha única (sem quebras)", null, (s, e) => SetTranscriptionMode("default_single_line"));
+            _menuPrompts.DropDown.Renderer = _trayMenu.Renderer;
             _menuPrompts.DropDownItems.Add(_menuModeParagraphs);
             _menuPrompts.DropDownItems.Add(_menuModeSingleLine);
 
-            _menuDict = new ToolStripMenuItem("📖 Dicionário de Palavras (Ctrl + Shift + W)", null, (s, e) => OpenDictionaryQuickForm());
-            _menuPending = new ToolStripMenuItem("📋 Áudios Pendentes", null, (s, e) => OpenPendingForm());
-            _menuHistory = new ToolStripMenuItem("📜 Histórico & Estatísticas", null, (s, e) => OpenHistoryForm());
-            _menuShortcuts = new ToolStripMenuItem("⌨ Guia de Atalhos...", null, (s, e) => ShowShortcutsDialog());
-            _menuAutoStart = new ToolStripMenuItem("🚀 Iniciar com o Windows", null, OnMenuAutoStartClick);
-            _menuSettings = new ToolStripMenuItem("⚙ Configurações", null, (s, e) => OpenSettingsForm());
-            _menuExit = new ToolStripMenuItem("⏻ Sair", null, OnMenuExitClick);
+            _menuDict = new ToolStripMenuItem("Dicionário de palavras", null, (s, e) => OpenDictionaryQuickForm()) { ShortcutKeyDisplayString = "Ctrl+Shift+W" };
+            _menuPending = new ToolStripMenuItem("Áudios pendentes", null, (s, e) => OpenPendingForm());
+            _menuHistory = new ToolStripMenuItem("Histórico e estatísticas", null, (s, e) => OpenHistoryForm());
+            _menuShortcuts = new ToolStripMenuItem("Guia de atalhos...", null, (s, e) => ShowShortcutsDialog());
+            _menuAutoStart = new ToolStripMenuItem("Iniciar com o Windows", null, OnMenuAutoStartClick);
+            _menuSettings = new ToolStripMenuItem("Configurações...", null, (s, e) => OpenSettingsForm());
+            _menuExit = new ToolStripMenuItem("Sair", null, OnMenuExitClick);
 
+            var menuTitle = new ToolStripLabel("VoxIA  ·  Ditado por voz") { ForeColor = Theme.Navy, Font = new Font(_trayMenu.Font, FontStyle.Bold), Margin = new Padding(0, 4, 0, 4) };
+            _trayMenu.Items.Add(menuTitle);
+            _trayMenu.Items.Add(new ToolStripSeparator());
             _trayMenu.Items.Add(_menuRecord);
             _trayMenu.Items.Add(_menuPrompts);
             _trayMenu.Items.Add(_menuDict);
@@ -237,15 +243,13 @@ namespace VoxIA
         {
             string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
 
-            string msg = "⌨ GUIA DE ATALHOS GLOBAIS DO VOXIA:\n\n" +
-                         string.Format("🎙 Iniciar / Parar Ditado:\n   • Tecla de Atalho: {0}\n   • Push-to-Talk: Manter pressionado para falar\n\n", hotkey) +
-                         "📖 Adicionar Palavra ao Dicionário:\n" +
-                         "   • Atalho Rápido: Ctrl + Shift + W (ou Ctrl + Shift + D)\n" +
-                         "   • Como usar: Selecione o texto em qualquer app (Word, Chrome, Prontuário) e pressione o atalho.\n\n" +
-                         "⏹ Cancelar Gravação Ativa:\n" +
-                         "   • Atalho: Esc\n\n" +
-                         "⚙ Configurações e Gerenciamento:\n" +
-                         "   • Clique duplo no ícone do VoxIA na bandeja do Windows.";
+            string msg = "ATALHOS GLOBAIS DO VOXIA\n\n" +
+                         string.Format("Iniciar / parar ditado:  {0}\n", hotkey) +
+                         "   No modo push-to-talk, mantenha pressionado para falar.\n\n" +
+                         "Adicionar palavra ao dicionário:  Ctrl + Shift + W  (ou Ctrl + Shift + D)\n" +
+                         "   Selecione o texto em qualquer aplicativo (Word, navegador, prontuário) e pressione o atalho.\n\n" +
+                         "Cancelar gravação em andamento:  Esc\n\n" +
+                         "Configurações:  clique duplo no ícone do VoxIA na bandeja do Windows.";
 
             MessageBox.Show(msg, "Guia de Atalhos — VoxIA", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -286,7 +290,8 @@ namespace VoxIA
 
                 _hud.ShowRecording();
                 string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
-                _menuRecord.Text = string.Format("⏹ Parar e Enviar ({0})", hotkey);
+                _menuRecord.Text = "Parar e enviar";
+                _menuRecord.ShortcutKeyDisplayString = hotkey;
             }
             catch (Exception ex)
             {
@@ -307,7 +312,8 @@ namespace VoxIA
             double durationSec = _audioRecorder.RecordingDuration.TotalSeconds;
             string filePath = _audioRecorder.StopRecording();
             string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
-            _menuRecord.Text = string.Format("🎙 Iniciar Gravação ({0})", hotkey);
+            _menuRecord.Text = "Iniciar gravação";
+            _menuRecord.ShortcutKeyDisplayString = hotkey;
             AudioFeedbackService.PlayStopBeep();
 
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
@@ -358,12 +364,12 @@ namespace VoxIA
 
             if (count > 0)
             {
-                _menuPending.Text = string.Format("📋 Áudios Pendentes ({0})", count);
+                _menuPending.Text = string.Format("Áudios pendentes ({0})", count);
                 _menuPending.Font = new Font(_trayMenu.Font, FontStyle.Bold);
             }
             else
             {
-                _menuPending.Text = "📋 Áudios Pendentes";
+                _menuPending.Text = "Áudios pendentes";
                 _menuPending.Font = new Font(_trayMenu.Font, FontStyle.Regular);
             }
         }

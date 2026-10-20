@@ -1,0 +1,10 @@
+VoxIA - versão para compartilhar (sem chave de API)
+
+1. Coloque esta pasta em um local com permissão de escrita (ex.: Documentos). Não rode de dentro de um .zip.
+2. Execute VoxIA.exe.
+3. Abra as configurações do app e cole a SUA chave de API do Groq (gratuita em console.groq.com > API Keys).
+4. Atalho padrão para ditar: F8.
+
+Modo portátil: histórico, dicionário e chave ficam na subpasta "data" desta pasta. Cada pessoa deve usar a sua própria cópia/chave; não compartilhe a pasta "data".
+
+Comandos de voz: "abrir tópico exame físico fechar tópico" cria um título de tópico em CAIXA ALTA; "abrir título ... fechar título" cria o título da primeira linha (diga "traço" para o hífen).

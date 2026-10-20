@@ -296,7 +296,36 @@ namespace VoxIA.Services
                 lock (_recordedAudioStream)
                 {
                     byte[] pcmData = _recordedAudioStream.ToArray();
+                    if (SettingsService.Current.EnableAudioPreprocessing)
+                    {
+                        try
+                        {
+                            var prep = AudioPreprocessor.Process(pcmData, (int)_format.nSamplesPerSec);
+                            if (prep.Changed)
+                            {
+                                Logger.LogInfo(string.Format("Audio preprocessing: {0:F1}s -> {1:F1}s, gain x{2:F2} ({3}).", prep.OriginalSeconds, prep.NewSeconds, prep.Gain, prep.Note));
+                                pcmData = prep.Pcm;
+                            }
+                            else
+                            {
+                                Logger.LogInfo("Audio preprocessing skipped: " + prep.Note);
+                            }
+                        }
+                        catch (Exception prepEx)
+                        {
+                            Logger.LogError("Audio preprocessing failed; using the original recording", prepEx);
+                        }
+                    }
                     AudioEncoderService.SaveAudioFile(pcmData, _currentFilePath, _format.nSamplesPerSec);
+                    try
+                    {
+                        AudioChunker.SaveParts(pcmData, (int)_format.nSamplesPerSec, _currentFilePath);
+                    }
+                    catch (Exception chunkEx)
+                    {
+                        AudioChunker.DeleteParts(_currentFilePath);
+                        Logger.LogError("Could not split the recording into blocks; it will be sent whole", chunkEx);
+                    }
                 }
 
                 CleanupWaveIn();

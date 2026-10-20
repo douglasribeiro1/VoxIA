@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using VoxIA.Services;
@@ -10,20 +11,18 @@ namespace VoxIA.UI
     public class SettingsForm : Form
     {
         private TextBox _txtApiKey;
+        private CheckBox _chkShowApiKey;
 
-        // Transcription Mode Controls
-        private RadioButton _rdoModeParagraphs;
-        private RadioButton _rdoModeSingleLine;
+        // Seletores: formato do texto (0 = parágrafos, 1 = linha única) e modo de acionamento (0 = alternar, 1 = segurar)
+        private SegmentedControl _segFormat;
+        private SegmentedControl _segMode;
 
-        private CheckBox _chkAutoClipboard;
-        private CheckBox _chkAutoStart;
-        private CheckBox _chkPortableMode;
-        private CheckBox _chkAudioBeep;
-        private CheckBox _chkShowHud;
+        private ToggleSwitch _chkAutoClipboard;
+        private ToggleSwitch _chkAutoStart;
+        private ToggleSwitch _chkPortableMode;
+        private ToggleSwitch _chkAudioBeep;
+        private ToggleSwitch _chkShowHud;
         private ComboBox _cboHotkeyChoice;
-        private GroupBox _grpHotkey;
-        private RadioButton _rdoToggleMode;
-        private RadioButton _rdoPushToTalkMode;
 
         // Dictionary UI controls
         private ListView _lstDictionary;
@@ -36,7 +35,21 @@ namespace VoxIA.UI
 
         private Button _btnSave;
         private Button _btnCancel;
-        private TabControl _tabs;
+
+        // Navegação lateral (substitui as abas)
+        private readonly List<Button> _navButtons = new List<Button>();
+        private readonly List<Panel> _sections = new List<Panel>();
+        private int _selectedSection = -1;
+
+        private const int FormWidth = 900;
+        private const int FormHeight = 620;
+        private const int SidebarWidth = 220;
+        private const int PageLeft = 32;
+        private const int PageTop = 116;
+        private const int PageWidth = 616;
+        private const int ColumnWidth = 300;
+        private const int ColumnGap = 16;
+        private const int CardGap = 16;
 
         public SettingsForm()
         {
@@ -47,34 +60,304 @@ namespace VoxIA.UI
 
         private void InitializeComponent()
         {
-            this.Text = "Configurações — VoxIA";
-            this.Size = new Size(580, 580);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.FromArgb(245, 246, 250);
-            this.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            Theme.ApplyForm(this, "Configurações — VoxIA", new Size(FormWidth, FormHeight));
 
-            _tabs = new TabControl
+            Panel content = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
+            Panel sidebar = BuildSidebar();
+            Panel footer = Theme.CreateFooter();
+
+            AddSection(sidebar, content, "Configurações", BuildSettingsSection());
+            AddSection(sidebar, content, "Atalhos", BuildShortcutsSection());
+            AddSection(sidebar, content, "Vocabulário", BuildDictionarySection());
+
+            // FORM BUTTONS
+            _btnCancel = new Button { Text = "Cancelar", Size = new Size(100, 34), DialogResult = DialogResult.Cancel };
+            Theme.StyleSecondary(_btnCancel);
+            _btnSave = new Button { Text = "Salvar alterações", Size = new Size(150, 34), DialogResult = DialogResult.OK };
+            Theme.StylePrimary(_btnSave);
+            _btnSave.Click += BtnSave_Click;
+
+            _btnCancel.Location = new Point(this.ClientSize.Width - _btnCancel.Width - 20, 12);
+            _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 10, 12);
+            _btnCancel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _btnSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+            Label lblFooterHint = new Label
             {
-                Location = new Point(12, 12),
-                Size = new Size(540, 480)
+                Text = "Enter salva  ·  Esc cancela",
+                Font = Theme.Small,
+                ForeColor = Theme.TextMuted,
+                BackColor = Color.Transparent,
+                AutoSize = true,
+                Location = new Point(20, 21)
+            };
+            footer.Controls.Add(lblFooterHint);
+            footer.Controls.Add(_btnSave);
+            footer.Controls.Add(_btnCancel);
+
+            // Ordem de adição importa para o Dock: Fill por primeiro, o rodapé por último
+            this.Controls.Add(content);
+            this.Controls.Add(sidebar);
+            this.Controls.Add(footer);
+
+            this.AcceptButton = _btnSave;
+            this.CancelButton = _btnCancel;
+
+            SelectTab(0);
+        }
+
+        /// <summary>Barra lateral com a marca VoxIA, a navegação e o status do serviço.</summary>
+        private Panel BuildSidebar()
+        {
+            Panel sidebar = new Panel { Dock = DockStyle.Left, Width = SidebarWidth, BackColor = Theme.Surface };
+            sidebar.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                // Barras do logotipo
+                int[] heights = { 8, 16, 24, 12, 18 };
+                using (SolidBrush bars = new SolidBrush(Theme.Accent))
+                {
+                    for (int i = 0; i < heights.Length; i++)
+                        e.Graphics.FillRectangle(bars, 24 + i * 6, 36 - heights[i] / 2, 3, heights[i]);
+                }
+
+                using (SolidBrush text = new SolidBrush(Theme.Text))
+                    e.Graphics.DrawString("VoxIA", Theme.HeaderTitle, text, 60, 20);
+
+                using (Pen p = new Pen(Theme.Border))
+                    e.Graphics.DrawLine(p, sidebar.Width - 1, 0, sidebar.Width - 1, sidebar.Height);
             };
 
-            // ==========================================
-            // TAB 1: CONFIGURAÇÕES GERAIS (TELA CENTRAL)
-            // ==========================================
-            TabPage tabConfig = new TabPage("⚙ Configurações") { BackColor = Color.White };
-            
-            // 1. Chave de API Groq
-            Label lblKey = new Label { Text = "🔑 Chave de API Groq:", Location = new Point(15, 12), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            _txtApiKey = new TextBox { Location = new Point(15, 33), Width = 495, Font = new Font("Segoe UI", 9F) };
-            Label lblKeyHint = new Label { Text = "Obtenha sua chave gratuita em console.groq.com", Location = new Point(15, 58), ForeColor = Color.Gray, AutoSize = true, Font = new Font("Segoe UI", 8.25F) };
+            Panel status = new Panel { Dock = DockStyle.Bottom, Height = 48, BackColor = Color.Transparent };
+            status.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (SolidBrush dot = new SolidBrush(Theme.Success))
+                    e.Graphics.FillEllipse(dot, 24, 20, 7, 7);
+                TextRenderer.DrawText(e.Graphics, "Groq · Whisper + GPT-OSS", Theme.Small, new Point(38, 16), Theme.TextMuted);
+            };
+            sidebar.Controls.Add(status);
 
-            // 2. Tecla de Atalho Global
-            Label lblHotkey = new Label { Text = "⌨ Tecla de Atalho Global para Ditado:", Location = new Point(15, 86), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            _cboHotkeyChoice = new ComboBox { Location = new Point(15, 107), Width = 495, DropDownStyle = ComboBoxStyle.DropDownList };
+            return sidebar;
+        }
+
+        private void AddSection(Panel sidebar, Panel content, string title, Panel section)
+        {
+            int index = _sections.Count;
+
+            Button nav = new Button
+            {
+                Text = "   " + title,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Location = new Point(12, 84 + index * 42),
+                Size = new Size(SidebarWidth - 24, 36),
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font(Theme.FontFamily, 9.75F),
+                Cursor = Cursors.Hand,
+                TabStop = false,
+                UseVisualStyleBackColor = false
+            };
+            nav.FlatAppearance.BorderSize = 0;
+            nav.FlatAppearance.MouseOverBackColor = Theme.SurfaceAlt;
+            nav.FlatAppearance.MouseDownBackColor = Theme.SurfaceAlt;
+            nav.Click += (s, e) => SelectTab(index);
+
+            section.Dock = DockStyle.Fill;
+            section.Visible = false;
+
+            sidebar.Controls.Add(nav);
+            content.Controls.Add(section);
+            _navButtons.Add(nav);
+            _sections.Add(section);
+        }
+
+        private Panel CreateSectionPanel()
+        {
+            return new Panel { BackColor = Theme.Background, AutoScroll = false };
+        }
+
+        /// <summary>Cabeçalho da página: rótulo pequeno em maiúsculas e título grande em serifa itálica.</summary>
+        private static void AddPageHeader(Panel section, string eyebrow, string title)
+        {
+            section.Controls.Add(Theme.CreateEyebrow(eyebrow, new Point(PageLeft, 40)));
+            section.Controls.Add(Theme.CreatePageTitle(title, new Point(PageLeft, 58)));
+        }
+
+        /// <summary>Começa um cartão com título; o conteúdo é adicionado depois e a altura é ajustada em EndCard.</summary>
+        private static Panel BeginCard(int x, int y, int width, string title)
+        {
+            Panel card = Theme.CreateCard(new Rectangle(x, y, width, 0));
+            if (!string.IsNullOrEmpty(title))
+                card.Controls.Add(Theme.CreateCardTitle(title, new Point(16, 14)));
+            return card;
+        }
+
+        /// <summary>Ajusta a altura do cartão ao conteúdo, adiciona à página e devolve a próxima posição vertical da coluna.</summary>
+        private static void EndCard(Panel section, Panel card, ref int columnY)
+        {
+            int bottom = 0;
+            foreach (Control c in card.Controls)
+                bottom = Math.Max(bottom, c.Bottom);
+
+            card.Height = bottom + 16;
+            section.Controls.Add(card);
+            columnY = card.Bottom + CardGap;
+        }
+
+        /// <summary>Linha com texto à esquerda e interruptor à direita, dentro de um cartão.</summary>
+        private static ToggleSwitch CreateToggleRow(Panel card, string text, int top)
+        {
+            Label lbl = new Label
+            {
+                Text = text,
+                Font = Theme.Body,
+                ForeColor = Theme.Text,
+                BackColor = Color.Transparent,
+                Location = new Point(16, top),
+                Size = new Size(ColumnWidth - 16 - 16 - 56, 36),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            ToggleSwitch toggle = new ToggleSwitch
+            {
+                Location = new Point(ColumnWidth - 16 - 44, top + 6),
+                BackColor = Theme.Surface
+            };
+            card.Controls.Add(lbl);
+            card.Controls.Add(toggle);
+            return toggle;
+        }
+
+        /// <summary>Atalho como teclas desenhadas (Ctrl + Shift + W) e uma descrição embaixo.</summary>
+        private static void AddShortcutRow(Panel card, string keys, string description, int top)
+        {
+            int x = 16;
+            string[] parts = keys.Split(new[] { " + " }, StringSplitOptions.None);
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (i > 0)
+                {
+                    card.Controls.Add(new Label
+                    {
+                        Text = "+",
+                        Font = Theme.Small,
+                        ForeColor = Theme.TextMuted,
+                        BackColor = Color.Transparent,
+                        AutoSize = true,
+                        Location = new Point(x, top + 4)
+                    });
+                    x += 18;
+                }
+
+                Panel cap = Theme.CreateKeyCap(parts[i], new Point(x, top));
+                card.Controls.Add(cap);
+                x += cap.Width + 6;
+            }
+
+            card.Controls.Add(Theme.CreateHint(description, new Point(16, top + 30), ColumnWidth - 32));
+        }
+
+        // ==========================================
+        // PÁGINA 1: CONFIGURAÇÕES (duas colunas)
+        // ==========================================
+        private Panel BuildSettingsSection()
+        {
+            Panel section = CreateSectionPanel();
+            AddPageHeader(section, "Preferências", "Como o VoxIA escuta você.");
+
+            int leftX = PageLeft;
+            int rightX = PageLeft + ColumnWidth + ColumnGap;
+            int leftY = PageTop;
+            int rightY = PageTop;
+
+            // Coluna esquerda: chave e comportamento
+            Panel cardKey = BeginCard(leftX, leftY, ColumnWidth, "Chave de API Groq");
+            _txtApiKey = new TextBox { Location = new Point(16, 40), Width = ColumnWidth - 32 - 80, UseSystemPasswordChar = true };
+            Theme.StyleTextBox(_txtApiKey);
+            _chkShowApiKey = new CheckBox
+            {
+                Text = "Mostrar",
+                Location = new Point(ColumnWidth - 16 - 66, 42),
+                AutoSize = true,
+                ForeColor = Theme.TextMuted,
+                BackColor = Theme.Surface,
+                Cursor = Cursors.Hand
+            };
+            _chkShowApiKey.CheckedChanged += (s, e) => _txtApiKey.UseSystemPasswordChar = !_chkShowApiKey.Checked;
+
+            LinkLabel lnkGroq = new LinkLabel
+            {
+                Text = "Obtenha sua chave gratuita em console.groq.com",
+                Location = new Point(16, 76),
+                Size = new Size(ColumnWidth - 32, 32),
+                Font = Theme.Small,
+                LinkColor = Theme.Accent,
+                ActiveLinkColor = Theme.AccentHover,
+                LinkBehavior = LinkBehavior.HoverUnderline,
+                BackColor = Color.Transparent
+            };
+            lnkGroq.LinkArea = new LinkArea(lnkGroq.Text.IndexOf("console"), "console.groq.com".Length);
+            lnkGroq.LinkClicked += (s, e) =>
+            {
+                try { System.Diagnostics.Process.Start("https://console.groq.com/keys"); } catch { }
+            };
+            cardKey.Controls.AddRange(new Control[] { _txtApiKey, _chkShowApiKey, lnkGroq });
+            EndCard(section, cardKey, ref leftY);
+
+            Panel cardSys = BeginCard(leftX, leftY, ColumnWidth, "Sistema e comportamento");
+            _chkAutoStart = CreateToggleRow(cardSys, "Iniciar com o Windows (na bandeja)", 40);
+            _chkPortableMode = CreateToggleRow(cardSys, "Modo portátil (dados na pasta ./data/)", 84);
+            _chkAutoClipboard = CreateToggleRow(cardSys, "Copiar o texto final automaticamente", 128);
+            _chkAudioBeep = CreateToggleRow(cardSys, "Sinal sonoro ao iniciar e parar", 172);
+            _chkShowHud = CreateToggleRow(cardSys, "Indicador flutuante (HUD) durante o ditado", 216);
+            _chkAutoClipboard.Checked = true;
+            _chkAudioBeep.Checked = true;
+            _chkShowHud.Checked = true;
+            EndCard(section, cardSys, ref leftY);
+
+            // Coluna direita: texto e compatibilidade
+            Panel cardFormat = BeginCard(rightX, rightY, ColumnWidth, "Idioma e texto");
+            _segFormat = new SegmentedControl { Location = new Point(16, 40), Size = new Size(ColumnWidth - 32, 36) };
+            _segFormat.SetItems("Parágrafos", "Linha única");
+            cardFormat.Controls.Add(_segFormat);
+            cardFormat.Controls.Add(Theme.CreateHint(
+                "Parágrafos detecta pausas e organiza o texto em blocos. Linha única mantém tudo em uma linha só, bom para buscas e chats.",
+                new Point(16, 88), ColumnWidth - 32));
+            EndCard(section, cardFormat, ref rightY);
+
+            Panel cardCompat = BeginCard(rightX, rightY, ColumnWidth, "Compatibilidade");
+            cardCompat.Controls.Add(Theme.CreateHint(
+                "Travessões e hífens especiais viram hífen comum (-), aspas curvas viram aspas retas e espaços especiais viram espaço normal. Os acentos são mantidos.",
+                new Point(16, 40), ColumnWidth - 32));
+            EndCard(section, cardCompat, ref rightY);
+
+            return section;
+        }
+
+        // ==========================================
+        // PÁGINA 2: ATALHOS (duas colunas)
+        // ==========================================
+        private Panel BuildShortcutsSection()
+        {
+            Panel section = CreateSectionPanel();
+            AddPageHeader(section, "Atalhos", "Teclas que dão o comando.");
+
+            int leftX = PageLeft;
+            int rightX = PageLeft + ColumnWidth + ColumnGap;
+            int leftY = PageTop;
+            int rightY = PageTop;
+
+            Panel cardHotkey = BeginCard(leftX, leftY, ColumnWidth, "Tecla de atalho global");
+            _cboHotkeyChoice = new ComboBox
+            {
+                Location = new Point(16, 40),
+                Width = ColumnWidth - 32,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Theme.SurfaceAlt,
+                ForeColor = Theme.Text,
+                Font = new Font(Theme.FontFamily, 9.75F)
+            };
             _cboHotkeyChoice.Items.Add("F8 (Recomendado / Tecla Única)");
             _cboHotkeyChoice.Items.Add("Ctrl + Win (Padrão Clássico)");
             _cboHotkeyChoice.Items.Add("F9 (Tecla Única)");
@@ -82,166 +365,97 @@ namespace VoxIA.UI
             _cboHotkeyChoice.Items.Add("F12 (Tecla Única)");
             _cboHotkeyChoice.Items.Add("Ctrl + Shift + Espaço");
             _cboHotkeyChoice.SelectedIndex = 0;
+            cardHotkey.Controls.Add(_cboHotkeyChoice);
+            cardHotkey.Controls.Add(Theme.CreateHint("Funciona em qualquer aplicativo, inclusive no prontuário.", new Point(16, 80), ColumnWidth - 32));
+            EndCard(section, cardHotkey, ref leftY);
 
-            // 3. Modo de Acionamento
-            _grpHotkey = new GroupBox { Text = "Modo de Acionamento do Ditado", Location = new Point(15, 138), Size = new Size(495, 74) };
-            _rdoToggleMode = new RadioButton { Text = "Pressionar 1x para Iniciar → Pressionar 1x para Parar e Enviar (Padrão)", Location = new Point(15, 20), AutoSize = true, Checked = true };
-            _rdoPushToTalkMode = new RadioButton { Text = "Manter pressionado para Falar → Soltar para Parar (Push-to-Talk)", Location = new Point(15, 45), AutoSize = true };
-            _grpHotkey.Controls.Add(_rdoToggleMode);
-            _grpHotkey.Controls.Add(_rdoPushToTalkMode);
+            Panel cardMode = BeginCard(leftX, leftY, ColumnWidth, "Modo de acionamento");
+            _segMode = new SegmentedControl { Location = new Point(16, 40), Size = new Size(ColumnWidth - 32, 36) };
+            _segMode.SetItems("Alternar", "Segurar");
+            cardMode.Controls.Add(_segMode);
+            cardMode.Controls.Add(Theme.CreateHint(
+                "Alternar: uma vez inicia e outra para e envia. Segurar: fale enquanto mantém pressionado e solte para enviar.",
+                new Point(16, 88), ColumnWidth - 32));
+            EndCard(section, cardMode, ref leftY);
 
-            // 4. Opções do Sistema e Comportamento
-            GroupBox grpOptions = new GroupBox { Text = "Opções do Sistema e Comportamento", Location = new Point(15, 220), Size = new Size(495, 166) };
-            _chkAutoStart = new CheckBox { Text = "Iniciar automaticamente com o Windows (residente na bandeja)", Location = new Point(15, 22), Width = 465, AutoSize = true };
-            _chkPortableMode = new CheckBox { Text = "Modo Portátil (Padrão: dados e configurações salvos localmente na pasta ./data/)", Location = new Point(15, 48), Width = 465, AutoSize = true };
-            _chkAutoClipboard = new CheckBox { Text = "Copiar automaticamente o texto final para a Área de Transferência (Clipboard)", Location = new Point(15, 74), Width = 465, AutoSize = true, Checked = true };
-            _chkAudioBeep = new CheckBox { Text = "Sinal sonoro discreto ao iniciar e parar gravação (Beep feedback)", Location = new Point(15, 100), Width = 465, AutoSize = true, Checked = true };
-            _chkShowHud = new CheckBox { Text = "Exibir indicador visual flutuante (HUD) centralizado na tela", Location = new Point(15, 126), Width = 465, AutoSize = true, Checked = true };
-            grpOptions.Controls.AddRange(new Control[] { _chkAutoStart, _chkPortableMode, _chkAutoClipboard, _chkAudioBeep, _chkShowHud });
+            Panel cardShortcuts = BeginCard(rightX, rightY, ColumnWidth, "Outros atalhos");
+            AddShortcutRow(cardShortcuts, "Ctrl + Shift + W", "Adiciona a palavra selecionada ao dicionário", 40);
+            AddShortcutRow(cardShortcuts, "Esc", "Cancela a gravação em andamento", 104);
+            EndCard(section, cardShortcuts, ref rightY);
 
-            tabConfig.Controls.AddRange(new Control[] {
-                lblKey, _txtApiKey, lblKeyHint,
-                lblHotkey, _cboHotkeyChoice, _grpHotkey,
-                grpOptions
-            });
+            return section;
+        }
 
-            // ==========================================
-            // TAB 2: MODO DE TRANSCRIÇÃO
-            // ==========================================
-            TabPage tabFormat = new TabPage("📝 Modo de Transcrição") { BackColor = Color.White };
+        // ==========================================
+        // PÁGINA 3: VOCABULÁRIO (cartão largo)
+        // ==========================================
+        private Panel BuildDictionarySection()
+        {
+            Panel section = CreateSectionPanel();
+            AddPageHeader(section, "Vocabulário", "Palavras que o VoxIA aprende.");
 
-            GroupBox grpMode = new GroupBox
-            {
-                Text = "Formatação do Texto Ditado",
-                Location = new Point(15, 15),
-                Size = new Size(495, 230),
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
-            };
+            Panel card = BeginCard(PageLeft, PageTop, PageWidth, "Dicionário");
+            card.Controls.Add(Theme.CreateHint("Dica: selecione uma palavra em qualquer aplicativo e pressione Ctrl + Shift + W.", new Point(16, 40), PageWidth - 32));
 
-            _rdoModeParagraphs = new RadioButton
-            {
-                Text = "¶  Transcrever em Parágrafos (com quebras de linha) [Padrão]",
-                Location = new Point(20, 30),
-                Size = new Size(455, 24),
-                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
-                Checked = true
-            };
-            Label lblDescParagraphs = new Label
-            {
-                Text = "Detecta pausas e organiza o ditado em parágrafos coesos e bem estruturados. Recomendado para textos longos, e-mails, prontuários, laudos e documentos em geral.",
-                Location = new Point(42, 56),
-                Size = new Size(430, 48),
-                Font = new Font("Segoe UI", 8.5F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(70, 80, 95)
-            };
-
-            _rdoModeSingleLine = new RadioButton
-            {
-                Text = "─  Transcrever em Linha Única (sem quebras de linha)",
-                Location = new Point(20, 115),
-                Size = new Size(455, 24),
-                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold)
-            };
-            Label lblDescSingleLine = new Label
-            {
-                Text = "Mantém todo o texto falado em uma única linha contínua, sem quebras de linha ou múltiplos parágrafos. Ideal para campos de pesquisa, formulários web e chats rápidos.",
-                Location = new Point(42, 141),
-                Size = new Size(430, 48),
-                Font = new Font("Segoe UI", 8.5F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(70, 80, 95)
-            };
-
-            grpMode.Controls.AddRange(new Control[] {
-                _rdoModeParagraphs, lblDescParagraphs,
-                _rdoModeSingleLine, lblDescSingleLine
-            });
-
-            tabFormat.Controls.AddRange(new Control[] { grpMode });
-
-            // ==========================================
-            // TAB 3: DICIONÁRIO DE PALAVRAS
-            // ==========================================
-            TabPage tabDict = new TabPage("📖 Dicionário de Palavras") { BackColor = Color.White };
-
-            Panel pnlDictTip = new Panel
-            {
-                Location = new Point(15, 12),
-                Size = new Size(495, 50),
-                BackColor = Color.FromArgb(248, 249, 250),
-                BorderStyle = BorderStyle.FixedSingle
-            };
-            Label lblDictTip = new Label
-            {
-                Text = "Dica: Selecione qualquer palavra em outro app e aperte Ctrl + Shift + W para cadastrar na hora!",
-                Font = new Font("Segoe UI", 8.5F, FontStyle.Italic),
-                ForeColor = Color.FromArgb(73, 80, 87),
-                Location = new Point(8, 15),
-                AutoSize = true
-            };
-            pnlDictTip.Controls.Add(lblDictTip);
-
-            Label lblSearch = new Label { Text = "🔍 Buscar:", Location = new Point(15, 70), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-            _txtDictSearch = new TextBox { Location = new Point(80, 67), Width = 280 };
+            Label lblSearch = new Label { Text = "Buscar", Location = new Point(16, 86), AutoSize = true, ForeColor = Theme.Text, BackColor = Color.Transparent, Font = Theme.BodyBold };
+            _txtDictSearch = new TextBox { Location = new Point(70, 82), Width = 260 };
+            Theme.StyleTextBox(_txtDictSearch);
             _txtDictSearch.TextChanged += (s, e) => FilterDictionaryList();
 
-            _lblDictCount = new Label { Text = "0 palavras", Location = new Point(370, 70), AutoSize = true, ForeColor = Color.Gray };
+            _lblDictCount = new Label { Text = "0 palavras", Location = new Point(344, 86), AutoSize = true, ForeColor = Theme.TextMuted, BackColor = Color.Transparent };
 
             _lstDictionary = new ListView
             {
-                Location = new Point(15, 95),
-                Size = new Size(495, 280),
-                View = View.Details,
-                FullRowSelect = true,
-                GridLines = true,
-                Font = new Font("Segoe UI", 9F)
+                Location = new Point(16, 118),
+                Size = new Size(PageWidth - 32, 230)
             };
-            _lstDictionary.Columns.Add("De (Transcrito / Erro)", 185);
-            _lstDictionary.Columns.Add("Para (Substituição Correta)", 195);
-            _lstDictionary.Columns.Add("Tipo", 95);
+            Theme.StyleListView(_lstDictionary);
+            _lstDictionary.Columns.Add("De (transcrito / erro)", 200);
+            _lstDictionary.Columns.Add("Para (substituição correta)", 254);
+            _lstDictionary.Columns.Add("Tipo", 120);
             _lstDictionary.DoubleClick += (s, e) => EditSelectedDictionaryEntry();
 
-            _btnAddDict = new Button { Text = "➕ Adicionar", Location = new Point(15, 385), Size = new Size(95, 30), BackColor = Color.FromArgb(0, 122, 255), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            _btnAddDict.FlatAppearance.BorderSize = 0;
+            int buttonsTop = 362;
+
+            _btnAddDict = new Button { Text = "Adicionar", Location = new Point(16, buttonsTop), Size = new Size(100, 32) };
+            Theme.StylePrimary(_btnAddDict);
             _btnAddDict.Click += (s, e) => AddNewDictionaryEntry();
 
-            _btnEditDict = new Button { Text = "✏ Editar", Location = new Point(115, 385), Size = new Size(80, 30) };
+            _btnEditDict = new Button { Text = "Editar", Location = new Point(124, buttonsTop), Size = new Size(86, 32) };
+            Theme.StyleSecondary(_btnEditDict);
             _btnEditDict.Click += (s, e) => EditSelectedDictionaryEntry();
 
-            _btnDeleteDict = new Button { Text = "🗑 Excluir", Location = new Point(200, 385), Size = new Size(80, 30) };
+            _btnDeleteDict = new Button { Text = "Excluir", Location = new Point(218, buttonsTop), Size = new Size(86, 32) };
+            Theme.StyleSecondary(_btnDeleteDict);
             _btnDeleteDict.Click += (s, e) => DeleteSelectedDictionaryEntry();
 
-            _btnClearDict = new Button { Text = "Limpar Tudo", Location = new Point(410, 385), Size = new Size(100, 30), ForeColor = Color.DarkRed };
+            _btnClearDict = new Button { Text = "Limpar tudo", Location = new Point(PageWidth - 16 - 110, buttonsTop), Size = new Size(110, 32) };
+            Theme.StyleDanger(_btnClearDict);
             _btnClearDict.Click += (s, e) => ClearAllDictionaryEntries();
 
-            tabDict.Controls.AddRange(new Control[] {
-                pnlDictTip, lblSearch, _txtDictSearch, _lblDictCount,
+            card.Controls.AddRange(new Control[] {
+                lblSearch, _txtDictSearch, _lblDictCount,
                 _lstDictionary, _btnAddDict, _btnEditDict, _btnDeleteDict, _btnClearDict
             });
 
-            _tabs.TabPages.Add(tabConfig);
-            _tabs.TabPages.Add(tabFormat);
-            _tabs.TabPages.Add(tabDict);
-            _tabs.SelectedIndex = 0;
-
-            // FORM BUTTONS
-            _btnSave = new Button { Text = "Salvar Alterações", Location = new Point(325, 502), Size = new Size(130, 32), DialogResult = DialogResult.OK, BackColor = Color.FromArgb(0, 122, 255), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            _btnSave.FlatAppearance.BorderSize = 0;
-            _btnSave.Click += BtnSave_Click;
-
-            _btnCancel = new Button { Text = "Cancelar", Location = new Point(465, 502), Size = new Size(85, 32), DialogResult = DialogResult.Cancel };
-
-            this.Controls.Add(_tabs);
-            this.Controls.Add(_btnSave);
-            this.Controls.Add(_btnCancel);
-            this.AcceptButton = _btnSave;
-            this.CancelButton = _btnCancel;
+            int y = PageTop;
+            EndCard(section, card, ref y);
+            return section;
         }
 
         public void SelectTab(int index)
         {
-            if (_tabs != null && index >= 0 && index < _tabs.TabPages.Count)
+            if (index < 0 || index >= _sections.Count) return;
+
+            _selectedSection = index;
+            for (int i = 0; i < _sections.Count; i++)
             {
-                _tabs.SelectedIndex = index;
+                bool active = (i == index);
+                _sections[i].Visible = active;
+                _navButtons[i].BackColor = active ? Theme.SurfaceAlt : Theme.Surface;
+                _navButtons[i].ForeColor = active ? Theme.Text : Theme.TextMuted;
+                _navButtons[i].Font = new Font(Theme.FontFamily, 9.75F, active ? FontStyle.Bold : FontStyle.Regular);
+                _navButtons[i].Invalidate();
             }
         }
 
@@ -250,10 +464,7 @@ namespace VoxIA.UI
             var s = SettingsService.Current;
             _txtApiKey.Text = SecureCredentialService.GetApiKey();
 
-            if (s.ActivePromptId == "default_single_line")
-                _rdoModeSingleLine.Checked = true;
-            else
-                _rdoModeParagraphs.Checked = true;
+            _segFormat.SelectedIndex = s.ActivePromptId == "default_single_line" ? 1 : 0;
 
             _chkAutoClipboard.Checked = s.AutoCopyToClipboard;
             _chkAutoStart.Checked = AutoStartService.IsAutoStartEnabled();
@@ -276,10 +487,7 @@ namespace VoxIA.UI
             else
                 _cboHotkeyChoice.SelectedIndex = 0;
 
-            if (s.PushToTalkMode)
-                _rdoPushToTalkMode.Checked = true;
-            else
-                _rdoToggleMode.Checked = true;
+            _segMode.SelectedIndex = s.PushToTalkMode ? 1 : 0;
         }
 
         private void LoadDictionaryList(string filter = null)
@@ -305,6 +513,7 @@ namespace VoxIA.UI
                 count++;
             }
 
+            Theme.ApplyZebra(_lstDictionary);
             _lblDictCount.Text = string.Format("{0} palavra(s)", count);
         }
 
@@ -330,7 +539,6 @@ namespace VoxIA.UI
             if (_lstDictionary.SelectedItems.Count == 0) return;
             var item = _lstDictionary.SelectedItems[0];
             string orig = item.Text;
-            string repl = item.SubItems.Count > 1 ? item.SubItems[1].Text : orig;
 
             using (var form = new QuickDictionaryForm(orig))
             {
@@ -375,7 +583,7 @@ namespace VoxIA.UI
             s.WhisperModel = "whisper-large-v3";
             s.CorrectionModel = "openai/gpt-oss-120b";
 
-            if (_rdoModeSingleLine.Checked)
+            if (_segFormat.SelectedIndex == 1)
             {
                 s.ActivePromptId = "default_single_line";
                 s.SelectedPromptPreset = "Transcrever em Linha Única";
@@ -391,7 +599,7 @@ namespace VoxIA.UI
             s.AutoCopyToClipboard = _chkAutoClipboard.Checked;
             s.AudioBeepFeedback = _chkAudioBeep.Checked;
             s.ShowFloatingHud = _chkShowHud.Checked;
-            s.PushToTalkMode = _rdoToggleMode.Checked == false;
+            s.PushToTalkMode = _segMode.SelectedIndex == 1;
 
             int hotkeyIdx = _cboHotkeyChoice.SelectedIndex;
             if (hotkeyIdx == 0) // F8

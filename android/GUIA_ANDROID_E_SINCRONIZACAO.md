@@ -125,3 +125,12 @@ create policy "Usuários podem gerenciar seu próprio dicionário"
     using (auth.uid() = user_id)
     with check (auth.uid() = user_id);
 ```
+
+
+## Comandos de voz de tópico e título (novo)
+
+- `abrir tópico exame físico fechar tópico` → escreve **EXAME FÍSICO** em linha própria, com o texto logo abaixo.
+- `abrir título enfermaria de reabilitação traço clínica médica fechar título` → escreve `ENFERMARIA DE REABILITAÇÃO - CLÍNICA MÉDICA` (caixa alta, sem ponto final), seguido de uma linha em branco. "traço" ou "hífen" viram " - ".
+- Os títulos não passam pela IA, então não são alterados. Sem o "fechar", o comando é ignorado.
+- O teclado também lê até 400 caracteres antes do cursor (nunca em campos de senha) para acertar a grafia de termos e siglas. O trecho fica só na memória.
+- No perfil "Geral / Parágrafos", textos longos (300+ caracteres) são separados em parágrafos por mudança de assunto.

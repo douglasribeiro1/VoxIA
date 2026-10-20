@@ -21,51 +21,71 @@ namespace VoxIA.UI
 
         private void InitializeComponent()
         {
-            this.Text = "Áudios Pendentes — Fila de Gravações";
-            this.Size = new Size(680, 420);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.FromArgb(245, 246, 250);
-            this.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            const int W = 720;
+            const int M = 22;
+            Theme.ApplyForm(this, "Áudios Pendentes — VoxIA", new Size(W, 460));
+
+            Panel header = Theme.CreateHeader("Áudios pendentes", "Gravações salvas localmente aguardando envio. Nenhum ditado é perdido sem conexão.");
+            Panel footer = Theme.CreateFooter();
+            footer.Width = W;
+            Panel body = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
 
             _listView = new ListView
             {
-                Location = new Point(12, 12),
-                Size = new Size(640, 310),
-                View = View.Details,
-                FullRowSelect = true,
-                GridLines = true,
+                Location = new Point(M, 18),
+                Size = new Size(W - M * 2, 300),
                 MultiSelect = false
             };
+            Theme.StyleListView(_listView);
 
-            _listView.Columns.Add("Data / Hora", 140);
+            _listView.Columns.Add("Data / hora", 140);
             _listView.Columns.Add("Duração", 80);
-            _listView.Columns.Add("Status", 110);
-            _listView.Columns.Add("Tentativas", 75);
-            _listView.Columns.Add("Último Erro", 215);
+            _listView.Columns.Add("Status", 120);
+            _listView.Columns.Add("Tentativas", 80);
+            _listView.Columns.Add("Último erro", 250);
+            body.Controls.Add(_listView);
 
-            _btnRetry = new Button { Text = "Tentar Novamente", Location = new Point(12, 335), Size = new Size(130, 30), BackColor = Color.FromArgb(0, 122, 255), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            _btnRetry.FlatAppearance.BorderSize = 0;
+            _btnRetry = new Button { Text = "Tentar novamente", Location = new Point(M, 12), Size = new Size(140, 34) };
+            Theme.StylePrimary(_btnRetry);
             _btnRetry.Click += BtnRetry_Click;
 
-            _btnDelete = new Button { Text = "Excluir", Location = new Point(150, 335), Size = new Size(90, 30), BackColor = Color.FromArgb(220, 53, 69), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            _btnDelete.FlatAppearance.BorderSize = 0;
-            _btnDelete.Click += BtnDelete_Click;
-
-            _btnRetryAll = new Button { Text = "Tentar Todos os Pendentes", Location = new Point(250, 335), Size = new Size(170, 30) };
+            _btnRetryAll = new Button { Text = "Tentar todos os pendentes", Location = new Point(M + 148, 12), Size = new Size(180, 34) };
+            Theme.StyleSecondary(_btnRetryAll);
             _btnRetryAll.Click += BtnRetryAll_Click;
 
-            _btnClose = new Button { Text = "Fechar", Location = new Point(562, 335), Size = new Size(90, 30), DialogResult = DialogResult.Cancel };
+            _btnDelete = new Button { Text = "Excluir", Location = new Point(M + 336, 12), Size = new Size(90, 34) };
+            Theme.StyleDanger(_btnDelete);
+            _btnDelete.Click += BtnDelete_Click;
+
+            _btnClose = new Button { Text = "Fechar", Location = new Point(W - M - 100, 12), Size = new Size(100, 34), DialogResult = DialogResult.Cancel };
+            Theme.StyleSecondary(_btnClose);
             _btnClose.Click += (s, e) => this.Close();
 
-            this.Controls.AddRange(new Control[] { _listView, _btnRetry, _btnDelete, _btnRetryAll, _btnClose });
+            footer.Controls.AddRange(new Control[] { _btnRetry, _btnRetryAll, _btnDelete, _btnClose });
+
+            this.Controls.Add(body);
+            this.Controls.Add(footer);
+            this.Controls.Add(header);
             this.CancelButton = _btnClose;
+        }
+
+        private static string StatusLabel(AudioQueueStatus status)
+        {
+            switch (status)
+            {
+                case AudioQueueStatus.PENDING: return "Aguardando envio";
+                case AudioQueueStatus.UPLOADING: return "Enviando";
+                case AudioQueueStatus.TRANSCRIBING: return "Transcrevendo";
+                case AudioQueueStatus.CORRECTING: return "Corrigindo texto";
+                case AudioQueueStatus.COMPLETED: return "Concluído";
+                case AudioQueueStatus.ERROR: return "Erro";
+                default: return status.ToString();
+            }
         }
 
         public void RefreshList()
         {
+            _listView.BeginUpdate();
             _listView.Items.Clear();
             var items = PendingAudioRepository.GetAll();
 
@@ -73,18 +93,23 @@ namespace VoxIA.UI
             {
                 ListViewItem lvi = new ListViewItem(item.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"));
                 lvi.SubItems.Add(string.Format("{0:F1}s", item.DurationSeconds));
-                lvi.SubItems.Add(item.Status.ToString());
+                lvi.SubItems.Add(StatusLabel(item.Status));
                 lvi.SubItems.Add(item.RetryCount.ToString());
                 lvi.SubItems.Add(item.LastError ?? "-");
                 lvi.Tag = item;
-
-                if (item.Status == AudioQueueStatus.ERROR)
-                    lvi.ForeColor = Color.DarkRed;
-                else if (item.Status == AudioQueueStatus.UPLOADING || item.Status == AudioQueueStatus.TRANSCRIBING)
-                    lvi.ForeColor = Color.DarkOrange;
-
                 _listView.Items.Add(lvi);
             }
+
+            Theme.ApplyZebra(_listView);
+            foreach (ListViewItem lvi in _listView.Items)
+            {
+                var item = (AudioQueueItem)lvi.Tag;
+                if (item.Status == AudioQueueStatus.ERROR)
+                    lvi.ForeColor = Theme.Danger;
+                else if (item.Status == AudioQueueStatus.UPLOADING || item.Status == AudioQueueStatus.TRANSCRIBING || item.Status == AudioQueueStatus.CORRECTING)
+                    lvi.ForeColor = Theme.Warning;
+            }
+            _listView.EndUpdate();
         }
 
         private async void BtnRetry_Click(object sender, EventArgs e)
