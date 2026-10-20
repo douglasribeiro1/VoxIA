@@ -49,14 +49,26 @@ jobs:
       - name: Atualizar a pasta de compartilhamento no repositorio (somente master)
         if: github.ref == 'refs/heads/master'
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          Copy-Item windows\VoxIA.exe VoxIA-Compartilhar\VoxIA.exe -Force
+          $exe = Join-Path $PWD "windows\VoxIA.exe"
+          $repo = Join-Path $env:RUNNER_TEMP "repo"
+          if (Test-Path $repo) { Remove-Item -Recurse -Force $repo }
+          git clone -q "https://x-access-token:$env:GH_TOKEN@github.com/$env:GITHUB_REPOSITORY.git" $repo
+          if ($LASTEXITCODE -ne 0) { throw "Falha ao clonar o repositorio" }
+          Set-Location $repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          Copy-Item $exe "VoxIA-Compartilhar\VoxIA.exe" -Force
           git add VoxIA-Compartilhar/VoxIA.exe
           git diff --cached --quiet
           if ($LASTEXITCODE -ne 0) {
-            git commit -m "Atualiza VoxIA.exe para compartilhar (build automatico) [skip ci]"
-            git pull --rebase origin master
-            git push origin HEAD:master
+            git commit -q -m "Atualiza VoxIA.exe para compartilhar (build automatico) [skip ci]"
+            for ($i = 1; $i -le 3; $i++) {
+              git pull -q --rebase origin master
+              git push -q origin HEAD:master
+              if ($LASTEXITCODE -eq 0) { break }
+              Start-Sleep -Seconds 5
+            }
           }
