@@ -7,6 +7,9 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     name: Compilar APK Android
@@ -47,3 +50,16 @@ jobs:
           name: VoxIA-Teclado-Android
           path: output/VoxIA-Teclado-Android.apk
           retention-days: 30
+
+      - name: Atualizar o APK no repositorio (somente master)
+        if: github.ref == 'refs/heads/master'
+        run: |
+          cp output/VoxIA-Teclado-Android.apk android/VoxIA-Teclado-Android.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android/VoxIA-Teclado-Android.apk
+          if ! git diff --cached --quiet; then
+            git commit -m "Atualiza APK Android (build automatico) [skip ci]"
+            git pull --rebase origin master
+            git push origin HEAD:master
+          fi
