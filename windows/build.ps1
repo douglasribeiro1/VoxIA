@@ -15,7 +15,7 @@ $references = "/lib:`"C:\Program Files\Reference Assemblies\Microsoft\Framework\
 $iconPath = Join-Path $scriptDir "app.ico"
 $iconArg = ""
 if (Test-Path $iconPath) {
-    $iconArg = "/win32icon:`"$iconPath`""
+    $iconArg = "/win32icon:`"$iconPath`" /win32manifest:`"$(Join-Path $scriptDir "app.manifest")`""
 }
 
 $targetOut = Join-Path $scriptDir "VoxIA.exe"
