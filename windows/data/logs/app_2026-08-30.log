@@ -1,5 +1,0 @@
-[2026-08-30 19:08:34] [INFO] Starting VoxIA application...
-[2026-08-30 19:08:34] [INFO] Background RetryService started.
-[2026-08-30 19:08:34] [INFO] Dedicated High-Priority Keyboard Hook thread started.
-[2026-08-30 19:08:34] [INFO] VoxIA Context fully initialized and resident in System Tray.
-[2026-08-30 19:08:34] [INFO] Global Low-Level Hook attached to isolated high-priority message loop (Thread ID: 30484)

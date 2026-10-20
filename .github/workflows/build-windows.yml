@@ -1,0 +1,62 @@
+name: Compilar VoxIA para Windows (EXE)
+
+on:
+  push:
+    branches: [ "master", "claude/**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Compilar VoxIA.exe e pasta de compartilhamento
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout do Repositorio
+        uses: actions/checkout@v4
+
+      - name: Compilar VoxIA.exe com o compilador do .NET Framework
+        shell: pwsh
+        run: |
+          $csc = "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
+          $uiaClient = (Get-ChildItem "C:\Windows\Microsoft.NET\assembly" -Recurse -Filter UIAutomationClient.dll | Select-Object -First 1).FullName
+          $uiaTypes = (Get-ChildItem "C:\Windows\Microsoft.NET\assembly" -Recurse -Filter UIAutomationTypes.dll | Select-Object -First 1).FullName
+          $sources = Get-ChildItem -Path windows\src -Recurse -Filter *.cs | ForEach-Object { $_.FullName }
+          & $csc /nologo /target:winexe /win32icon:windows\app.ico /out:windows\VoxIA.exe `
+            /r:System.dll,System.Drawing.dll,System.Windows.Forms.dll,System.Web.Extensions.dll,System.Net.Http.dll `
+            "/r:$uiaClient" "/r:$uiaTypes" $sources
+          if ($LASTEXITCODE -ne 0) { throw "Falha na compilacao do VoxIA.exe" }
+
+      - name: Montar a pasta para compartilhar (sem chave de API)
+        shell: pwsh
+        run: |
+          $dest = "output\VoxIA-Compartilhar"
+          New-Item -ItemType Directory -Force "$dest\data" | Out-Null
+          Copy-Item windows\VoxIA.exe "$dest\VoxIA.exe"
+          Copy-Item VoxIA-Compartilhar\LEIAME.txt, VoxIA-Compartilhar\portable.txt $dest
+          Copy-Item VoxIA-Compartilhar\data\.gitkeep "$dest\data\"
+
+      - name: Publicar a pasta como artefato para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoxIA-Windows
+          path: output/VoxIA-Compartilhar
+          include-hidden-files: true
+          retention-days: 30
+
+      - name: Atualizar a pasta de compartilhamento no repositorio (somente master)
+        if: github.ref == 'refs/heads/master'
+        shell: pwsh
+        run: |
+          Copy-Item windows\VoxIA.exe VoxIA-Compartilhar\VoxIA.exe -Force
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VoxIA-Compartilhar/VoxIA.exe
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "Atualiza VoxIA.exe para compartilhar (build automatico) [skip ci]"
+            git pull --rebase origin master
+            git push origin HEAD:master
+          }

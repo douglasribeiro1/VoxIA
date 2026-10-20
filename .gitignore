@@ -1,0 +1,4 @@
+# Dados pessoais e chave de API do Windows (nunca versionar)
+windows/data/
+VoxIA-Compartilhar/data/*
+!VoxIA-Compartilhar/data/.gitkeep
