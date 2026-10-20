@@ -118,6 +118,9 @@ namespace VoxIA.UI
             }
         }
 
+        private const int RecordingWidth = 168;
+        private const int RecordingHeight = 52;
+
         private void InitializeComponent()
         {
             this.FormBorderStyle = FormBorderStyle.None;
@@ -163,7 +166,7 @@ namespace VoxIA.UI
             {
                 _hideTimer.Stop();
                 _state = HudState.RECORDING;
-                PositionAtScreenCenter(120, 40);
+                PositionAtScreenCenter(RecordingWidth, RecordingHeight);
                 ShowWindow(this.Handle, SW_SHOWNOACTIVATE);
                 EnsureTopMost();
                 _animTimer.Start();
@@ -281,6 +284,7 @@ namespace VoxIA.UI
 
                     if (_state == HudState.RECORDING)
                     {
+                        DrawRecordingPill(g, w, h);
                         DrawWaveformEqualizer(g, w, h);
                     }
                     else if (_state == HudState.PROCESSING)
@@ -338,11 +342,19 @@ namespace VoxIA.UI
             }
         }
 
+        /// <summary>Cápsula preta arredondada de fundo da gravação, como o balão do Android.</summary>
+        private void DrawRecordingPill(Graphics g, int w, int h)
+        {
+            using (GraphicsPath path = Theme.RoundedRect(new RectangleF(0, 0, w, h), h / 2f))
+            using (SolidBrush bg = new SolidBrush(Color.FromArgb(240, 14, 15, 18)))
+                g.FillPath(bg, path);
+        }
+
         private void DrawWaveformEqualizer(Graphics g, int w, int h)
         {
             float centerY = h / 2f;
-            int numBars = 22;
-            float margin = 8f;
+            int numBars = 21;
+            float margin = 18f;
             float availableWidth = w - (margin * 2f);
             float step = availableWidth / (numBars - 1);
 
@@ -360,29 +372,19 @@ namespace VoxIA.UI
                 float h3 = (float)Math.Sin(t * 36.0f + _phase * 1.05f);
                 float rawWave = Math.Abs(h1 * 0.45f + h2 * 0.35f + h3 * 0.20f);
 
-                // Idle base height: 2px to 4.5px (4px to 9px total height when quiet)
-                float minHalfH = 2.0f + (rawWave * 3.0f * envelope);
-
-                // Voice-reactive amplitude: surges with microphone volume up to ~14.5px (29px total height)
-                float voiceHalfH = _smoothedAudioLevel * 14.5f * (0.35f + rawWave * 0.65f) * envelope;
+                // Altura em repouso: pequena ondulação; com voz, chega quase à altura total da cápsula
+                float minHalfH = 3.0f + (rawWave * 4.0f * envelope);
+                float voiceHalfH = _smoothedAudioLevel * 21.0f * (0.35f + rawWave * 0.65f) * envelope;
 
                 float halfH = minHalfH + voiceHalfH;
-                halfH = Math.Min(halfH, (h / 2.0f) - 3.0f);
+                halfH = Math.Min(halfH, (h / 2.0f) - 6.0f);
 
                 float x = margin + (i * step);
                 float yTop = centerY - halfH;
                 float yBottom = centerY + halfH;
 
-                // 1. Subtle soft white/light contrast rim for visibility against dark backgrounds
-                using (Pen glowPen = new Pen(Color.FromArgb(90, 255, 255, 255), 4.2f))
-                {
-                    glowPen.StartCap = LineCap.Round;
-                    glowPen.EndCap = LineCap.Round;
-                    g.DrawLine(glowPen, x, yTop, x, yBottom);
-                }
-
-                // 2. Solid deep black bar (as requested: "faça preto mesmo")
-                using (Pen barPen = new Pen(Color.FromArgb(18, 18, 22), 2.6f))
+                // Barra laranja arredondada, na cor do logotipo
+                using (Pen barPen = new Pen(Theme.Accent, 4f))
                 {
                     barPen.StartCap = LineCap.Round;
                     barPen.EndCap = LineCap.Round;
