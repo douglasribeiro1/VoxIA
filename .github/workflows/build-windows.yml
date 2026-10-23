@@ -2,7 +2,7 @@ name: Compilar VoxIA para Windows (EXE)
 
 on:
   push:
-    branches: [ "master", "claude/**" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 permissions:
@@ -40,11 +40,12 @@ jobs:
 
       - name: Publicar a pasta como artefato para download
         uses: actions/upload-artifact@v4
+        continue-on-error: true   # a cota de artefatos pode estourar; o .exe também é gravado no repositório
         with:
           name: VoxIA-Windows
           path: output/VoxIA-Compartilhar
           include-hidden-files: true
-          retention-days: 30
+          retention-days: 3
 
       - name: Atualizar a pasta de compartilhamento no repositorio (somente master)
         if: github.ref == 'refs/heads/master'

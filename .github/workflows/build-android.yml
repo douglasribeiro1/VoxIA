@@ -2,8 +2,6 @@ name: Compilar Teclado Android (APK)
 
 on:
   push:
-    branches: [ "main", "master", "claude/**" ]
-  pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
@@ -46,10 +44,11 @@ jobs:
 
       - name: Publicar APK como Artefato para Download
         uses: actions/upload-artifact@v4
+        continue-on-error: true   # a cota de artefatos pode estourar; o APK também é gravado no repositório
         with:
           name: VoxIA-Teclado-Android
           path: output/VoxIA-Teclado-Android.apk
-          retention-days: 30
+          retention-days: 3
 
       - name: Atualizar o APK no repositorio (somente master)
         if: github.ref == 'refs/heads/master'
