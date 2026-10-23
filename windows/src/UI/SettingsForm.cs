@@ -85,13 +85,17 @@ namespace VoxIA.UI
 
             _btnSave.Click += BtnSave_Click;
 
-            // Botões à direita do rodapé, sempre visíveis
-            _btnCancel.Location = new Point(this.ClientSize.Width - _btnCancel.Width - 24, 10);
-            _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 12, 10);
-            _btnCancel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            _btnSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-
+            // Botões à direita do rodapé: posição calculada pela largura real do rodapé (sem Anchor,
+            // que empurrava os botões para fora da tela quando o rodapé ainda tinha a largura padrão)
             footer.Height = 58;
+            footer.Width = this.ClientSize.Width;
+            Action placeButtons = () =>
+            {
+                _btnCancel.Location = new Point(footer.ClientSize.Width - _btnCancel.Width - 24, 10);
+                _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 12, 10);
+            };
+            footer.Resize += (s, e) => placeButtons();
+            placeButtons();
             footer.Controls.Add(_btnSave);
             footer.Controls.Add(_btnCancel);
 
