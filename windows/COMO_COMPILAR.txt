@@ -1,0 +1,11 @@
+Como compilar o VoxIA para Windows no seu computador
+
+1. Extraia esta pasta inteira para um local com permissão de escrita (ex.: Documentos\VoxIA-Windows). Não rode de dentro do .zip.
+2. Dê dois cliques em build.bat.
+   - Usa o compilador que já vem no Windows (.NET Framework 4). Não precisa instalar nada.
+   - Se der certo, aparece "[SUCESSO]" e o arquivo VoxIA.exe é criado nesta mesma pasta.
+   - Se o VoxIA estiver aberto, feche-o pela bandeja antes (senão o arquivo fica em uso).
+3. Execute VoxIA.exe. O modo portátil guarda tudo na subpasta "data" ao lado do .exe (criada sozinha).
+4. Abra as Configurações pelo ícone da bandeja e cole a SUA chave da Groq.
+
+Alternativa pelo PowerShell: clique com o botão direito em build.ps1 > "Executar com o PowerShell".

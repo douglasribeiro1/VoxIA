@@ -23,6 +23,7 @@ namespace VoxIA.UI
         private ToggleSwitch _chkAudioBeep;
         private ToggleSwitch _chkShowHud;
         private ComboBox _cboHotkeyChoice;
+        private ComboBox _cboMicrophone;
 
         // Dictionary UI controls
         private ListView _lstDictionary;
@@ -50,6 +51,7 @@ namespace VoxIA.UI
         private const int ColumnWidth = 300;
         private const int ColumnGap = 16;
         private const int CardGap = 16;
+        private const string MicrophoneDefaultLabel = "Padrão do sistema";
 
         public SettingsForm()
         {
@@ -60,7 +62,10 @@ namespace VoxIA.UI
 
         private void InitializeComponent()
         {
-            Theme.ApplyForm(this, "Configurações — VoxIA", new Size(FormWidth, FormHeight));
+            // A janela nunca passa da área útil da tela, para o rodapé (Salvar / Cancelar) sempre aparecer
+            Rectangle workArea = Screen.FromPoint(Cursor.Position).WorkingArea;
+            int clientHeight = Math.Min(FormHeight, Math.Max(440, workArea.Height - 80));
+            Theme.ApplyForm(this, "Configurações — VoxIA", new Size(FormWidth, clientHeight));
 
             Panel content = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
             Panel sidebar = BuildSidebar();
@@ -71,27 +76,22 @@ namespace VoxIA.UI
             AddSection(sidebar, content, "Vocabulário", BuildDictionarySection());
 
             // FORM BUTTONS
-            _btnCancel = new Button { Text = "Cancelar", Size = new Size(100, 34), DialogResult = DialogResult.Cancel };
+            _btnCancel = new Button { Text = "Cancelar", Size = new Size(120, 38), DialogResult = DialogResult.Cancel };
             Theme.StyleSecondary(_btnCancel);
-            _btnSave = new Button { Text = "Salvar alterações", Size = new Size(150, 34), DialogResult = DialogResult.OK };
+            _btnCancel.Font = Theme.BodyBold;
+            _btnCancel.FlatAppearance.BorderColor = Color.FromArgb(84, 90, 104);
+            _btnSave = new Button { Text = "Salvar alterações", Size = new Size(170, 38), DialogResult = DialogResult.OK };
             Theme.StylePrimary(_btnSave);
+
             _btnSave.Click += BtnSave_Click;
 
-            _btnCancel.Location = new Point(this.ClientSize.Width - _btnCancel.Width - 20, 12);
-            _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 10, 12);
+            // Botões à direita do rodapé, sempre visíveis
+            _btnCancel.Location = new Point(this.ClientSize.Width - _btnCancel.Width - 24, 10);
+            _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 12, 10);
             _btnCancel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             _btnSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
-            Label lblFooterHint = new Label
-            {
-                Text = "Enter salva  ·  Esc cancela",
-                Font = Theme.Small,
-                ForeColor = Theme.TextMuted,
-                BackColor = Color.Transparent,
-                AutoSize = true,
-                Location = new Point(20, 21)
-            };
-            footer.Controls.Add(lblFooterHint);
+            footer.Height = 58;
             footer.Controls.Add(_btnSave);
             footer.Controls.Add(_btnCancel);
 
@@ -162,6 +162,13 @@ namespace VoxIA.UI
             nav.FlatAppearance.MouseOverBackColor = Theme.SurfaceAlt;
             nav.FlatAppearance.MouseDownBackColor = Theme.SurfaceAlt;
             nav.Click += (s, e) => SelectTab(index);
+
+            // Se a janela for baixa demais para a página, o conteúdo rola em vez de ser cortado
+            int bottom = 0;
+            foreach (Control c in section.Controls)
+                bottom = Math.Max(bottom, c.Bottom);
+            section.AutoScroll = true;
+            section.AutoScrollMinSize = new Size(0, bottom + 24);
 
             section.Dock = DockStyle.Fill;
             section.Visible = false;
@@ -324,6 +331,29 @@ namespace VoxIA.UI
                 "Parágrafos detecta pausas e organiza o texto em blocos. Linha única mantém tudo em uma linha só, bom para buscas e chats.",
                 new Point(16, 88), ColumnWidth - 32));
             EndCard(section, cardFormat, ref rightY);
+
+            Panel cardMic = BeginCard(rightX, rightY, ColumnWidth, "Microfone");
+            _cboMicrophone = new ComboBox
+            {
+                Location = new Point(16, 40),
+                Width = ColumnWidth - 32,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Theme.SurfaceAlt,
+                ForeColor = Theme.Text,
+                Font = new Font(Theme.FontFamily, 9.75F)
+            };
+            _cboMicrophone.Items.Add(MicrophoneDefaultLabel);
+            foreach (string name in MicrophoneService.GetInputDeviceNames())
+            {
+                if (!string.IsNullOrEmpty(name)) _cboMicrophone.Items.Add(name);
+            }
+            _cboMicrophone.SelectedIndex = 0;
+            cardMic.Controls.Add(_cboMicrophone);
+            cardMic.Controls.Add(Theme.CreateHint(
+                "Microfone usado para ditar. \"Padrão do sistema\" segue o que o Windows estiver usando.",
+                new Point(16, 80), ColumnWidth - 32));
+            EndCard(section, cardMic, ref rightY);
 
             Panel cardCompat = BeginCard(rightX, rightY, ColumnWidth, "Compatibilidade");
             cardCompat.Controls.Add(Theme.CreateHint(
@@ -488,6 +518,13 @@ namespace VoxIA.UI
                 _cboHotkeyChoice.SelectedIndex = 0;
 
             _segMode.SelectedIndex = s.PushToTalkMode ? 1 : 0;
+
+            _cboMicrophone.SelectedIndex = 0;
+            if (!string.IsNullOrEmpty(s.PreferredMicrophone))
+            {
+                int micIndex = _cboMicrophone.Items.IndexOf(s.PreferredMicrophone);
+                if (micIndex > 0) _cboMicrophone.SelectedIndex = micIndex;
+            }
         }
 
         private void LoadDictionaryList(string filter = null)
@@ -600,6 +637,7 @@ namespace VoxIA.UI
             s.AudioBeepFeedback = _chkAudioBeep.Checked;
             s.ShowFloatingHud = _chkShowHud.Checked;
             s.PushToTalkMode = _segMode.SelectedIndex == 1;
+            s.PreferredMicrophone = _cboMicrophone.SelectedIndex > 0 ? (string)_cboMicrophone.SelectedItem : "";
 
             int hotkeyIdx = _cboHotkeyChoice.SelectedIndex;
             if (hotkeyIdx == 0) // F8

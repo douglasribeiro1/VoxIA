@@ -70,6 +70,9 @@ namespace VoxIA.Services
         public bool EnableAudioPreprocessing { get; set; }
         public bool EnableFieldContext { get; set; }
 
+        /// <summary>Nome do microfone escolhido; vazio usa o padrão do sistema.</summary>
+        public string PreferredMicrophone { get; set; }
+
         public AppSettings()
         {
             ApiKey = "";
@@ -101,6 +104,7 @@ namespace VoxIA.Services
 
             EnableAudioPreprocessing = true;
             EnableFieldContext = true;
+            PreferredMicrophone = "";
         }
     }
 

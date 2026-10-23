@@ -149,7 +149,13 @@ namespace VoxIA.Services
                     throw new InvalidOperationException("Failed to create Win32 audio event handle.");
                 }
 
-                int result = waveInOpen(out _hWaveIn, WAVE_MAPPER, ref _format, _hEvent, IntPtr.Zero, CALLBACK_EVENT);
+                int deviceId = MicrophoneService.ResolveDeviceId(SettingsService.Current.PreferredMicrophone);
+                int result = waveInOpen(out _hWaveIn, deviceId, ref _format, _hEvent, IntPtr.Zero, CALLBACK_EVENT);
+                if (result != 0 && deviceId != WAVE_MAPPER)
+                {
+                    Logger.LogWarning(string.Format("Chosen microphone could not be opened (error {0}); falling back to the system default.", result));
+                    result = waveInOpen(out _hWaveIn, WAVE_MAPPER, ref _format, _hEvent, IntPtr.Zero, CALLBACK_EVENT);
+                }
                 if (result != 0)
                 {
                     throw new InvalidOperationException(string.Format("Failed to open Windows audio input device (waveInOpen error {0}). Verify microphone connection.", result));
