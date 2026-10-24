@@ -372,7 +372,7 @@ class VoxIAInputMethodService : InputMethodService() {
      */
     private fun readFieldContext(): String {
         val prefs = getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
-        if (!prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, true)) return ""
+        if (!prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, VoxIABubbleService.DEFAULT_SEND_CONTEXT)) return ""
         return try {
             if (isPasswordField()) return ""
             val before = currentInputConnection?.getTextBeforeCursor(400, 0)?.toString() ?: ""
@@ -390,7 +390,7 @@ class VoxIAInputMethodService : InputMethodService() {
             ic.commitText(text, 1)
             ic.endBatchEdit()
         } else {
-            Log.e("VoxIA", "InputConnection é nulo ao tentar inserir texto: '$text'")
+            Log.e("VoxIA", "InputConnection é nulo ao tentar inserir texto (${text.length} caracteres).")
         }
     }
 

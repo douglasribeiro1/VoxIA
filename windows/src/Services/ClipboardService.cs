@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -14,8 +15,14 @@ namespace VoxIA.Services
             {
                 try
                 {
-                    Clipboard.SetText(text);
-                    Logger.LogInfo("Text copied to clipboard successfully.");
+                    // O texto continua disponível para Ctrl+V, mas o Windows é instruído a não guardá-lo
+                    // no histórico da área de transferência (Win+V) nem sincronizá-lo com a nuvem.
+                    var data = new DataObject();
+                    data.SetText(text, TextDataFormat.UnicodeText);
+                    data.SetData("CanIncludeInClipboardHistory", new MemoryStream(BitConverter.GetBytes(0)));
+                    data.SetData("CanUploadToCloudClipboard", new MemoryStream(BitConverter.GetBytes(0)));
+                    Clipboard.SetDataObject(data, true, 5, 100);
+                    Logger.LogInfo("Text copied to clipboard successfully (excluded from clipboard history).");
                 }
                 catch (Exception ex)
                 {

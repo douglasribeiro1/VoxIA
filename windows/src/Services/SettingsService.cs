@@ -40,7 +40,6 @@ namespace VoxIA.Services
 
     public class AppSettings
     {
-        public string ApiKey { get; set; }
         public string WhisperModel { get; set; }
         public string CorrectionModel { get; set; }
         public string SelectedPromptPreset { get; set; }
@@ -73,9 +72,14 @@ namespace VoxIA.Services
         /// <summary>Nome do microfone escolhido; vazio usa o padrão do sistema.</summary>
         public string PreferredMicrophone { get; set; }
 
+        /// <summary>Dias que o histórico de ditados é guardado. 0 = não guardar; -1 = sem limite.</summary>
+        public int HistoryRetentionDays { get; set; }
+
+        /// <summary>Versão das migrações de privacidade já aplicadas a este settings.json.</summary>
+        public int PrivacyVersion { get; set; }
+
         public AppSettings()
         {
-            ApiKey = "";
             WhisperModel = "whisper-large-v3";
             CorrectionModel = "openai/gpt-oss-120b";
             SelectedPromptPreset = "Transcrever em Parágrafos";
@@ -103,14 +107,24 @@ namespace VoxIA.Services
             SilenceAutoStopSeconds = 3;
 
             EnableAudioPreprocessing = true;
-            EnableFieldContext = true;
+            EnableFieldContext = false;
             PreferredMicrophone = "";
+            HistoryRetentionDays = 7;
+            PrivacyVersion = 0;
         }
     }
 
     public static class SettingsService
     {
+        private const int CurrentPrivacyVersion = 1;
+
         private static AppSettings _currentSettings;
+
+        /// <summary>
+        /// Chave de API encontrada em texto puro num settings.json antigo. Fica só na memória até ser
+        /// migrada para o armazenamento protegido; o settings.json não grava mais esse campo.
+        /// </summary>
+        public static string LegacyApiKey { get; set; }
 
         public static AppSettings Current
         {
@@ -208,6 +222,13 @@ RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO EM UMA ÚNICA LINHA.",
                     string json = File.ReadAllText(AppPathService.SettingsFilePath);
                     var serializer = new JavaScriptSerializer();
                     _currentSettings = serializer.Deserialize<AppSettings>(json);
+
+                    var raw = serializer.DeserializeObject(json) as Dictionary<string, object>;
+                    object legacyKey;
+                    if (raw != null && raw.TryGetValue("ApiKey", out legacyKey) && legacyKey is string && ((string)legacyKey).Trim().Length > 0)
+                    {
+                        LegacyApiKey = (string)legacyKey;
+                    }
                 }
             }
             catch (Exception ex)
@@ -243,6 +264,14 @@ RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO EM UMA ÚNICA LINHA.",
             _currentSettings.WhisperModel = "whisper-large-v3";
             _currentSettings.CorrectionModel = "openai/gpt-oss-120b";
             _currentSettings.PortableMode = AppPathService.IsPortableMode;
+
+            if (_currentSettings.PrivacyVersion < CurrentPrivacyVersion)
+            {
+                // Versões antigas gravavam o texto ditado nos logs e enviavam o texto do campo à Groq por padrão.
+                Logger.DeleteAllLogs();
+                _currentSettings.EnableFieldContext = false;
+                _currentSettings.PrivacyVersion = CurrentPrivacyVersion;
+            }
 
             Save();
         }

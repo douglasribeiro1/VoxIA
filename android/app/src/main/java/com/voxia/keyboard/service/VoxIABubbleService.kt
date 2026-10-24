@@ -594,7 +594,7 @@ class VoxIABubbleService : AccessibilityService() {
 
     private fun readFieldContext(node: AccessibilityNodeInfo?): String {
         if (node == null || node.isPassword) return ""
-        if (!prefs.getBoolean(PREF_SEND_CONTEXT, true)) return ""
+        if (!prefs.getBoolean(PREF_SEND_CONTEXT, DEFAULT_SEND_CONTEXT)) return ""
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && node.isShowingHintText) return ""
             val text = node.text?.toString() ?: return ""
@@ -835,7 +835,9 @@ class VoxIABubbleService : AccessibilityService() {
             ).apply { shape = android.graphics.drawable.GradientDrawable.OVAL }
         }
         /** Compartilhada com o teclado: enviar o texto já escrito no campo como contexto. */
-        const val PREF_SEND_CONTEXT = "send_field_context"
+        // Chave nova (v2) para que todos comecem com o envio desligado, mesmo quem já usava a versão antiga.
+        const val PREF_SEND_CONTEXT = "send_field_context_v2"
+        const val DEFAULT_SEND_CONTEXT = false
         private const val PREF_SIDE = "bubble_side"
         private const val PREF_Y = "bubble_y"
         private const val PREF_PENDING = "bubble_pending_audio_path"

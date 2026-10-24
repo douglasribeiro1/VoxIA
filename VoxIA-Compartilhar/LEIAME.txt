@@ -7,4 +7,14 @@ VoxIA - versão para compartilhar (sem chave de API)
 
 Modo portátil: histórico, dicionário e chave ficam na subpasta "data" desta pasta. Cada pessoa deve usar a sua própria cópia/chave; não compartilhe a pasta "data".
 
+Privacidade:
+- A chave e o histórico ficam protegidos pelo Windows: só abrem neste computador, com o seu usuário. Se copiar a pasta para outro PC, informe a chave de novo.
+- O histórico é apagado depois de 7 dias (dá para mudar ou desligar em Configurações > Privacidade). Os logs não guardam o texto ditado e são apagados após 7 dias.
+- Por padrão, só o áudio vai para a Groq. O texto que já está no campo só é enviado se você ligar essa opção em Privacidade.
+- O texto ditado fica na área de transferência para colar com Ctrl+V, mas não entra no histórico do Windows (Win+V) nem na sincronização com a nuvem.
+
+Conferir se o VoxIA.exe não foi alterado: no Prompt de Comando, dentro desta pasta, rode
+    certutil -hashfile VoxIA.exe SHA256
+e compare com o código do arquivo VoxIA.exe.sha256.txt (e com o publicado no repositório).
+
 Comandos de voz: "abrir tópico exame físico fechar tópico" cria um título de tópico em CAIXA ALTA; "abrir título ... fechar título" cria o título da primeira linha (diga "traço" para o hífen).

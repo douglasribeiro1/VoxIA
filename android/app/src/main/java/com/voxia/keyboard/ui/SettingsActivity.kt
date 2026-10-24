@@ -138,7 +138,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun loadSavedData() {
         etGroqApiKey.setText(apiKeyStore.get())
         switchAutoSend.isChecked = prefs.getBoolean("auto_send_enabled", false)
-        switchSendContext.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, true)
+        switchSendContext.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, VoxIABubbleService.DEFAULT_SEND_CONTEXT)
         switchBubbleVisible.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_ENABLED, true)
 
         val alpha = prefs.getInt(VoxIABubbleService.PREF_ALPHA, 100).coerceIn(30, 100)

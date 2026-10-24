@@ -24,6 +24,12 @@ namespace VoxIA.UI
         private ToggleSwitch _chkShowHud;
         private ComboBox _cboHotkeyChoice;
         private ComboBox _cboMicrophone;
+        private ToggleSwitch _chkFieldContext;
+        private ComboBox _cboHistoryRetention;
+
+        // Opções de "Guardar histórico" e os dias correspondentes (0 = não guardar, -1 = sem limite)
+        private static readonly string[] HistoryRetentionLabels = { "Não guardar", "1 dia", "7 dias", "30 dias", "Sem limite" };
+        private static readonly int[] HistoryRetentionDays = { 0, 1, 7, 30, -1 };
 
         // Dictionary UI controls
         private ListView _lstDictionary;
@@ -326,6 +332,42 @@ namespace VoxIA.UI
             _chkShowHud.Checked = true;
             EndCard(section, cardSys, ref leftY);
 
+            Panel cardPrivacy = BeginCard(leftX, leftY, ColumnWidth, "Privacidade");
+            _chkFieldContext = CreateToggleRow(cardPrivacy, "Enviar o texto já escrito no campo", 40);
+            Label hintContext = Theme.CreateHint(
+                "Ajuda a pontuar a continuação, mas manda à Groq parte do que já está no campo (no prontuário, dados do paciente). Desligado por padrão.",
+                new Point(16, 80), ColumnWidth - 32);
+            cardPrivacy.Controls.Add(hintContext);
+            int historyTop = hintContext.Bottom + 14;
+            Label lblHistory = new Label
+            {
+                Text = "Guardar histórico",
+                Font = Theme.Body,
+                ForeColor = Theme.Text,
+                BackColor = Color.Transparent,
+                Location = new Point(16, historyTop),
+                Size = new Size(130, 28),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            _cboHistoryRetention = new ComboBox
+            {
+                Location = new Point(ColumnWidth - 16 - 130, historyTop + 2),
+                Width = 130,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Theme.SurfaceAlt,
+                ForeColor = Theme.Text,
+                Font = new Font(Theme.FontFamily, 9.75F)
+            };
+            _cboHistoryRetention.Items.AddRange(HistoryRetentionLabels);
+            _cboHistoryRetention.SelectedIndex = 2;
+            cardPrivacy.Controls.Add(lblHistory);
+            cardPrivacy.Controls.Add(_cboHistoryRetention);
+            cardPrivacy.Controls.Add(Theme.CreateHint(
+                "O histórico e a chave ficam protegidos pelo Windows e só abrem neste computador, com o seu usuário. Os logs não guardam o texto ditado e são apagados após 7 dias.",
+                new Point(16, historyTop + 40), ColumnWidth - 32));
+            EndCard(section, cardPrivacy, ref leftY);
+
             // Coluna direita: texto e compatibilidade
             Panel cardFormat = BeginCard(rightX, rightY, ColumnWidth, "Idioma e texto");
             _segFormat = new SegmentedControl { Location = new Point(16, 40), Size = new Size(ColumnWidth - 32, 36) };
@@ -505,6 +547,9 @@ namespace VoxIA.UI
             _chkPortableMode.Checked = AppPathService.IsPortableMode;
             _chkAudioBeep.Checked = s.AudioBeepFeedback;
             _chkShowHud.Checked = s.ShowFloatingHud;
+            _chkFieldContext.Checked = s.EnableFieldContext;
+            int retentionIndex = Array.IndexOf(HistoryRetentionDays, s.HistoryRetentionDays);
+            _cboHistoryRetention.SelectedIndex = retentionIndex >= 0 ? retentionIndex : 2;
 
             if (s.HotkeyVirtualKey == 0x77) // F8
                 _cboHotkeyChoice.SelectedIndex = 0;
@@ -619,7 +664,6 @@ namespace VoxIA.UI
         {
             var s = SettingsService.Current;
             string apiKey = _txtApiKey.Text.Trim();
-            SecureCredentialService.SaveApiKey(apiKey);
 
             s.WhisperModel = "whisper-large-v3";
             s.CorrectionModel = "openai/gpt-oss-120b";
@@ -640,6 +684,8 @@ namespace VoxIA.UI
             s.AutoCopyToClipboard = _chkAutoClipboard.Checked;
             s.AudioBeepFeedback = _chkAudioBeep.Checked;
             s.ShowFloatingHud = _chkShowHud.Checked;
+            s.EnableFieldContext = _chkFieldContext.Checked;
+            s.HistoryRetentionDays = HistoryRetentionDays[Math.Max(0, _cboHistoryRetention.SelectedIndex)];
             s.PushToTalkMode = _segMode.SelectedIndex == 1;
             s.PreferredMicrophone = _cboMicrophone.SelectedIndex > 0 ? (string)_cboMicrophone.SelectedItem : "";
 
@@ -706,7 +752,10 @@ namespace VoxIA.UI
             AppPathService.EnablePortableMode(enablePortable);
             s.PortableMode = enablePortable;
 
+            // Depois de trocar o modo portátil, para a chave ser gravada na pasta de dados que vale agora
+            SecureCredentialService.SaveApiKey(apiKey);
             SettingsService.Save();
+            HistoryRepository.ApplyRetention();
             this.Close();
         }
     }

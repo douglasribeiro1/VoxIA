@@ -132,7 +132,8 @@ namespace VoxIA.Services
                 ctx.ContextText = ReadTextBeforeCaret(ctx.AutomationElement);
             }
 
-            Logger.LogInfo(string.Format("Captured Target Context: Process='{0}', Title='{1}', HWnd=0x{2:X}, FieldContext={3} chars", ctx.ProcessName, ctx.WindowTitle, ctx.WindowHandle.ToInt64(), ctx.ContextText != null ? ctx.ContextText.Length : 0));
+            // O título da janela não vai para o log: em prontuários ele costuma trazer o nome do paciente.
+            Logger.LogInfo(string.Format("Captured Target Context: Process='{0}', HWnd=0x{1:X}, FieldContext={2} chars", ctx.ProcessName, ctx.WindowHandle.ToInt64(), ctx.ContextText != null ? ctx.ContextText.Length : 0));
             return ctx;
         }
 

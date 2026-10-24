@@ -37,7 +37,7 @@ class DictationEngine(context: Context) {
         lastCorrectionIssue = null
         onStage(Stage.TRANSCRIBING)
         val whisperTerms = dictionaryManager.getWhisperPromptTerms()
-        Log.d("VoxIA", "Enviando para Whisper (${audioFile.length()} bytes, termos: $whisperTerms)...")
+        Log.d("VoxIA", "Enviando para Whisper (${audioFile.length()} bytes)...")
 
         val transcription = groqClient.transcribeAudio(
             audioFile = audioFile,
@@ -46,7 +46,8 @@ class DictationEngine(context: Context) {
             contextText = contextText
         )
         val rawTranscript = transcription.getOrElse { return Result.failure(it) }
-        Log.d("VoxIA", "Transcrição Whisper concluída: '$rawTranscript'")
+        // O texto ditado nunca vai para o logcat; só o tamanho.
+        Log.d("VoxIA", "Transcrição Whisper concluída: ${rawTranscript.length} caracteres.")
         if (rawTranscript.isBlank()) return Result.success("")
 
         onStage(Stage.CORRECTING)
@@ -83,7 +84,7 @@ class DictationEngine(context: Context) {
                 dictionaryManager.applyReplacements(markedRaw)
             ) { dictionaryManager.applyReplacements(it) }
         }
-        Log.d("VoxIA", "Texto final formatado: '$finalText'")
+        Log.d("VoxIA", "Texto final formatado: ${finalText.length} caracteres.")
         return Result.success(if (finalText.isNotBlank()) finalText else rawTranscript)
     }
 }

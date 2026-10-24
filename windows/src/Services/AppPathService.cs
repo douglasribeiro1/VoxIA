@@ -48,6 +48,12 @@ namespace VoxIA.Services
             get { return Path.Combine(_dataDirectory, "history.json"); }
         }
 
+        /// <summary>Histórico protegido pelo Windows (DPAPI). O history.json em texto puro é das versões antigas.</summary>
+        public static string ProtectedHistoryFilePath
+        {
+            get { return Path.Combine(_dataDirectory, "history.dat"); }
+        }
+
         public static string DictionaryFilePath
         {
             get { return Path.Combine(_dataDirectory, "dictionary.json"); }
@@ -58,6 +64,13 @@ namespace VoxIA.Services
             get { return Path.Combine(_dataDirectory, "credentials.dat"); }
         }
 
+        /// <summary>Chave da Groq protegida pelo Windows (DPAPI).</summary>
+        public static string ProtectedApiKeyFilePath
+        {
+            get { return Path.Combine(_dataDirectory, "api_key.dpapi"); }
+        }
+
+        /// <summary>Chave em texto puro das versões antigas; só é lida para migrar e depois apagada.</summary>
         public static string ApiKeyFilePath
         {
             get { return Path.Combine(_dataDirectory, "api_key.txt"); }

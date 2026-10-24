@@ -60,7 +60,7 @@ namespace VoxIA.Services
                     return;
                 }
 
-                Logger.LogInfo(string.Format("Whisper Raw Transcript: \"{0}\"", rawText));
+                Logger.LogInfo(string.Format("Whisper raw transcript: {0} chars.", rawText.Length));
 
                 // Step 2: Correct text with Groq LLM
                 PendingAudioRepository.UpdateStatus(item.Id, AudioQueueStatus.CORRECTING);
@@ -92,7 +92,7 @@ namespace VoxIA.Services
                 // Step 2.6: Compatibilidade com sistemas legados (hífens Unicode, aspas curvas, espaços especiais -> ANSI)
                 finalText = TextSanitizer.NormalizeForLegacyApps(finalText);
 
-                Logger.LogInfo(string.Format("Final Post-Processed Text: \"{0}\"", finalText));
+                Logger.LogInfo(string.Format("Final post-processed text: {0} chars.", finalText.Length));
 
                 // Step 3: Text Insertion & Clipboard
                 TextInsertionService.InsertTextIntoContext(finalText, item.TargetContext);

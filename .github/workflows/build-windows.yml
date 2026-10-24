@@ -37,6 +37,9 @@ jobs:
           Copy-Item windows\VoxIA.exe "$dest\VoxIA.exe"
           Copy-Item VoxIA-Compartilhar\LEIAME.txt, VoxIA-Compartilhar\portable.txt $dest
           Copy-Item VoxIA-Compartilhar\data\.gitkeep "$dest\data\"
+          # Código SHA-256 para quem recebe a pasta conferir que o .exe não foi alterado
+          $hash = (Get-FileHash "$dest\VoxIA.exe" -Algorithm SHA256).Hash
+          Set-Content -Path "$dest\VoxIA.exe.sha256.txt" -Value "$hash  VoxIA.exe" -Encoding ascii
 
       - name: Publicar a pasta como artefato para download
         uses: actions/upload-artifact@v4
@@ -54,6 +57,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $exe = Join-Path $PWD "windows\VoxIA.exe"
+          $sha = Join-Path $PWD "output\VoxIA-Compartilhar\VoxIA.exe.sha256.txt"
           $repo = Join-Path $env:RUNNER_TEMP "repo"
           if (Test-Path $repo) { Remove-Item -Recurse -Force $repo }
           git clone -q "https://x-access-token:$env:GH_TOKEN@github.com/$env:GITHUB_REPOSITORY.git" $repo
@@ -62,7 +66,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           Copy-Item $exe "VoxIA-Compartilhar\VoxIA.exe" -Force
-          git add VoxIA-Compartilhar/VoxIA.exe
+          Copy-Item $sha "VoxIA-Compartilhar\VoxIA.exe.sha256.txt" -Force
+          git add VoxIA-Compartilhar/VoxIA.exe VoxIA-Compartilhar/VoxIA.exe.sha256.txt
           git diff --cached --quiet
           if ($LASTEXITCODE -ne 0) {
             git commit -q -m "Atualiza VoxIA.exe para compartilhar (build automatico) [skip ci]"

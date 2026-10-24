@@ -5,7 +5,11 @@ namespace VoxIA.Services
 {
     public static class Logger
     {
+        /// <summary>Logs mais antigos que isso são apagados.</summary>
+        private const int LogRetentionDays = 7;
+
         private static readonly object _lock = new object();
+        private static DateTime _lastPurgeDate = DateTime.MinValue;
 
         public static void LogInfo(string message)
         {
@@ -41,6 +45,11 @@ namespace VoxIA.Services
 
                 lock (_lock)
                 {
+                    if (_lastPurgeDate != DateTime.Today)
+                    {
+                        _lastPurgeDate = DateTime.Today;
+                        DeleteLogs(DateTime.Today.AddDays(-LogRetentionDays));
+                    }
                     File.AppendAllText(logFile, line + Environment.NewLine);
                 }
             }
@@ -48,6 +57,31 @@ namespace VoxIA.Services
             {
                 // Silent fail for logging to avoid cascading crashes
             }
+        }
+
+        /// <summary>Apaga todos os arquivos de log (usado na migração de versões que gravavam o texto ditado).</summary>
+        public static void DeleteAllLogs()
+        {
+            lock (_lock)
+            {
+                DeleteLogs(DateTime.MaxValue);
+            }
+        }
+
+        private static void DeleteLogs(DateTime olderThan)
+        {
+            try
+            {
+                foreach (string file in Directory.GetFiles(AppPathService.LogsDirectory, "app_*.log"))
+                {
+                    try
+                    {
+                        if (File.GetLastWriteTime(file) < olderThan) File.Delete(file);
+                    }
+                    catch { }
+                }
+            }
+            catch { }
         }
 
         private static string Sanitize(string text)
