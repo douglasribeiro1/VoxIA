@@ -215,6 +215,45 @@ namespace VoxIA.Services
                     Logger.LogError("Error loading pending audio queue", ex);
                     _items = new List<AudioQueueItem>();
                 }
+
+                DeleteOrphanAudioFiles();
+            }
+        }
+
+        /// <summary>
+        /// Apaga gravações e blocos que ficaram na pasta audio_queue sem pertencer a nenhum item da fila
+        /// (ex.: o app foi fechado no meio do processamento). Assim não sobra áudio de ditado esquecido no disco.
+        /// </summary>
+        private static void DeleteOrphanAudioFiles()
+        {
+            try
+            {
+                var keep = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var item in _items)
+                {
+                    if (string.IsNullOrEmpty(item.FilePath)) continue;
+                    keep.Add(Path.GetFileNameWithoutExtension(item.FilePath));
+                }
+
+                int removed = 0;
+                foreach (string file in Directory.GetFiles(AppPathService.AudioQueueDirectory))
+                {
+                    // rec_x.m4a e os blocos rec_x.part01.flac pertencem ao item rec_x
+                    string name = Path.GetFileName(file);
+                    int dot = name.IndexOf('.');
+                    string stem = dot > 0 ? name.Substring(0, dot) : name;
+                    if (keep.Contains(stem)) continue;
+                    // Por segurança, nunca mexe numa gravação recente (pode estar em andamento).
+                    if (File.GetLastWriteTime(file) > DateTime.Now.AddHours(-1)) continue;
+                    try { File.Delete(file); removed++; } catch { }
+                }
+
+                if (removed > 0)
+                    Logger.LogInfo(string.Format("Deleted {0} orphan audio file(s) from the queue folder.", removed));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to clean orphan audio files", ex);
             }
         }
 

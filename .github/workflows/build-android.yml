@@ -31,16 +31,32 @@ jobs:
       - name: Dar permissao de execucao ao Gradle Wrapper
         run: chmod +x android/gradlew
 
-      - name: Compilar APK Debug
+      - name: Preparar a chave de assinatura (segredos do repositorio)
+        env:
+          KEYSTORE_B64: ${{ secrets.VOXIA_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/voxia-release.keystore"
+            echo "VOXIA_KEYSTORE_PATH=$RUNNER_TEMP/voxia-release.keystore" >> "$GITHUB_ENV"
+            echo "APK sera assinado com a chave propria do VoxIA."
+          else
+            echo "::warning::Segredo VOXIA_KEYSTORE_BASE64 nao configurado; o APK sera assinado com a chave de depuracao do repositorio."
+          fi
+
+      - name: Compilar APK (release, sem modo de depuracao)
+        env:
+          VOXIA_KEYSTORE_PASSWORD: ${{ secrets.VOXIA_KEYSTORE_PASSWORD }}
+          VOXIA_KEY_ALIAS: ${{ secrets.VOXIA_KEY_ALIAS }}
+          VOXIA_KEY_PASSWORD: ${{ secrets.VOXIA_KEY_PASSWORD }}
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
-
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Renomear e Preparar APK
         run: |
           mkdir -p output
-          cp android/app/build/outputs/apk/debug/app-debug.apk output/VoxIA-Teclado-Android.apk
+          cp android/app/build/outputs/apk/release/app-release.apk output/VoxIA-Teclado-Android.apk
+          rm -f "$RUNNER_TEMP/voxia-release.keystore"
 
       - name: Publicar APK como Artefato para Download
         uses: actions/upload-artifact@v4

@@ -5,16 +5,25 @@ using System.Text;
 
 namespace VoxIA.Services
 {
+    /// <summary>
+    /// Guarda a chave da Groq protegida pelo Windows (DPAPI): só o mesmo usuário, no mesmo computador,
+    /// consegue lê-la. Copiar a pasta do VoxIA para outro PC não leva a chave junto; lá ela é pedida de novo.
+    /// </summary>
     public static class SecureCredentialService
     {
-        private static readonly byte[] CryptoKey = new byte[] {
+        private static readonly byte[] Entropy = Encoding.UTF8.GetBytes("VoxIA_Secure_Entropy_2026");
+        private static readonly object _lock = new object();
+        private static string _cachedKey;
+
+        // Chave e IV fixos da versão antiga do credentials.dat. Usados só para migrar e apagar esse arquivo.
+        private static readonly byte[] LegacyCryptoKey = new byte[] {
             0x56, 0x6F, 0x78, 0x49, 0x41, 0x5F, 0x53, 0x65,
             0x63, 0x75, 0x72, 0x65, 0x5F, 0x32, 0x30, 0x32,
             0x36, 0x5F, 0x47, 0x72, 0x6F, 0x71, 0x5F, 0x56,
             0x61, 0x75, 0x6C, 0x74, 0x5F, 0x4B, 0x65, 0x79
         };
 
-        private static readonly byte[] CryptoIv = new byte[] {
+        private static readonly byte[] LegacyCryptoIv = new byte[] {
             0x56, 0x6F, 0x78, 0x49, 0x41, 0x5F, 0x49, 0x56,
             0x5F, 0x32, 0x30, 0x32, 0x36, 0x5F, 0x30, 0x31
         };
@@ -23,74 +32,93 @@ namespace VoxIA.Services
         {
             string cleanKey = !string.IsNullOrEmpty(apiKey) ? apiKey.Trim() : string.Empty;
 
-            try
+            lock (_lock)
             {
-                // Save unencrypted in SettingsService / settings.json
-                SettingsService.Current.ApiKey = cleanKey;
-                SettingsService.Save();
-
-                // Also save in plain text file api_key.txt
-                string plainPath = AppPathService.ApiKeyFilePath;
-                if (!string.IsNullOrEmpty(cleanKey))
+                try
                 {
-                    File.WriteAllText(plainPath, cleanKey);
-                }
-                else if (File.Exists(plainPath))
-                {
-                    try { File.Delete(plainPath); } catch { }
-                }
+                    string path = AppPathService.ProtectedApiKeyFilePath;
+                    if (cleanKey.Length > 0)
+                    {
+                        byte[] protectedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(cleanKey), Entropy, DataProtectionScope.CurrentUser);
+                        File.WriteAllBytes(path, protectedBytes);
+                    }
+                    else if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
 
-                // Delete legacy encrypted credentials file if present
-                if (File.Exists(AppPathService.CredentialsFilePath))
-                {
-                    try { File.Delete(AppPathService.CredentialsFilePath); } catch { }
+                    _cachedKey = cleanKey;
+                    DeleteLegacyCopies();
+                    Logger.LogInfo("Groq API key saved (protected by Windows DPAPI).");
                 }
-
-                Logger.LogInfo("Groq API key saved in plain text (unencrypted).");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Failed to save Groq API key", ex);
+                catch (Exception ex)
+                {
+                    Logger.LogError("Failed to save Groq API key", ex);
+                }
             }
         }
 
         public static string GetApiKey()
         {
-            // 1. Direct from settings.json
-            if (!string.IsNullOrEmpty(SettingsService.Current.ApiKey))
-                return SettingsService.Current.ApiKey.Trim();
+            lock (_lock)
+            {
+                if (_cachedKey != null) return _cachedKey;
 
-            // 2. Direct from plain text file api_key.txt
+                string path = AppPathService.ProtectedApiKeyFilePath;
+                if (File.Exists(path))
+                {
+                    try
+                    {
+                        byte[] raw = ProtectedData.Unprotect(File.ReadAllBytes(path), Entropy, DataProtectionScope.CurrentUser);
+                        _cachedKey = Encoding.UTF8.GetString(raw).Trim();
+                        return _cachedKey;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Ex.: pasta copiada de outro computador ou de outro usuário do Windows.
+                        Logger.LogError("Saved Groq API key could not be unlocked on this computer; it must be entered again", ex);
+                    }
+                }
+
+                string legacyKey = ReadLegacyKey();
+                if (!string.IsNullOrEmpty(legacyKey))
+                {
+                    SaveApiKey(legacyKey); // lock reentrante: mesma thread
+                    Logger.LogInfo("Groq API key migrated from the old unprotected storage.");
+                    return legacyKey;
+                }
+
+                _cachedKey = string.Empty;
+                return _cachedKey;
+            }
+        }
+
+        /// <summary>Lê a chave das versões antigas: settings.json, api_key.txt ou credentials.dat.</summary>
+        private static string ReadLegacyKey()
+        {
+            if (!string.IsNullOrWhiteSpace(SettingsService.LegacyApiKey))
+                return SettingsService.LegacyApiKey.Trim();
+
             string plainPath = AppPathService.ApiKeyFilePath;
             if (File.Exists(plainPath))
             {
                 try
                 {
                     string key = File.ReadAllText(plainPath);
-                    if (!string.IsNullOrWhiteSpace(key))
-                    {
-                        SettingsService.Current.ApiKey = key.Trim();
-                        return key.Trim();
-                    }
+                    if (!string.IsNullOrWhiteSpace(key)) return key.Trim();
                 }
                 catch { }
             }
 
-            // 3. Migration: Decrypt legacy credentials.dat if it exists
             if (File.Exists(AppPathService.CredentialsFilePath))
             {
                 try
                 {
-                    byte[] encrypted = File.ReadAllBytes(AppPathService.CredentialsFilePath);
-                    byte[] raw = DecryptBytes(encrypted);
+                    byte[] raw = DecryptLegacyBytes(File.ReadAllBytes(AppPathService.CredentialsFilePath));
                     if (raw != null)
                     {
-                        string legacyKey = Encoding.UTF8.GetString(raw);
-                        if (!string.IsNullOrWhiteSpace(legacyKey))
-                        {
-                            SaveApiKey(legacyKey.Trim());
-                            return legacyKey.Trim();
-                        }
+                        string key = Encoding.UTF8.GetString(raw);
+                        if (!string.IsNullOrWhiteSpace(key)) return key.Trim();
                     }
                 }
                 catch (Exception ex)
@@ -102,32 +130,28 @@ namespace VoxIA.Services
             return string.Empty;
         }
 
-        private static byte[] EncryptBytes(byte[] plain)
+        /// <summary>Apaga as cópias desprotegidas da chave deixadas pelas versões antigas.</summary>
+        private static void DeleteLegacyCopies()
         {
-            using (var aes = Aes.Create())
+            try { if (File.Exists(AppPathService.ApiKeyFilePath)) File.Delete(AppPathService.ApiKeyFilePath); } catch { }
+            try { if (File.Exists(AppPathService.CredentialsFilePath)) File.Delete(AppPathService.CredentialsFilePath); } catch { }
+
+            if (SettingsService.LegacyApiKey != null)
             {
-                aes.Key = CryptoKey;
-                aes.IV = CryptoIv;
-                using (var ms = new MemoryStream())
-                {
-                    using (var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(plain, 0, plain.Length);
-                        cs.FlushFinalBlock();
-                    }
-                    return ms.ToArray();
-                }
+                // Regrava o settings.json, que deixa de ter o campo ApiKey.
+                SettingsService.LegacyApiKey = null;
+                SettingsService.Save();
             }
         }
 
-        private static byte[] DecryptBytes(byte[] cipher)
+        private static byte[] DecryptLegacyBytes(byte[] cipher)
         {
             try
             {
                 using (var aes = Aes.Create())
                 {
-                    aes.Key = CryptoKey;
-                    aes.IV = CryptoIv;
+                    aes.Key = LegacyCryptoKey;
+                    aes.IV = LegacyCryptoIv;
                     using (var ms = new MemoryStream())
                     {
                         using (var cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))
@@ -143,8 +167,7 @@ namespace VoxIA.Services
             {
                 try
                 {
-                    byte[] entropy = Encoding.UTF8.GetBytes("VoxIA_Secure_Entropy_2026");
-                    return ProtectedData.Unprotect(cipher, entropy, DataProtectionScope.CurrentUser);
+                    return ProtectedData.Unprotect(cipher, Entropy, DataProtectionScope.CurrentUser);
                 }
                 catch
                 {

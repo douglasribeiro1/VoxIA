@@ -31,11 +31,6 @@ VoxIA/
 │   ├── GUIA_ANDROID_E_SINCRONIZACAO.md  # Guia de configuração e Supabase Sync
 │   └── GUIA_INSTALACAO_USB_ANDROID.md   # Guia detalhado de depuração USB
 │
-├── 📁 backups/                          # Backups históricos e versões legadas
-│   ├── VoxIA_Backup_20260824_PreModifications.zip
-│   ├── VoxIA_Stable_Backup.zip
-│   └── windows-v2/                      # Versão legada arquivada
-│
 ├── 📁 .github/                          # Automações de CI/CD (GitHub Actions)
 │   └── workflows/
 │       └── build-android.yml            # Compilação automática do APK

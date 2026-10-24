@@ -44,6 +44,10 @@ namespace VoxIA
             try
             {
                 Logger.LogInfo("Starting VoxIA application...");
+                // Migra logo na abertura a chave antiga em texto puro para o armazenamento protegido.
+                SecureCredentialService.GetApiKey();
+                // Carrega a fila (e limpa áudios órfãos) antes de qualquer gravação começar.
+                PendingAudioRepository.GetAll();
                 Application.Run(new VoxIAContext());
             }
             catch (Exception ex)

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web.Script.Serialization;
 
 namespace VoxIA.Services
@@ -17,8 +19,13 @@ namespace VoxIA.Services
         public int WordCount { get; set; }
     }
 
+    /// <summary>
+    /// Histórico de ditados, gravado protegido pelo Windows (DPAPI) e apagado depois do prazo escolhido
+    /// nas configurações (HistoryRetentionDays).
+    /// </summary>
     public static class HistoryRepository
     {
+        private static readonly byte[] Entropy = Encoding.UTF8.GetBytes("VoxIA_History_Entropy_2026");
         private static List<DictationHistoryItem> _history = new List<DictationHistoryItem>();
         private static readonly object _lock = new object();
 
@@ -31,6 +38,7 @@ namespace VoxIA.Services
         {
             lock (_lock)
             {
+                ApplyRetention();
                 return _history.OrderByDescending(h => h.Timestamp).ToList();
             }
         }
@@ -38,6 +46,7 @@ namespace VoxIA.Services
         public static void AddRecord(string rawText, string finalText, double durationSec, string targetProcess)
         {
             if (string.IsNullOrEmpty(finalText)) return;
+            if (SettingsService.Current.HistoryRetentionDays == 0) return;
 
             int wordCount = finalText.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
@@ -60,6 +69,7 @@ namespace VoxIA.Services
                 {
                     _history = _history.OrderByDescending(h => h.Timestamp).Take(1000).ToList();
                 }
+                ApplyRetention();
                 Save();
             }
         }
@@ -73,24 +83,57 @@ namespace VoxIA.Services
             }
         }
 
+        /// <summary>Apaga os ditados mais antigos que o prazo configurado (ou todos, se o histórico estiver desligado).</summary>
+        public static void ApplyRetention()
+        {
+            lock (_lock)
+            {
+                int days = SettingsService.Current.HistoryRetentionDays;
+                if (days < 0) return;
+
+                DateTime cutoff = days == 0 ? DateTime.MaxValue : DateTime.Now.AddDays(-days);
+                int removed = _history.RemoveAll(h => h.Timestamp < cutoff);
+                if (removed > 0)
+                {
+                    Logger.LogInfo(string.Format("History retention removed {0} old dictation(s).", removed));
+                    Save();
+                }
+            }
+        }
+
         private static void Load()
         {
             lock (_lock)
             {
                 try
                 {
-                    if (File.Exists(AppPathService.HistoryFilePath))
+                    var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                    if (File.Exists(AppPathService.ProtectedHistoryFilePath))
                     {
+                        byte[] raw = ProtectedData.Unprotect(File.ReadAllBytes(AppPathService.ProtectedHistoryFilePath), Entropy, DataProtectionScope.CurrentUser);
+                        _history = serializer.Deserialize<List<DictationHistoryItem>>(Encoding.UTF8.GetString(raw)) ?? new List<DictationHistoryItem>();
+                    }
+                    else if (File.Exists(AppPathService.HistoryFilePath))
+                    {
+                        // Migração: o history.json antigo, em texto puro, vira history.dat protegido.
                         string json = File.ReadAllText(AppPathService.HistoryFilePath);
-                        var serializer = new JavaScriptSerializer();
                         _history = serializer.Deserialize<List<DictationHistoryItem>>(json) ?? new List<DictationHistoryItem>();
+                        Save();
+                        if (File.Exists(AppPathService.ProtectedHistoryFilePath))
+                        {
+                            File.Delete(AppPathService.HistoryFilePath);
+                            Logger.LogInfo("Dictation history migrated to protected storage.");
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
+                    // Ex.: pasta copiada de outro computador; o histórico de lá não pode ser lido aqui.
                     Logger.LogError("Failed to load dictation history", ex);
                     _history = new List<DictationHistoryItem>();
                 }
+
+                ApplyRetention();
             }
         }
 
@@ -98,9 +141,16 @@ namespace VoxIA.Services
         {
             try
             {
-                var serializer = new JavaScriptSerializer();
-                string json = serializer.Serialize(_history);
-                File.WriteAllText(AppPathService.HistoryFilePath, json);
+                if (_history.Count == 0)
+                {
+                    if (File.Exists(AppPathService.ProtectedHistoryFilePath)) File.Delete(AppPathService.ProtectedHistoryFilePath);
+                    if (File.Exists(AppPathService.HistoryFilePath)) File.Delete(AppPathService.HistoryFilePath);
+                    return;
+                }
+
+                var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                byte[] plain = Encoding.UTF8.GetBytes(serializer.Serialize(_history));
+                File.WriteAllBytes(AppPathService.ProtectedHistoryFilePath, ProtectedData.Protect(plain, Entropy, DataProtectionScope.CurrentUser));
             }
             catch (Exception ex)
             {

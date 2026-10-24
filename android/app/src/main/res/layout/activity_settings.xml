@@ -509,7 +509,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Até 400 caracteres já escritos antes do cursor vão junto com o áudio para a Groq, para acertar nomes e termos. Desligado, só o áudio é enviado. Campos de senha nunca são lidos." />
+                            android:text="Até 400 caracteres já escritos antes do cursor vão junto com o áudio para a Groq, para acertar nomes e termos. No prontuário, isso inclui dados do paciente. Desligado (padrão), só o áudio é enviado. Campos de senha nunca são lidos." />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch

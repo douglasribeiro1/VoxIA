@@ -2,3 +2,7 @@
 windows/data/
 VoxIA-Compartilhar/data/*
 !VoxIA-Compartilhar/data/.gitkeep
+
+# Backups locais com dados pessoais (histórico, áudios, chave): nunca versionar
+backups/
+*.dpapi
