@@ -180,7 +180,11 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         btnEnableBubble.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            try {
+                startActivity(VoxIABubbleService.accessibilitySettingsIntent(this))
+            } catch (e: Exception) {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            }
         }
 
         btnBubbleRestricted.setOnClickListener {
@@ -245,10 +249,14 @@ class SettingsActivity : AppCompatActivity() {
         val hasKey = apiKeyStore.get().isNotBlank()
 
         setPill(tvStatusKeyboard, "Teclado", keyboardOn)
-        setPill(tvStatusBubble, "Balão", bubbleOn && switchBubbleVisible.isChecked)
+        setPill(tvStatusBubble, "Balão", bubbleOn && VoxIABubbleService.running && switchBubbleVisible.isChecked)
         setPill(tvStatusKey, "Chave", hasKey)
 
-        if (bubbleOn) {
+        if (bubbleOn && !VoxIABubbleService.running) {
+            // Ligado nas configurações, mas o Android não reconectou (ex.: depois da economia de energia)
+            tvBubbleStatus.text = "Parado: desligue e ligue de novo"
+            btnEnableBubble.text = "Religar na Acessibilidade"
+        } else if (bubbleOn) {
             tvBubbleStatus.text = if (switchBubbleVisible.isChecked) "Ativado" else "Ativado, mas oculto"
             btnEnableBubble.text = "Abrir Acessibilidade"
         } else {

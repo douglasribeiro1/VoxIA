@@ -71,6 +71,25 @@
                 android:resource="@xml/bubble_accessibility" />
         </service>
 
+        <!-- Bloco nas configurações rápidas: religa ou mostra/oculta o balão -->
+        <service
+            android:name=".service.VoxIABubbleTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_bubble"
+            android:label="@string/bubble_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
     </application>
+
+    <!-- Para saber se o aparelho abre direto a chave do VoxIA na Acessibilidade -->
+    <queries>
+        <intent>
+            <action android:name="android.settings.ACCESSIBILITY_DETAILS_SETTINGS" />
+        </intent>
+    </queries>
 
 </manifest>

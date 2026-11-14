@@ -329,6 +329,13 @@
                     android:layout_marginTop="12dp"
                     android:text="Ativar na Acessibilidade" />
 
+                <TextView
+                    style="@style/VoxIA.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Atalho rápido: puxe a barra do topo da tela, toque no lápis (editar) e arraste o bloco &quot;Balão VoxIA&quot; para cima. Se o balão parar (por exemplo, depois da economia de energia), um toque nele leva direto à chave para religar. Com o balão ligado, o toque mostra ou oculta o balão." />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnBubbleRestricted"
                     style="@style/Widget.Material3.Button.TextButton"
