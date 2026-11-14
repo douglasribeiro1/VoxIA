@@ -8,6 +8,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -99,7 +100,10 @@ class VoxIABubbleService : AccessibilityService() {
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            PREF_ENABLED -> refreshBubble()
+            PREF_ENABLED -> {
+                refreshBubble()
+                VoxIABubbleTileService.requestUpdate(this)
+            }
             PREF_COLOR, PREF_ALPHA -> setState(state)
             PREF_SIZE -> rebuildBubble()
         }
@@ -122,6 +126,8 @@ class VoxIABubbleService : AccessibilityService() {
         createBubble()
         setState(if (pendingAudioFile != null) State.PENDING else State.IDLE)
         refreshBubble()
+        running = true
+        VoxIABubbleTileService.requestUpdate(this)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -147,6 +153,8 @@ class VoxIABubbleService : AccessibilityService() {
         leaveForeground()
         hideBubble()
         scope.cancel()
+        running = false
+        VoxIABubbleTileService.requestUpdate(this)
         super.onDestroy()
     }
 
@@ -843,6 +851,31 @@ class VoxIABubbleService : AccessibilityService() {
         private const val PREF_PENDING = "bubble_pending_audio_path"
         private const val CHANNEL_ID = "voxia_bubble_recording"
         private const val NOTIFICATION_ID = 4101
+
+        /** Se o serviço está de fato rodando neste processo (ligado na Acessibilidade e conectado). */
+        @Volatile
+        var running = false
+            private set
+
+        /**
+         * Abre direto a chave do balão na Acessibilidade. Se o aparelho não tiver essa tela,
+         * abre a lista de Acessibilidade já destacando o VoxIA.
+         */
+        fun accessibilitySettingsIntent(context: Context): Intent {
+            val component = ComponentName(context, VoxIABubbleService::class.java).flattenToString()
+            val details = Intent(ACTION_ACCESSIBILITY_DETAILS)
+                .putExtra(Intent.EXTRA_COMPONENT_NAME, component)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (details.resolveActivity(context.packageManager) != null) return details
+            return Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                .putExtra(":settings:fragment_args_key", component)
+                .putExtra(":settings:show_fragment_args", Bundle().apply {
+                    putString(":settings:fragment_args_key", component)
+                })
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        private const val ACTION_ACCESSIBILITY_DETAILS = "android.settings.ACCESSIBILITY_DETAILS_SETTINGS"
 
         /** Se o serviço de acessibilidade do balão está ligado nas configurações do Android. */
         fun isEnabled(context: Context): Boolean {
