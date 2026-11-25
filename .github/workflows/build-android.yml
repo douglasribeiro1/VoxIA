@@ -87,3 +87,18 @@ jobs:
               sleep 5
             done
           fi
+
+      - name: Publicar o APK na Release "ultima-versao" (link de download do README)
+        if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cp output/VoxIA-Teclado-Android.apk output/VoxIA-Android.apk
+          if ! gh release view ultima-versao >/dev/null 2>&1; then
+            # O workflow do Windows pode criar a release ao mesmo tempo; se já existir, segue em frente
+            gh release create ultima-versao --target "$GITHUB_SHA" --title "VoxIA — última versão" \
+              --notes-file .github/RELEASE_NOTES.md --latest || true
+          fi
+          gh release edit ultima-versao --notes-file .github/RELEASE_NOTES.md
+          gh release upload ultima-versao output/VoxIA-Android.apk --clobber

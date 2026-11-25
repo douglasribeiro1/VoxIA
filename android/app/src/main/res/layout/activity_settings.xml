@@ -183,6 +183,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Salvar chave" />
+
+                <TextView
+                    style="@style/VoxIA.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Não tem chave? É grátis e leva 2 minutos:\n1. Toque em &quot;Criar minha chave na Groq&quot; e entre com sua conta Google (ou e-mail).\n2. Toque em &quot;Create API Key&quot;, dê um nome (ex.: VoxIA) e copie a chave (começa com gsk_). Ela só aparece uma vez.\n3. Volte aqui, cole a chave no campo acima e toque em Salvar chave." />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOpenGroq"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Criar minha chave na Groq" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
