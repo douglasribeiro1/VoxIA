@@ -20,6 +20,7 @@ namespace VoxIA.Services
             public double Gain;
             public string Note;
             public bool Silent;   // true quando não há fala nenhuma (não deve ser enviado ao Whisper)
+            public int SpeechFrames = -1; // quadros de 20 ms com fala; -1 = não medido
         }
 
         private const int FrameMs = 20;
@@ -98,6 +99,7 @@ namespace VoxIA.Services
             {
                 if (rms[f] > speechLevel) speechFrames++;
             }
+            res.SpeechFrames = speechFrames;
             if (speechFrames < MinSpeechFrames)
             {
                 res.Note = "no speech detected; left untouched";

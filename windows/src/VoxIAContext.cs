@@ -27,6 +27,8 @@ namespace VoxIA
         private AudioRecorder _audioRecorder;
         private FloatingHudOverlay _hud;
         private TargetContext _activeTargetContext;
+        private LiveTranscriber _live;
+        private bool _finishingDictation;
         private DateTime _lastActionTime = DateTime.MinValue;
 
         public VoxIAContext()
@@ -223,6 +225,7 @@ namespace VoxIA
 
             if (_audioRecorder.IsRecording)
             {
+                CancelLive();
                 _audioRecorder.CancelRecording();
                 _hud.Hide();
                 AudioFeedbackService.PlayStopBeep();
@@ -298,9 +301,18 @@ namespace VoxIA
                 StartDictation();
         }
 
+        private void CancelLive()
+        {
+            if (_live != null)
+            {
+                _live.Cancel();
+                _live = null;
+            }
+        }
+
         private void StartDictation()
         {
-            if (_audioRecorder.IsRecording) return;
+            if (_audioRecorder.IsRecording || _finishingDictation) return;
 
             // Debounce guard: 400ms between actions
             double msSinceLast = (DateTime.Now - _lastActionTime).TotalMilliseconds;
@@ -322,6 +334,11 @@ namespace VoxIA
                 // Start recording PCM stream
                 _audioRecorder.StartRecording();
                 AudioFeedbackService.PlayStartBeep();
+
+                // Blocos longos já vão sendo transcritos enquanto a pessoa fala
+                CancelLive();
+                _live = new LiveTranscriber(_audioRecorder, _activeTargetContext != null ? _activeTargetContext.ContextText : null);
+                _live.Start();
 
                 _hud.ShowRecording();
                 string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
@@ -345,20 +362,50 @@ namespace VoxIA
             _lastActionTime = DateTime.Now;
 
             double durationSec = _audioRecorder.RecordingDuration.TotalSeconds;
-            string filePath = _audioRecorder.StopRecording();
+            bool captured = _audioRecorder.StopCapture();
             string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
             _menuRecord.Text = "Iniciar gravação";
             _menuRecord.ShortcutKeyDisplayString = hotkey;
             AudioFeedbackService.PlayStopBeep();
 
-            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            if (!captured)
+            {
+                CancelLive();
+                _hud.ShowError("Falha no arquivo de áudio");
+                return;
+            }
+
+            _hud.ShowProcessing();
+
+            // Junta o que já foi transcrito durante a fala; o arquivo fica só com o restante
+            LiveTranscriber.Partial partial = null;
+            string filePath;
+            _finishingDictation = true;
+            try
+            {
+                if (_live != null)
+                {
+                    LiveTranscriber live = _live;
+                    _live = null;
+                    partial = await live.FinishAsync();
+                }
+                filePath = _audioRecorder.SaveCaptured(partial != null ? partial.CommittedSamples : 0);
+            }
+            finally
+            {
+                _finishingDictation = false;
+            }
+            string prefix = partial != null ? partial.Text : null;
+            bool hasPrefix = !string.IsNullOrWhiteSpace(prefix);
+
+            if (!hasPrefix && (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)))
             {
                 _hud.ShowError("Falha no arquivo de áudio");
                 return;
             }
 
             // Sem fala: não envia nada ao Whisper (ele inventaria palavras)
-            if (_audioRecorder.LastRecordingWasSilent)
+            if (!hasPrefix && _audioRecorder.LastRecordingWasSilent)
             {
                 Logger.LogInfo("Recording had no speech; not sent to Whisper.");
                 AudioChunker.DeleteParts(filePath);
@@ -367,10 +414,9 @@ namespace VoxIA
                 return;
             }
 
-            _hud.ShowProcessing();
-
             // CRITICAL RULE: Save recording to persistent queue BEFORE any network upload attempt!
-            var queueItem = PendingAudioRepository.AddRecording(filePath, durationSec, _activeTargetContext);
+            var queueItem = PendingAudioRepository.AddRecording(filePath, durationSec, _activeTargetContext,
+                prefix, _audioRecorder.LastRecordingWasSilent, _audioRecorder.LastSpeechFrames);
             UpdatePendingBadge();
 
             // Process item through async queue worker

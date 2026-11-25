@@ -19,6 +19,12 @@ namespace VoxIA.Services
         private const int FrameMs = 20;
         private const int QuietWindowFrames = 10;        // cut in the middle of the quietest 200 ms
 
+        /// <summary>
+        /// Na transcrição durante a fala, um bloco só é cortado quando já há áudio suficiente para
+        /// escolher a pausa com a mesma janela usada no ditado inteiro (bloco máximo + cauda mínima).
+        /// </summary>
+        public const double LiveWindowSeconds = MaxChunkSeconds + MinTailSeconds;
+
         /// <summary>Sample offsets where the PCM (16-bit mono) should be cut. Empty = do not split.</summary>
         public static List<int> FindCuts(byte[] pcm, int sampleRate)
         {

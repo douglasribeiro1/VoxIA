@@ -107,6 +107,24 @@ namespace VoxIA.Services
             }
         }
 
+        /// <summary>
+        /// Grafias corretas dos termos do dicionário, separadas por vírgula, para orientar o Whisper
+        /// e a correção pela IA (as palavras "como deve ficar" e os termos só de vocabulário).
+        /// </summary>
+        public static string GetVocabularyTerms()
+        {
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var terms = new List<string>();
+            foreach (var e in GetEntries())
+            {
+                string term = (e.IsVocabularyOnly || string.IsNullOrWhiteSpace(e.Replacement)) ? e.Original : e.Replacement;
+                if (string.IsNullOrWhiteSpace(term)) continue;
+                term = term.Trim();
+                if (seen.Add(term)) terms.Add(term);
+            }
+            return string.Join(", ", terms.ToArray());
+        }
+
         public static List<DictionaryEntry> GetEntries()
         {
             lock (_lock)
