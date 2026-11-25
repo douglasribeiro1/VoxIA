@@ -594,6 +594,41 @@
                             style="@style/VoxIA.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="Comando de voz &quot;apaga isso&quot;" />
+
+                        <TextView
+                            style="@style/VoxIA.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Dizer &quot;apaga isso&quot; (ou &quot;risca isso&quot;) seguido de uma pausa descarta a frase anterior do ditado, no máximo 30 palavras. Desligado por padrão." />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchDeleteCommand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:contentDescription="Comando de voz apaga isso" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/VoxIA.Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="Enviar mensagem após ditar" />
 
                         <TextView

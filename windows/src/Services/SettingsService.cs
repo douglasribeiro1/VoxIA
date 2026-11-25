@@ -69,6 +69,9 @@ namespace VoxIA.Services
         public bool EnableAudioPreprocessing { get; set; }
         public bool EnableFieldContext { get; set; }
 
+        /// <summary>Comando falado "apaga isso" (descarta a frase anterior). Desligado por padrão.</summary>
+        public bool EnableDeleteCommand { get; set; }
+
         /// <summary>Nome do microfone escolhido; vazio usa o padrão do sistema.</summary>
         public string PreferredMicrophone { get; set; }
 
@@ -108,6 +111,7 @@ namespace VoxIA.Services
 
             EnableAudioPreprocessing = true;
             EnableFieldContext = false;
+            EnableDeleteCommand = false;
             PreferredMicrophone = "";
             HistoryRetentionDays = 7;
             PrivacyVersion = 0;
