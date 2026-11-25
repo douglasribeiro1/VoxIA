@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ComponentName
@@ -41,10 +42,13 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.voxia.keyboard.R
 import com.voxia.keyboard.audio.AudioRecorder
 import com.voxia.keyboard.data.ApiKeyStore
+import com.voxia.keyboard.data.CorrectionLearner
+import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.ui.AddWordActivity
 import com.voxia.keyboard.ui.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
@@ -98,6 +102,24 @@ class VoxIABubbleService : AccessibilityService() {
 
     private val refreshRunnable = Runnable { refreshBubble() }
 
+    /**
+     * Campo onde o último ditado foi inserido, observado por alguns minutos: se a pessoa corrigir
+     * à mão uma palavra do ditado, o VoxIA sugere ensiná-la ao dicionário. Só o texto desse campo
+     * é lido, só no aparelho, e nada é enviado para a internet.
+     */
+    private class LearnWatch(
+        val node: AccessibilityNodeInfo,
+        val packageName: CharSequence?,
+        val baseline: String,
+        val start: Int,
+        val end: Int,
+        val until: Long,
+        val suggested: MutableSet<String> = mutableSetOf()
+    )
+    private var learnWatch: LearnWatch? = null
+    private val learnRunnable = Runnable { checkCorrections() }
+    private var learnNotificationId = 0
+
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             PREF_ENABLED -> {
@@ -131,6 +153,19 @@ class VoxIABubbleService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (event?.eventType == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) {
+            // Digitação: só interessa para perceber correções no campo do último ditado
+            val watch = learnWatch ?: return
+            if (System.currentTimeMillis() > watch.until) {
+                learnWatch = null
+                return
+            }
+            if (event.packageName == watch.packageName) {
+                handler.removeCallbacks(learnRunnable)
+                handler.postDelayed(learnRunnable, LEARN_IDLE_MS)
+            }
+            return
+        }
         // O teclado abre/fecha com animação: espera assentar antes de decidir
         handler.removeCallbacks(refreshRunnable)
         handler.postDelayed(refreshRunnable, 150)
@@ -442,7 +477,7 @@ class VoxIABubbleService : AccessibilityService() {
     private fun onBubbleLongPress() {
         when (state) {
             State.PENDING -> {
-                pendingAudioFile?.delete()
+                DictationEngine.discard(pendingAudioFile)
                 pendingAudioFile = null
                 setState(State.IDLE)
                 toast("Áudio guardado descartado.")
@@ -517,6 +552,7 @@ class VoxIABubbleService : AccessibilityService() {
             toast("⚠ Erro ao acessar o microfone.")
             return
         }
+        dictationEngine.startLive(audioRecorder, apiKeyStore.get(), fieldContext, scope)
         vibrate()
         setState(State.RECORDING)
         startPulse()
@@ -531,12 +567,14 @@ class VoxIABubbleService : AccessibilityService() {
             leaveForeground()
 
             if (file == null) {
+                dictationEngine.cancelLive()
                 toast("Fale um pouco mais (áudio vazio).")
                 setState(State.IDLE)
                 refreshBubble()
                 return@launch
             }
             if (muted) {
+                dictationEngine.cancelLive()
                 file.delete()
                 toast("O Android bloqueou o microfone para o balão. Abra o VoxIA e veja a seção do balão.", long = true)
                 setState(State.IDLE)
@@ -544,9 +582,17 @@ class VoxIABubbleService : AccessibilityService() {
                 return@launch
             }
 
-            pendingAudioFile?.takeIf { it != file }?.delete()
-            pendingAudioFile = file
-            processAudio(file)
+            val prepared = dictationEngine.prepareRecording(file)
+            if (prepared == null) {
+                toast("Nenhuma fala detectada.")
+                setState(State.IDLE)
+                refreshBubble()
+                return@launch
+            }
+
+            pendingAudioFile?.takeIf { it != prepared }?.let { DictationEngine.discard(it) }
+            pendingAudioFile = prepared
+            processAudio(prepared)
         }
     }
 
@@ -556,7 +602,7 @@ class VoxIABubbleService : AccessibilityService() {
             val result = dictationEngine.process(file, apiKeyStore.get(), fieldContext)
             result.onSuccess { text ->
                 pendingAudioFile = null
-                try { file.delete() } catch (ignored: Exception) {}
+                DictationEngine.discard(file)
                 if (text.isBlank()) {
                     toast("Nenhuma fala detectada.")
                 } else {
@@ -580,14 +626,16 @@ class VoxIABubbleService : AccessibilityService() {
     private fun cancelDictation() {
         when (state) {
             State.RECORDING -> {
+                dictationEngine.cancelLive()
                 audioRecorder.cancelRecording()
                 leaveForeground()
             }
             State.PROCESSING -> {
                 workJob?.cancel()
+                dictationEngine.cancelLive()
                 if (audioRecorder.isRecordingNow()) audioRecorder.cancelRecording()
                 leaveForeground()
-                pendingAudioFile?.delete()
+                DictationEngine.discard(pendingAudioFile)
                 pendingAudioFile = null
             }
             else -> return
@@ -643,6 +691,7 @@ class VoxIABubbleService : AccessibilityService() {
             }
         }
 
+        if (inserted && node != null) startLearnWatch(node, text)
         if (inserted) {
             // Devolve à área de transferência o que estava lá antes, quando o Android deixa ler
             if (previousClip != null) {
@@ -652,6 +701,89 @@ class VoxIABubbleService : AccessibilityService() {
             }
         } else {
             toast("Texto copiado. Toque e segure no campo e escolha Colar.", long = true)
+        }
+    }
+
+    private fun startLearnWatch(node: AccessibilityNodeInfo, inserted: String) {
+        learnWatch = null
+        handler.removeCallbacks(learnRunnable)
+        if (!prefs.getBoolean(PREF_LEARN, true) || node.isPassword) return
+        try {
+            node.refresh()
+            val after = currentText(node)
+            // O ditado ocupa o trecho onde ele aparece no campo (procurado perto do cursor)
+            val cursor = node.textSelectionStart.takeIf { it in 0..after.length } ?: after.length
+            val body = inserted.trimEnd()
+            var start = after.lastIndexOf(body, startIndex = maxOf(0, cursor - body.length))
+            if (start < 0) start = after.lastIndexOf(body)
+            if (start < 0 || body.isEmpty()) return
+            learnWatch = LearnWatch(
+                node, node.packageName, after, start, start + body.length,
+                System.currentTimeMillis() + LEARN_WINDOW_MS
+            )
+        } catch (e: Exception) {
+            Log.w("VoxIABubble", "Não foi possível observar correções: ${e.message}")
+        }
+    }
+
+    private fun checkCorrections() {
+        val watch = learnWatch ?: return
+        try {
+            if (!watch.node.refresh() || watch.node.isPassword) {
+                learnWatch = null
+                return
+            }
+            val now = currentText(watch.node)
+            val found = CorrectionLearner.find(watch.baseline, now, watch.start, watch.end)
+            if (found.isEmpty()) return
+            val known = DictionaryManager(this).getEntries()
+            for (c in found) {
+                val key = c.original.lowercase() + "→" + c.replacement.lowercase()
+                if (!watch.suggested.add(key)) continue
+                val already = known.any {
+                    it.original.equals(c.original, ignoreCase = true) &&
+                        (it.isVocabularyOnly || it.replacement.equals(c.replacement, ignoreCase = true))
+                }
+                if (!already) suggestLearning(c)
+            }
+        } catch (e: Exception) {
+            Log.w("VoxIABubble", "Falha ao conferir correções: ${e.message}")
+        }
+    }
+
+    private fun suggestLearning(c: CorrectionLearner.Correction) {
+        val manager = NotificationManagerCompat.from(this)
+        val allowed = manager.areNotificationsEnabled() && (Build.VERSION.SDK_INT < 33 ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+        if (!allowed) {
+            toast("Dica: para o VoxIA aprender \"${c.replacement}\", toque e segure no balão com a palavra selecionada.", long = true)
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(LEARN_CHANNEL_ID, "Sugestões do dicionário", NotificationManager.IMPORTANCE_DEFAULT)
+            channel.setShowBadge(false)
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+        }
+        val id = LEARN_NOTIFICATION_BASE + (learnNotificationId++ % 20)
+        val tap = PendingIntent.getActivity(
+            this, id, AddWordActivity.intentFor(this, c.original, c.replacement),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(this, LEARN_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_book)
+            .setContentTitle("Ensinar ao VoxIA?")
+            .setContentText("Você corrigiu \"${c.original}\" para \"${c.replacement}\". Toque para salvar no dicionário.")
+            .setStyle(NotificationCompat.BigTextStyle().bigText(
+                "Você corrigiu \"${c.original}\" para \"${c.replacement}\". Toque para salvar no dicionário e o VoxIA acertar das próximas vezes."
+            ))
+            .setContentIntent(tap)
+            .setAutoCancel(true)
+            .setTimeoutAfter(LEARN_WINDOW_MS * 2)
+            .build()
+        try {
+            manager.notify(id, notification)
+        } catch (e: SecurityException) {
+            Log.w("VoxIABubble", "Notificação de sugestão bloqueada: ${e.message}")
         }
     }
 
@@ -850,6 +982,12 @@ class VoxIABubbleService : AccessibilityService() {
         private const val PREF_Y = "bubble_y"
         private const val PREF_PENDING = "bubble_pending_audio_path"
         private const val CHANNEL_ID = "voxia_bubble_recording"
+        /** Sugerir ensinar ao dicionário as palavras que a pessoa corrige depois do ditado. */
+        const val PREF_LEARN = "learn_corrections"
+        private const val LEARN_CHANNEL_ID = "voxia_learn_suggestions"
+        private const val LEARN_NOTIFICATION_BASE = 4200
+        private const val LEARN_WINDOW_MS = 5 * 60 * 1000L // observa o campo por 5 minutos
+        private const val LEARN_IDLE_MS = 3000L            // confere 3 s depois de a pessoa parar de digitar
         private const val NOTIFICATION_ID = 4101
 
         /** Se o serviço está de fato rodando neste processo (ligado na Acessibilidade e conectado). */

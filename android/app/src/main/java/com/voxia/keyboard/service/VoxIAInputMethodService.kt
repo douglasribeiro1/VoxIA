@@ -499,6 +499,7 @@ class VoxIAInputMethodService : InputMethodService() {
             fieldContext = readFieldContext()
             val started = audioRecorder.startRecording()
             if (started) {
+                dictationEngine.startLive(audioRecorder, apiKey, fieldContext, serviceScope)
                 btnRetryAudio?.visibility = View.GONE
                 btnMicRecord?.setBackgroundResource(R.drawable.bg_mic_recording)
                 btnMicRecord?.setImageResource(R.drawable.ic_stop)
@@ -515,17 +516,28 @@ class VoxIAInputMethodService : InputMethodService() {
             btnMicRecord?.setImageResource(R.drawable.ic_mic)
 
             serviceScope.launch {
-                val audioFile = audioRecorder.stopRecording()
-                isStoppingRecording = false
+                val recorded = audioRecorder.stopRecording()
 
-                if (audioFile == null || !audioFile.exists() || audioFile.length() < 100) {
+                if (recorded == null || !recorded.exists() || recorded.length() < 100) {
+                    dictationEngine.cancelLive()
+                    isStoppingRecording = false
                     btnCancelRecording?.visibility = View.GONE
                     tvStatusMessage?.text = "⚠ Fale um pouco mais (áudio vazio)."
                     resetStatusAfterDelay(2500)
                     return@launch
                 }
 
-                pendingAudioFile?.takeIf { it != audioFile }?.delete()
+                tvStatusMessage?.text = getString(R.string.status_transcribing)
+                val audioFile = dictationEngine.prepareRecording(recorded)
+                isStoppingRecording = false
+                if (audioFile == null) {
+                    btnCancelRecording?.visibility = View.GONE
+                    tvStatusMessage?.text = "Nenhuma fala detectada."
+                    resetStatusAfterDelay(2500)
+                    return@launch
+                }
+
+                pendingAudioFile?.takeIf { it != audioFile }?.let { DictationEngine.discard(it) }
                 pendingAudioFile = audioFile
                 processAudioFile(audioFile)
             }
@@ -621,7 +633,7 @@ class VoxIAInputMethodService : InputMethodService() {
                 // Sucesso (com ou sem fala): limpa arquivo pendente
                 pendingAudioFile = null
                 btnRetryAudio?.visibility = View.GONE
-                try { audioFile.delete() } catch (ignored: Exception) {}
+                DictationEngine.discard(audioFile)
             }.onFailure { error ->
                 Log.e("VoxIA", "Falha de rede ou processamento de áudio", error)
                 // PRESERVA O ARQUIVO DE ÁUDIO NO DISCO PARA RETENTATIVA!
@@ -644,6 +656,7 @@ class VoxIAInputMethodService : InputMethodService() {
     private fun cancelDictation() {
         when {
             audioRecorder.isRecordingNow() -> {
+                dictationEngine.cancelLive()
                 audioRecorder.cancelRecording()
                 stopMicPulse()
                 btnMicRecord?.setBackgroundResource(R.drawable.bg_mic_button)
@@ -653,7 +666,7 @@ class VoxIAInputMethodService : InputMethodService() {
                 processingJob?.cancel()
                 processingJob = null
                 isProcessingAudio = false
-                pendingAudioFile?.delete()
+                DictationEngine.discard(pendingAudioFile)
                 pendingAudioFile = null
                 btnRetryAudio?.visibility = View.GONE
             }

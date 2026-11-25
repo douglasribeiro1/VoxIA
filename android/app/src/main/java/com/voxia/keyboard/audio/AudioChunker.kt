@@ -18,6 +18,31 @@ object AudioChunker {
     private const val FRAME_MS = 20
     private const val QUIET_WINDOW_FRAMES = 10     // corta no meio dos 200 ms mais silenciosos
 
+    /**
+     * Na transcrição durante a fala, um bloco só é cortado quando já há áudio suficiente para
+     * escolher a pausa com a mesma janela usada no ditado inteiro (bloco máximo + cauda mínima).
+     */
+    const val LIVE_WINDOW_SECONDS = MAX_CHUNK_SECONDS + MIN_TAIL_SECONDS
+
+    /** Primeiro ponto de corte (em amostras) de um trecho com pelo menos LIVE_WINDOW_SECONDS. */
+    fun firstCut(pcm: ByteArray, sampleRate: Int): Int? = findCuts(pcm, sampleRate).firstOrNull()
+
+    /** PCM de um WAV gravado pelo AudioRecorder (cabeçalho fixo de 44 bytes). */
+    fun readWavPcm(wavFile: File): ByteArray = RandomAccessFile(wavFile, "r").use { raf ->
+        val len = (raf.length() - AudioRecorder.WAV_HEADER_SIZE).toInt().coerceAtLeast(0) and 1.inv()
+        ByteArray(len).also {
+            raf.seek(AudioRecorder.WAV_HEADER_SIZE.toLong())
+            raf.readFully(it)
+        }
+    }
+
+    fun writeWav(wavFile: File, pcm: ByteArray, offset: Int = 0, length: Int = pcm.size - offset) {
+        wavFile.outputStream().use { out ->
+            out.write(AudioRecorder.buildWavHeader(length.toLong(), AudioRecorder.SAMPLE_RATE))
+            out.write(pcm, offset, length)
+        }
+    }
+
     /** Posições (em amostras) onde o PCM 16 bits mono deve ser cortado. Vazio = não dividir. */
     fun findCuts(pcm: ByteArray, sampleRate: Int): List<Int> {
         val cuts = mutableListOf<Int>()

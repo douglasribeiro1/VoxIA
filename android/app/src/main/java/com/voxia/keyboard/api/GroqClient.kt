@@ -1,4 +1,4 @@
-﻿package com.voxia.keyboard.api
+package com.voxia.keyboard.api
 
 import android.util.Log
 import com.google.gson.Gson
@@ -10,9 +10,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import com.voxia.keyboard.audio.AudioChunker
+import com.voxia.keyboard.audio.AudioRecorder
+import com.voxia.keyboard.audio.FlacEncoder
 import com.voxia.keyboard.data.TopicFormatter
 import java.io.File
 import java.io.IOException
@@ -40,6 +41,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
 3. JAMAIS converse, não responda, não emita opiniões, não dê conselhos e não invente explicações.
 4. NUNCA inclua legendas, créditos de transcrição, saudações ou comentários como 'Aqui está o seu texto'.
 5. Retorne EXCLUSIVAMENTE o texto final corrigido, sem aspas e sem blocos de código.
+6. O texto vem de reconhecimento de voz e pode ter PALAVRAS TROCADAS por outras de som parecido (ex.: "desartria" no lugar de "disartria", "lo sartana" no lugar de "losartana"). Corrija essas trocas SOMENTE quando o contexto deixar evidente qual palavra foi dita, com atenção a termos técnicos, nomes de medicamentos e ao VOCABULÁRIO DO USUÁRIO quando informado. Na dúvida, mantenha a palavra transcrita. Nunca troque palavras por sinônimos nem mude o sentido.
 """.trimIndent()
 
     /**
@@ -53,33 +55,54 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
         model: String = "whisper-large-v3",
         initialPrompt: String = "",
         maxRetries: Int = 3,
-        contextText: String = ""
+        contextText: String = "",
+        prefixText: String = ""
     ): Result<String> = withContext(Dispatchers.IO) {
+        transcribeFile(audioFile, apiKey, model, initialPrompt, maxRetries, contextText, prefixText.trim())
+            .map { joinText(prefixText.trim(), it) }
+    }
+
+    /**
+     * [prefixText] = o que já foi transcrito durante a fala (blocos anteriores deste mesmo ditado).
+     * Ele serve de prompt para o primeiro bloco, no lugar do texto do campo.
+     */
+    private suspend fun transcribeFile(
+        audioFile: File,
+        apiKey: String,
+        model: String,
+        initialPrompt: String,
+        maxRetries: Int,
+        contextText: String,
+        prefixText: String
+    ): Result<String> {
+        val firstContext = if (prefixText.isNotBlank()) prefixText else contextText
         val trimmedKey = apiKey.trim()
         if (trimmedKey.isBlank()) {
-            return@withContext Result.failure(Exception("Chave da Groq API não configurada."))
+            return Result.failure(Exception("Chave da Groq API não configurada."))
         }
 
         if (!audioFile.exists() || audioFile.length() < 100) {
-            return@withContext Result.failure(Exception("Arquivo de áudio inválido ou vazio."))
+            // Com prefixo, o resto do ditado já foi transcrito durante a fala
+            if (prefixText.isNotBlank()) return Result.success("")
+            return Result.failure(Exception("Arquivo de áudio inválido ou vazio."))
         }
 
         if (!AudioChunker.hasSpeech(AudioChunker.wavSpeechFrames(audioFile))) {
             Log.i("GroqClient", "Gravação sem fala detectável. Nada enviado ao Whisper.")
-            return@withContext Result.success("")
+            return Result.success("")
         }
 
         val parts = AudioChunker.split(audioFile)
         try {
             if (parts.isEmpty()) {
-                val prompt = buildWhisperPrompt(initialPrompt, contextText)
+                val prompt = buildWhisperPrompt(initialPrompt, firstContext)
                 val text = sendToWhisper(audioFile, model, trimmedKey, prompt, maxRetries)
-                    .getOrElse { return@withContext Result.failure(it) }
-                if (isPromptEcho(text, contextText) || isVocabularyEcho(text, prompt, AudioChunker.wavSpeechFrames(audioFile))) {
+                    .getOrElse { return Result.failure(it) }
+                if (isPromptEcho(text, firstContext) || isVocabularyEcho(text, prompt, AudioChunker.wavSpeechFrames(audioFile))) {
                     Log.i("GroqClient", "Whisper devolveu apenas palavras do prompt (sem fala real). Descartando.")
-                    return@withContext Result.success("")
+                    return Result.success("")
                 }
-                return@withContext Result.success(text)
+                return Result.success(text)
             }
 
             val soFar = StringBuilder()
@@ -89,10 +112,10 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                     Log.i("GroqClient", "Bloco ${index + 1}/${parts.size} sem fala. Ignorando.")
                     continue
                 }
-                val promptContext = if (index == 0) contextText else soFar.toString()
+                val promptContext = if (soFar.isEmpty()) firstContext else joinText(prefixText, soFar.toString())
                 val prompt = buildWhisperPrompt(initialPrompt, promptContext)
                 val text = sendToWhisper(part, model, trimmedKey, prompt, maxRetries)
-                    .getOrElse { return@withContext Result.failure(it) }
+                    .getOrElse { return Result.failure(it) }
                 if (isPromptEcho(text, promptContext) || isVocabularyEcho(text, prompt, speech)) {
                     Log.i("GroqClient", "Bloco ${index + 1}/${parts.size} só repetiu o prompt. Ignorando.")
                     continue
@@ -103,12 +126,48 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                     soFar.append(text)
                 }
             }
-            Result.success(soFar.toString())
+            return Result.success(soFar.toString())
         } finally {
             AudioChunker.deleteParts(audioFile)
         }
     }
 
+    /**
+     * Um bloco cortado numa pausa enquanto a pessoa ainda fala (ver LiveTranscriber).
+     * Devolve "" quando o bloco não tem fala ou o Whisper só repetiu o prompt.
+     */
+    suspend fun transcribeLiveChunk(
+        pcm: ByteArray,
+        apiKey: String,
+        vocabulary: String,
+        promptContext: String,
+        model: String = "whisper-large-v3"
+    ): Result<String> = withContext(Dispatchers.IO) {
+        val trimmedKey = apiKey.trim()
+        if (trimmedKey.isBlank()) return@withContext Result.failure(Exception("Chave da Groq API não configurada."))
+        val speech = AudioChunker.speechFrames(pcm, AudioRecorder.SAMPLE_RATE)
+        if (!AudioChunker.hasSpeech(speech)) return@withContext Result.success("")
+        val prompt = buildWhisperPrompt(vocabulary, promptContext)
+        val flac = FlacEncoder.encode(pcm, AudioRecorder.SAMPLE_RATE)
+        val text = sendAudio(flac, "bloco.flac", "audio/flac", model, trimmedKey, prompt, 3)
+            .getOrElse { return@withContext Result.failure(it) }
+        if (isPromptEcho(text, promptContext) || isVocabularyEcho(text, prompt, speech)) {
+            Log.i("GroqClient", "Bloco ao vivo só repetiu o prompt. Ignorando.")
+            return@withContext Result.success("")
+        }
+        Result.success(text)
+    }
+
+    private fun joinText(a: String, b: String): String = when {
+        a.isBlank() -> b.trim()
+        b.isBlank() -> a.trim()
+        else -> a.trim() + " " + b.trim()
+    }
+
+    /**
+     * WAV vai comprimido em FLAC (sem perdas: as amostras são as mesmas, só o arquivo fica
+     * menor e o envio mais rápido). Se a compressão falhar, vai o WAV original.
+     */
     private suspend fun sendToWhisper(
         audioFile: File,
         model: String,
@@ -116,19 +175,43 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
         prompt: String,
         maxRetries: Int
     ): Result<String> {
-        var lastException: Exception = Exception("Erro desconhecido de transcrição")
+        if (audioFile.name.endsWith(".wav", ignoreCase = true)) {
+            try {
+                val pcm = AudioChunker.readWavPcm(audioFile)
+                val flac = FlacEncoder.encode(pcm, AudioRecorder.SAMPLE_RATE)
+                Log.d("GroqClient", "Áudio comprimido para envio: ${audioFile.length()} → ${flac.size} bytes.")
+                return sendAudio(flac, audioFile.nameWithoutExtension + ".flac", "audio/flac", model, apiKey, prompt, maxRetries)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w("GroqClient", "Falha ao comprimir em FLAC; enviando WAV.", e)
+            }
+        }
         val mediaType = if (audioFile.name.endsWith(".wav", ignoreCase = true)) "audio/wav" else "audio/m4a"
+        return sendAudio(audioFile.readBytes(), audioFile.name, mediaType, model, apiKey, prompt, maxRetries)
+    }
+
+    private suspend fun sendAudio(
+        audio: ByteArray,
+        fileName: String,
+        mediaType: String,
+        model: String,
+        apiKey: String,
+        prompt: String,
+        maxRetries: Int
+    ): Result<String> {
+        var lastException: Exception = Exception("Erro desconhecido de transcrição")
 
         for (attempt in 1..maxRetries) {
             try {
-                Log.d("GroqClient", "Tentativa $attempt de transcrição Whisper (${audioFile.name})...")
+                Log.d("GroqClient", "Tentativa $attempt de transcrição Whisper ($fileName, ${audio.size} bytes)...")
 
                 val requestBody = MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart(
                         "file",
-                        audioFile.name,
-                        audioFile.asRequestBody(mediaType.toMediaTypeOrNull())
+                        fileName,
+                        audio.toRequestBody(mediaType.toMediaTypeOrNull())
                     )
                     .addFormDataPart("model", model)
                     .addFormDataPart("language", "pt")
@@ -203,7 +286,8 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
         systemPrompt: String,
         model: String = "openai/gpt-oss-120b",
         contextText: String = "",
-        paragraphMode: Boolean = false
+        paragraphMode: Boolean = false,
+        vocabulary: String = ""
     ): Result<String> = withContext(Dispatchers.IO) {
         if (rawText.isBlank()) {
             return@withContext Result.success("")
@@ -237,7 +321,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                         })
                         add(JsonObject().apply {
                             addProperty("role", "user")
-                            addProperty("content", buildUserMessage(rawText, contextText, paragraphMode))
+                            addProperty("content", buildUserMessage(rawText, contextText, paragraphMode, vocabulary))
                         })
                     }
                     add("messages", messages)
@@ -359,16 +443,18 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
         return corrected.contains(probe, ignoreCase = true) && !rawText.contains(probe, ignoreCase = true)
     }
 
-    private fun buildUserMessage(rawText: String, contextText: String, paragraphMode: Boolean): String {
+    private fun buildUserMessage(rawText: String, contextText: String, paragraphMode: Boolean, vocabulary: String): String {
         val paragraphReminder = if (paragraphMode && rawText.length >= 300) {
             "\nORGANIZAÇÃO: este é um texto longo. Separe-o em parágrafos por MUDANÇA DE ASSUNTO (linha em branco entre os parágrafos), sem alterar, omitir ou acrescentar nenhuma palavra."
         } else ""
         val markerReminder = if (TopicFormatter.hasMarkers(rawText)) {
             "\nMARCADORES: códigos como [[T0]] são títulos já formatados pelo aplicativo. Mantenha cada um exatamente como está, sozinho e na mesma posição, sem traduzir, remover, repetir ou juntar ao texto."
         } else ""
-        if (paragraphReminder.isEmpty() && markerReminder.isEmpty() && contextText.isBlank()) return rawText
+        if (paragraphReminder.isEmpty() && markerReminder.isEmpty() && contextText.isBlank() && vocabulary.isBlank()) return rawText
 
-        val contextBlock = if (contextText.isBlank()) "" else
+        val vocabularyBlock = if (vocabulary.isBlank()) "" else
+            "VOCABULÁRIO DO USUÁRIO (grafias corretas de termos que ele usa; se uma palavra transcrita soar parecida com um destes termos e o contexto indicar, use a grafia daqui):\n$vocabulary\n\n"
+        val contextBlock = vocabularyBlock + if (contextText.isBlank()) "" else
             "CONTEXTO (trecho que já está escrito antes do cursor; use SOMENTE para conferir a grafia de termos, nomes e siglas; NUNCA repita, copie ou inclua este trecho na resposta):\n\"\"\"\n$contextText\n\"\"\"\n\n"
         return contextBlock + "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n" + rawText + "\n\"\"\"" +
             "\n\nLEMBRETE OBRIGATÓRIO: Retorne apenas o texto ditado acima com pontuação e ortografia ajustadas. Se for uma pergunta, devolva a pergunta pontuada com interrogação sem responder." +

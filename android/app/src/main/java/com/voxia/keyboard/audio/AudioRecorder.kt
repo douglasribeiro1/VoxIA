@@ -1,4 +1,4 @@
-﻿package com.voxia.keyboard.audio
+package com.voxia.keyboard.audio
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,7 +15,12 @@ import kotlin.math.abs
 
 /**
  * Grava 16 kHz mono 16 bits direto em WAV. O PCM sem compressão permite dividir ditados
- * longos nas pausas antes de enviar ao Whisper (ver AudioChunker).
+ * longos nas pausas antes de enviar ao Whisper (ver AudioChunker) e ler o que já foi gravado
+ * enquanto a gravação continua (transcrição durante a fala, ver LiveTranscriber).
+ *
+ * A fonte preferida é VOICE_RECOGNITION: o Android entrega o som do microfone ajustado para
+ * reconhecimento de fala (resposta plana, sem o processamento de chamada telefônica que abafa
+ * consoantes). Se o aparelho não aceitar, volta para MIC.
  */
 class AudioRecorder(private val context: Context) {
     @Volatile private var record: AudioRecord? = null
@@ -25,7 +30,7 @@ class AudioRecorder(private val context: Context) {
     private var readerThread: Thread? = null
     private var output: RandomAccessFile? = null
     private var currentOutputFile: File? = null
-    private var dataBytes = 0L
+    @Volatile private var dataBytes = 0L
     private var recordingStartTime = 0L
 
     @SuppressLint("MissingPermission") // a permissão é pedida na tela de configurações
@@ -39,15 +44,9 @@ class AudioRecorder(private val context: Context) {
 
             val minBuf = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
             val bufSize = maxOf(minBuf, SAMPLE_RATE / 5 * 2) // pelo menos 200 ms
-            val rec = AudioRecord(
-                MediaRecorder.AudioSource.MIC,
-                SAMPLE_RATE,
-                AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                bufSize
-            )
-            if (rec.state != AudioRecord.STATE_INITIALIZED) {
-                rec.release()
+            val rec = openRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, bufSize)
+                ?: openRecord(MediaRecorder.AudioSource.MIC, bufSize)
+            if (rec == null) {
                 Log.e("AudioRecorder", "AudioRecord não inicializou (permissão de microfone?)")
                 return false
             }
@@ -72,6 +71,44 @@ class AudioRecorder(private val context: Context) {
             Log.e("AudioRecorder", "Erro ao iniciar gravação", e)
             cleanup(deleteFile = true)
             false
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun openRecord(source: Int, bufSize: Int): AudioRecord? = try {
+        val rec = AudioRecord(source, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufSize)
+        if (rec.state == AudioRecord.STATE_INITIALIZED) {
+            Log.d("AudioRecorder", "Gravando com a fonte de áudio $source.")
+            rec
+        } else {
+            rec.release()
+            null
+        }
+    } catch (e: Exception) {
+        Log.w("AudioRecorder", "Fonte de áudio $source indisponível: ${e.message}")
+        null
+    }
+
+    /** Quantas amostras já foram gravadas no arquivo (gravação em andamento). */
+    fun recordedSamples(): Int = if (isRecording) (dataBytes / 2).toInt() else 0
+
+    /**
+     * Lê do arquivo da gravação em andamento as amostras [fromSample, toSample) sem interromper
+     * a gravação. Devolve null se não estiver gravando ou se a leitura falhar.
+     */
+    fun readRecorded(fromSample: Int, toSample: Int): ByteArray? {
+        val file = currentOutputFile ?: return null
+        if (!isRecording || toSample <= fromSample) return null
+        return try {
+            RandomAccessFile(file, "r").use { raf ->
+                val bytes = ByteArray((toSample - fromSample) * 2)
+                raf.seek(WAV_HEADER_SIZE + fromSample * 2L)
+                raf.readFully(bytes)
+                bytes
+            }
+        } catch (e: Exception) {
+            Log.w("AudioRecorder", "Leitura durante a gravação falhou: ${e.message}")
+            null
         }
     }
 

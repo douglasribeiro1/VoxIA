@@ -67,6 +67,7 @@ class SettingsActivity : AppCompatActivity() {
 
     // Preferências
     private lateinit var switchSendContext: MaterialSwitch
+    private lateinit var switchLearnCorrections: MaterialSwitch
     private lateinit var switchAutoSend: MaterialSwitch
 
     // Dicionário
@@ -154,6 +155,7 @@ class SettingsActivity : AppCompatActivity() {
         toggleBubbleSize = findViewById(R.id.toggleBubbleSize)
 
         switchSendContext = findViewById(R.id.switchSendContext)
+        switchLearnCorrections = findViewById(R.id.switchLearnCorrections)
         switchAutoSend = findViewById(R.id.switchAutoSend)
 
         etNewDictOriginal = findViewById(R.id.etNewDictOriginal)
@@ -172,6 +174,7 @@ class SettingsActivity : AppCompatActivity() {
         etGroqApiKey.setText(apiKeyStore.get())
         switchAutoSend.isChecked = prefs.getBoolean("auto_send_enabled", false)
         switchSendContext.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, VoxIABubbleService.DEFAULT_SEND_CONTEXT)
+        switchLearnCorrections.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_LEARN, true)
         switchBubbleVisible.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_ENABLED, true)
 
         val alpha = prefs.getInt(VoxIABubbleService.PREF_ALPHA, 100).coerceIn(30, 100)
@@ -252,6 +255,9 @@ class SettingsActivity : AppCompatActivity() {
             updateBubblePreview()
         }
 
+        switchLearnCorrections.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(VoxIABubbleService.PREF_LEARN, isChecked).apply()
+        }
         switchSendContext.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, isChecked).apply()
         }
