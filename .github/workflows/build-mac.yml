@@ -21,7 +21,7 @@ jobs:
 
       - name: Testar a lógica de áudio (FLAC, tratamento, blocos)
         run: |
-          swiftc -O -parse-as-library mac/src/AudioProcessing.swift mac/tests/SelfTest.swift -o "$RUNNER_TEMP/selftest"
+          swiftc -O -swift-version 5 -parse-as-library mac/src/AudioProcessing.swift mac/tests/SelfTest.swift -o "$RUNNER_TEMP/selftest"
           "$RUNNER_TEMP/selftest"
 
       - name: Compilar o VoxIA.app

@@ -19,7 +19,7 @@ fi
 SOURCES=(src/*.swift)
 for ARCH in arm64 x86_64; do
     echo "Compilando para $ARCH..."
-    swiftc -O -parse-as-library -target "$ARCH-apple-macos12.0" "${SOURCES[@]}" -o "$OUT/VoxIA-$ARCH"
+    swiftc -O -swift-version 5 -parse-as-library -target "$ARCH-apple-macos12.0" "${SOURCES[@]}" -o "$OUT/VoxIA-$ARCH"
 done
 
 APP="$OUT/VoxIA.app"
