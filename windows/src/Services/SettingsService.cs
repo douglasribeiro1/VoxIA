@@ -75,6 +75,12 @@ namespace VoxIA.Services
         /// <summary>Sobe o volume de captação do microfone para 100% durante o ditado (e baixa se saturar).</summary>
         public bool BoostMicrophoneDuringDictation { get; set; }
 
+        /// <summary>Procura atualizações ao abrir e uma vez por dia.</summary>
+        public bool AutoCheckUpdates { get; set; }
+
+        /// <summary>Última busca de atualizações (DateTime.UtcNow.Ticks); 0 = nunca.</summary>
+        public long LastUpdateCheckTicks { get; set; }
+
         /// <summary>Nome do microfone escolhido; vazio usa o padrão do sistema.</summary>
         public string PreferredMicrophone { get; set; }
 
@@ -116,6 +122,8 @@ namespace VoxIA.Services
             EnableFieldContext = false;
             EnableDeleteCommand = false;
             BoostMicrophoneDuringDictation = true;
+            AutoCheckUpdates = true;
+            LastUpdateCheckTicks = 0;
             PreferredMicrophone = "";
             HistoryRetentionDays = 7;
             PrivacyVersion = 0;

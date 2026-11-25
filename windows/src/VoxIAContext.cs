@@ -28,6 +28,11 @@ namespace VoxIA
         private FloatingHudOverlay _hud;
         private TargetContext _activeTargetContext;
         private LiveTranscriber _live;
+        private UpdateService.UpdateInfo _pendingUpdate;
+        private ToolStripMenuItem _menuUpdate;
+        private System.Windows.Forms.Timer _updateTimer;
+        private bool _balloonIsUpdate;
+        private bool _updating;
         private bool _finishingDictation;
         private DateTime _lastActionTime = DateTime.MinValue;
 
@@ -36,6 +41,7 @@ namespace VoxIA
             InitializeServices();
             InitializeTray();
             RegisterHotkeys();
+            StartUpdateChecks();
 
             Logger.LogInfo("VoxIA Context fully initialized and resident in System Tray.");
 
@@ -80,6 +86,7 @@ namespace VoxIA
         {
             AudioVolumeService.EnsureFullVolume();
             MicrophoneLevelService.RestoreAfterCrash();
+            UpdateService.CleanupOldExe();
 
             _audioRecorder = new AudioRecorder();
             _hud = new FloatingHudOverlay(() => _audioRecorder.CurrentAudioLevel);
@@ -132,6 +139,8 @@ namespace VoxIA
             _trayMenu.Items.Add(_menuShortcuts);
             _trayMenu.Items.Add(_menuAutoStart);
             _trayMenu.Items.Add(_menuSettings);
+            _menuUpdate = new ToolStripMenuItem("Procurar atualizações", null, (s, e) => OnMenuUpdateClick());
+            _trayMenu.Items.Add(_menuUpdate);
             _trayMenu.Items.Add(new ToolStripSeparator());
             _trayMenu.Items.Add(_menuExit);
 
@@ -493,8 +502,94 @@ namespace VoxIA
         {
             if (_notifyIcon != null && SettingsService.Current.ShowNotifications)
             {
+                _balloonIsUpdate = false;
                 _notifyIcon.ShowBalloonTip(3000, title, text, ToolTipIcon.Info);
             }
+        }
+
+        // ---------- Atualização com um clique ----------
+
+        private void StartUpdateChecks()
+        {
+            if (_notifyIcon != null)
+            {
+                _notifyIcon.BalloonTipClicked += (s, e) => { if (_balloonIsUpdate) PromptUpdate(); };
+            }
+            if (Program.JustUpdated)
+            {
+                ShowNotification("VoxIA atualizado", "A versão nova já está funcionando.");
+            }
+            // Primeira busca 1 minuto depois de abrir; depois confere a cada hora se já passou um dia
+            _updateTimer = new System.Windows.Forms.Timer { Interval = 60 * 1000 };
+            _updateTimer.Tick += async (s, e) =>
+            {
+                _updateTimer.Interval = 60 * 60 * 1000;
+                if (_pendingUpdate != null || !UpdateService.IsAutoCheckDue()) return;
+                var info = await UpdateService.CheckAsync();
+                if (info != null) OnUpdateFound(info);
+            };
+            _updateTimer.Start();
+        }
+
+        private void OnUpdateFound(UpdateService.UpdateInfo info)
+        {
+            _pendingUpdate = info;
+            _menuUpdate.Text = "Atualizar o VoxIA (versão nova)";
+            _menuUpdate.Font = new Font(_trayMenu.Font, FontStyle.Bold);
+            if (_notifyIcon != null)
+            {
+                _balloonIsUpdate = true;
+                _notifyIcon.ShowBalloonTip(10000, "Versão nova do VoxIA", "Clique aqui para atualizar (leva alguns segundos).", ToolTipIcon.Info);
+            }
+        }
+
+        private async void OnMenuUpdateClick()
+        {
+            if (_pendingUpdate != null)
+            {
+                PromptUpdate();
+                return;
+            }
+            if (!UpdateService.IsSupported)
+            {
+                MessageBox.Show("Esta cópia do VoxIA foi compilada à mão e não se atualiza sozinha. Baixe a versão nova pelo link do GitHub.", "VoxIA", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            var info = await UpdateService.CheckAsync();
+            if (info == null)
+            {
+                MessageBox.Show(string.Format("Você já está com a versão mais nova do VoxIA (build {0}).", BuildInfo.Build), "VoxIA", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            OnUpdateFound(info);
+            PromptUpdate();
+        }
+
+        private async void PromptUpdate()
+        {
+            if (_pendingUpdate == null || _updating) return;
+            if (_audioRecorder.IsRecording || _finishingDictation)
+            {
+                MessageBox.Show("Termine o ditado em andamento e depois clique em atualizar.", "VoxIA", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            var answer = MessageBox.Show(
+                "Há uma versão nova do VoxIA.\n\nAtualizar agora? O VoxIA fecha e abre de novo sozinho em alguns segundos. Sua chave, dicionário e configurações continuam iguais.",
+                "Atualizar o VoxIA", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (answer != DialogResult.Yes) return;
+
+            _updating = true;
+            _menuUpdate.Text = "Atualizando…";
+            _menuUpdate.Enabled = false;
+            bool restarting = await UpdateService.ApplyAsync(_pendingUpdate);
+            if (restarting)
+            {
+                OnMenuExitClick(this, EventArgs.Empty);
+                return;
+            }
+            _updating = false;
+            _menuUpdate.Text = "Atualizar o VoxIA (versão nova)";
+            _menuUpdate.Enabled = true;
         }
 
         private void UpdateAutoStartMenu()

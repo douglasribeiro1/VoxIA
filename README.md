@@ -96,6 +96,18 @@ Comandos de voz (Windows e Android):
 
 ---
 
+## 🔄 Atualizações automáticas
+
+A partir desta versão, o VoxIA procura versões novas sozinho (ao abrir e uma vez por dia):
+- **Windows:** aparece um aviso perto do relógio, **Versão nova do VoxIA**. Clique nele (ou no menu 🎙 → **Atualizar o VoxIA**) e confirme: ele baixa, troca o VoxIA.exe e abre de novo em alguns segundos. Também dá para procurar à mão no menu 🎙 → **Procurar atualizações**.
+- **Android:** aparece uma notificação **Versão nova do VoxIA**. Toque nela e depois em **Instalar**. Na primeira vez, o Android pede para **permitir instalar apps desta fonte**: ligue e volte ao VoxIA. Também dá para procurar no app, no cartão **Atualizações**.
+
+Chave, dicionário e configurações continuam iguais. O arquivo baixado é conferido (SHA-256) antes de instalar. Para desligar a busca automática: Configurações → **Procurar atualizações automaticamente**.
+
+> Quem tem uma versão anterior precisa instalar **esta** versão à mão uma última vez (pelos links acima); daí em diante, as atualizações chegam sozinhas.
+
+---
+
 ## 🎯 Como o VoxIA acerta mais
 
 - **Dicionário:** as palavras que você ensina vão como vocabulário para o Whisper e para a correção pela IA, que também conserta palavras trocadas por outras de som parecido quando o contexto deixa claro.

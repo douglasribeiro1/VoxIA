@@ -102,3 +102,11 @@ jobs:
           fi
           gh release edit ultima-versao --notes-file .github/RELEASE_NOTES.md
           gh release upload ultima-versao output/VoxIA-Android.apk --clobber
+
+          # Atualização com um clique: por último, o arquivo de versão que o app consulta
+          NAME=$(grep -oP 'versionName "\K[^"]+' android/app/build.gradle)
+          SHA=$(sha256sum output/VoxIA-Android.apk | cut -d' ' -f1)
+          printf '{"versionCode": %s, "versionName": "%s", "url": "https://github.com/%s/releases/download/ultima-versao/VoxIA-Android.apk", "sha256": "%s"}\n' \
+            "$GITHUB_RUN_NUMBER" "$NAME" "$GH_REPO" "$SHA" > "$RUNNER_TEMP/version-android.json"
+          cat "$RUNNER_TEMP/version-android.json"
+          gh release upload ultima-versao "$RUNNER_TEMP/version-android.json" --clobber
