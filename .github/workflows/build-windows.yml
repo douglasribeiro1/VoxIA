@@ -17,6 +17,13 @@ jobs:
       - name: Checkout do Repositorio
         uses: actions/checkout@v4
 
+      - name: Gravar o número do build no app (usado pela busca de atualizações)
+        shell: pwsh
+        run: |
+          $f = "windows\src\BuildInfo.cs"
+          (Get-Content $f -Raw) -replace 'Build = 0;', "Build = $env:GITHUB_RUN_NUMBER;" | Set-Content $f -Encoding utf8
+          Select-String -Path $f -Pattern "Build ="
+
       - name: Compilar VoxIA.exe com o compilador do .NET Framework
         shell: pwsh
         run: |
@@ -105,3 +112,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Falha ao atualizar a release" }
           gh release upload ultima-versao $zip --clobber
           if ($LASTEXITCODE -ne 0) { throw "Falha ao enviar o .zip para a release" }
+
+          # Atualização com um clique: o .exe solto e, por último, o arquivo de versão que o app consulta
+          $exe = "output\VoxIA-Compartilhar\VoxIA.exe"
+          gh release upload ultima-versao $exe --clobber
+          if ($LASTEXITCODE -ne 0) { throw "Falha ao enviar o VoxIA.exe para a release" }
+          $sha = (Get-FileHash $exe -Algorithm SHA256).Hash.ToLower()
+          $info = @{ build = [int]$env:GITHUB_RUN_NUMBER; url = "https://github.com/$env:GH_REPO/releases/download/ultima-versao/VoxIA.exe"; sha256 = $sha }
+          $json = Join-Path $env:RUNNER_TEMP "version-windows.json"
+          $info | ConvertTo-Json | Set-Content -Path $json -Encoding ascii
+          Get-Content $json
+          gh release upload ultima-versao $json --clobber
+          if ($LASTEXITCODE -ne 0) { throw "Falha ao enviar o version-windows.json para a release" }

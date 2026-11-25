@@ -33,6 +33,10 @@ import com.voxia.keyboard.data.ApiKeyStore
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.service.DictationEngine
 import com.voxia.keyboard.service.VoxIABubbleService
+import com.voxia.keyboard.update.UpdateManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -95,6 +99,115 @@ class SettingsActivity : AppCompatActivity() {
         renderDictionaryList()
         checkPermissions()
         showWelcomeIfNoKey()
+        setupUpdateCard()
+        if (intent?.getBooleanExtra(EXTRA_START_UPDATE, false) == true) checkForUpdate(manual = true, startRightAway = true)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_START_UPDATE, false)) checkForUpdate(manual = true, startRightAway = true)
+    }
+
+    // ---------- Atualização com um clique ----------
+
+    private lateinit var tvUpdateStatus: TextView
+    private lateinit var btnUpdate: MaterialButton
+    private var availableUpdate: UpdateManager.UpdateInfo? = null
+    private var updateBusy = false
+    /** APK baixado esperando a permissão "instalar apps desta fonte". */
+    private var pendingApk: File? = null
+
+    private fun setupUpdateCard() {
+        tvUpdateStatus = findViewById(R.id.tvUpdateStatus)
+        btnUpdate = findViewById(R.id.btnUpdate)
+        val switchAuto = findViewById<MaterialSwitch>(R.id.switchAutoUpdate)
+        switchAuto.isChecked = UpdateManager.isAutoCheckEnabled(this)
+        switchAuto.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(UpdateManager.PREF_AUTO, isChecked).apply()
+        }
+        btnUpdate.setOnClickListener {
+            if (availableUpdate != null) startUpdate() else checkForUpdate(manual = true, startRightAway = false)
+        }
+        renderUpdateCard("Você está na versão ${UpdateManager.currentVersionName(this)}.")
+    }
+
+    private fun renderUpdateCard(status: String) {
+        tvUpdateStatus.text = status
+        btnUpdate.isEnabled = !updateBusy
+        btnUpdate.text = when {
+            updateBusy -> "Aguarde…"
+            availableUpdate != null -> "Atualizar agora"
+            else -> "Procurar atualizações"
+        }
+    }
+
+    private fun checkForUpdate(manual: Boolean, startRightAway: Boolean) {
+        if (updateBusy) return
+        updateBusy = true
+        renderUpdateCard("Procurando versão nova…")
+        lifecycleScope.launch {
+            val info = UpdateManager.check(this@SettingsActivity)
+            updateBusy = false
+            availableUpdate = info
+            val current = UpdateManager.currentVersionName(this@SettingsActivity)
+            if (info == null) {
+                renderUpdateCard(if (manual) "Você já está com a versão mais nova ($current)." else "Você está na versão $current.")
+            } else {
+                val name = info.versionName.ifBlank { "nova" }
+                renderUpdateCard("Versão $name disponível (você está na $current).")
+                if (startRightAway) startUpdate()
+            }
+        }
+    }
+
+    private fun startUpdate() {
+        val info = availableUpdate ?: return
+        if (updateBusy) return
+        updateBusy = true
+        renderUpdateCard("Baixando a versão ${info.versionName}…")
+        lifecycleScope.launch {
+            val apk = UpdateManager.download(this@SettingsActivity, info)
+            updateBusy = false
+            if (apk == null) {
+                renderUpdateCard("Não foi possível baixar agora. Tente de novo ou baixe pelo navegador.")
+                openUpdateInBrowser()
+                return@launch
+            }
+            installOrAskPermission(apk)
+        }
+    }
+
+    private fun installOrAskPermission(apk: File) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !packageManager.canRequestPackageInstalls()) {
+            pendingApk = apk
+            renderUpdateCard("Falta um passo: permita que o VoxIA instale a atualização.")
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Permitir atualizações")
+                .setMessage("Só na primeira vez: na tela que vai abrir, ligue \"Permitir desta fonte\" e volte ao VoxIA. A instalação continua sozinha.")
+                .setPositiveButton("Abrir") { _, _ ->
+                    try {
+                        startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+                    } catch (e: Exception) {
+                        openUpdateInBrowser()
+                    }
+                }
+                .setNegativeButton("Agora não", null)
+                .show()
+            return
+        }
+        pendingApk = null
+        if (UpdateManager.install(this, apk)) {
+            renderUpdateCard("Toque em \"Instalar\" na tela do Android para concluir.")
+        } else {
+            openUpdateInBrowser()
+        }
+    }
+
+    private fun openUpdateInBrowser() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(UpdateManager.DOWNLOAD_PAGE)))
+        } catch (ignored: Exception) {}
     }
 
     /** Primeira vez, sem chave: explica o passo a passo da Groq antes de tudo. */
@@ -131,6 +244,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onResume()
         updateStatus()
         renderDictionaryList()
+        val apk = pendingApk
+        if (apk != null && apk.exists() &&
+            (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || packageManager.canRequestPackageInstalls())) {
+            installOrAskPermission(apk)
+        } else if (availableUpdate == null && UpdateManager.isAutoCheckDue(this)) {
+            checkForUpdate(manual = false, startRightAway = false)
+        }
     }
 
     private fun initViews() {
@@ -445,6 +565,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     companion object {
+        /** Aberto pela notificação "versão nova": já começa a atualizar. */
+        const val EXTRA_START_UPDATE = "start_update"
         private const val GROQ_KEYS_URL = "https://console.groq.com/keys"
         private const val PREF_WELCOME_SHOWN = "welcome_groq_shown"
     }

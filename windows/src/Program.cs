@@ -10,9 +10,13 @@ namespace VoxIA
     {
         private static Mutex _appMutex;
 
+        /// <summary>Aberto pela atualização com um clique (mostra o aviso "VoxIA atualizado").</summary>
+        public static bool JustUpdated { get; private set; }
+
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
+            JustUpdated = args != null && Array.IndexOf(args, "--after-update") >= 0;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -31,11 +35,19 @@ namespace VoxIA
             }
 
             const string appGuid = "VoxIA_Single_Instance_Mutex_2026_91896598";
-            bool createdNew;
+            _appMutex = new Mutex(false, appGuid);
+            bool acquired;
+            try
+            {
+                // Depois de uma atualização, a versão antiga ainda está fechando: espera por ela
+                acquired = _appMutex.WaitOne(JustUpdated ? 20000 : 0, false);
+            }
+            catch (AbandonedMutexException)
+            {
+                acquired = true; // a versão anterior fechou sem liberar a trava
+            }
 
-            _appMutex = new Mutex(true, appGuid, out createdNew);
-
-            if (!createdNew)
+            if (!acquired)
             {
                 MessageBox.Show("VoxIA já está em execução e residente na área de notificação (bandeja do Windows).", "VoxIA", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;

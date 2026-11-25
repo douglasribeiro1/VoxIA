@@ -51,6 +51,7 @@ import com.voxia.keyboard.data.CorrectionLearner
 import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.ui.AddWordActivity
 import com.voxia.keyboard.ui.SettingsActivity
+import com.voxia.keyboard.update.UpdateManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -120,6 +121,18 @@ class VoxIABubbleService : AccessibilityService() {
     private val learnRunnable = Runnable { checkCorrections() }
     private var learnNotificationId = 0
 
+    /** Busca de atualização uma vez por dia enquanto o balão está ligado (avisa por notificação). */
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            if (UpdateManager.isAutoCheckDue(this@VoxIABubbleService) && state != State.RECORDING) {
+                scope.launch {
+                    UpdateManager.check(this@VoxIABubbleService)?.let { UpdateManager.notifyIfNew(this@VoxIABubbleService, it) }
+                }
+            }
+            handler.postDelayed(this, 60 * 60 * 1000L)
+        }
+    }
+
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             PREF_ENABLED -> {
@@ -150,6 +163,7 @@ class VoxIABubbleService : AccessibilityService() {
         refreshBubble()
         running = true
         VoxIABubbleTileService.requestUpdate(this)
+        handler.postDelayed(updateRunnable, 2 * 60 * 1000L)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
