@@ -3,6 +3,7 @@ import AppKit
 import ApplicationServices
 
 public class TextInsertionService {
+    @discardableResult
     public static func insertTextAtCursor(_ text: String) -> Bool {
         guard !text.isEmpty else { return false }
 
@@ -32,6 +33,7 @@ public class TextInsertionService {
         return true
     }
 
+    @discardableResult
     public static func insertText(_ text: String, targetCtx: TargetContext? = nil) -> Bool {
         return insertTextAtCursor(text)
     }

@@ -18,6 +18,12 @@ public struct AudioQueueItem: Codable {
     public var retryCount: Int
     public var lastError: String?
     public var targetContext: TargetContext?
+    /// Texto já transcrito durante a fala; o arquivo de áudio tem só o restante.
+    public var prefixText: String?
+    /// O áudio restante não tem fala: só o prefixText vale.
+    public var audioIsSilent: Bool?
+    /// Quadros de 20 ms com fala (-1 = não medido).
+    public var speechFrames: Int?
 }
 
 public class PendingAudioRepository {
@@ -47,7 +53,8 @@ public class PendingAudioRepository {
         return items
     }
 
-    public static func addRecording(filePath: String, durationSeconds: Double, targetContext: TargetContext?) -> AudioQueueItem {
+    public static func addRecording(filePath: String, durationSeconds: Double, targetContext: TargetContext?,
+                                    prefixText: String? = nil, audioIsSilent: Bool = false, speechFrames: Int = -1) -> AudioQueueItem {
         let item = AudioQueueItem(
             id: UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased(),
             createdAt: Date(),
@@ -56,7 +63,10 @@ public class PendingAudioRepository {
             status: .PENDING,
             retryCount: 0,
             lastError: nil,
-            targetContext: targetContext
+            targetContext: targetContext,
+            prefixText: prefixText,
+            audioIsSilent: audioIsSilent,
+            speechFrames: speechFrames
         )
 
         lock.lock()

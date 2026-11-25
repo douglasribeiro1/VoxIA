@@ -1,48 +1,34 @@
 #!/bin/bash
+# Compila o VoxIA.app (Apple Silicon e Intel) e gera build/VoxIA-Mac.zip.
+# Usado pelo GitHub Actions (.github/workflows/build-mac.yml); também roda num Mac com as
+# ferramentas de linha de comando do Xcode (xcode-select --install).
+set -euo pipefail
+cd "$(dirname "$0")"
 
-echo "========================================================"
-echo "   Compilando VoxIA para macOS (Native Apple Silicon & Intel)"
-echo "========================================================"
-echo ""
+BUILD="${VOXIA_BUILD:-0}"          # 0 = compilado à mão (sem busca automática de atualizações)
+VERSION="${VOXIA_VERSION:-$(cat VERSION)}"
+OUT=build
+rm -rf "$OUT"
+mkdir -p "$OUT"
 
-if ! command -v swiftc &> /dev/null
-then
-    echo "[ERRO] O compilador 'swiftc' não foi encontrado."
-    echo "Instale o Xcode ou ferramentas de linha de comando com:"
-    echo "xcode-select --install"
+if ! command -v swiftc >/dev/null; then
+    echo "[ERRO] swiftc não encontrado. Instale com: xcode-select --install"
     exit 1
 fi
 
-echo "Compilando arquivos Swift..."
+SOURCES=(src/*.swift)
+for ARCH in arm64 x86_64; do
+    echo "Compilando para $ARCH..."
+    swiftc -O -parse-as-library -target "$ARCH-apple-macos12.0" "${SOURCES[@]}" -o "$OUT/VoxIA-$ARCH"
+done
 
-swiftc -O \
-    -parse-as-library \
-    src/AppPathService.swift \
-    src/Logger.swift \
-    src/SecureCredentialService.swift \
-    src/SettingsService.swift \
-    src/DictionaryService.swift \
-    src/AudioRecorderService.swift \
-    src/TextInsertionService.swift \
-    src/TranscriptionService.swift \
-    src/TextCorrectionService.swift \
-    src/PendingAudioRepository.swift \
-    src/HistoryRepository.swift \
-    src/RetryService.swift \
-    src/GlobalHotkeyService.swift \
-    src/FloatingHudOverlay.swift \
-    src/VoxIAMacApp.swift \
-    -o VoxIAMac
+APP="$OUT/VoxIA.app"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+lipo -create "$OUT/VoxIA-arm64" "$OUT/VoxIA-x86_64" -output "$APP/Contents/MacOS/VoxIA"
+sed -e "s/__BUILD__/$BUILD/g" -e "s/__VERSION__/$VERSION/g" Info.plist > "$APP/Contents/Info.plist"
 
-if [ $? -eq 0 ]; then
-    echo ""
-    echo "========================================================"
-    echo "   [SUCESSO] VoxIAMac foi gerado com sucesso!"
-    echo "========================================================"
-    echo "Para rodar o aplicativo no Mac:"
-    echo "./VoxIAMac"
-    echo ""
-else
-    echo "[ERRO] Falha na compilação do VoxIA no macOS."
-    exit 1
-fi
+# Assinatura local (ad-hoc): exigida para o app rodar em Macs com Apple Silicon
+codesign --force --deep --sign - "$APP"
+
+(cd "$OUT" && ditto -c -k --keepParent VoxIA.app VoxIA-Mac.zip)
+echo "Pronto: $OUT/VoxIA.app e $OUT/VoxIA-Mac.zip (versão $VERSION, build $BUILD)"

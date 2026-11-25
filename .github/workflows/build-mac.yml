@@ -1,0 +1,57 @@
+name: Compilar VoxIA para Mac
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    paths: [ "mac/**", ".github/workflows/build-mac.yml" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-mac:
+    name: Compilar VoxIA.app (Apple Silicon e Intel)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout do Repositorio
+        uses: actions/checkout@v4
+
+      - name: Testar a lógica de áudio (FLAC, tratamento, blocos)
+        run: |
+          swiftc -O -parse-as-library mac/src/AudioProcessing.swift mac/tests/SelfTest.swift -o "$RUNNER_TEMP/selftest"
+          "$RUNNER_TEMP/selftest"
+
+      - name: Compilar o VoxIA.app
+        env:
+          VOXIA_BUILD: ${{ github.run_number }}
+        run: ./mac/build_mac.sh
+
+      - name: Publicar o .zip como artefato para download
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: VoxIA-Mac
+          path: mac/build/VoxIA-Mac.zip
+          retention-days: 3
+
+      - name: Publicar na Release "ultima-versao" (somente master)
+        if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ZIP=mac/build/VoxIA-Mac.zip
+          if ! gh release view ultima-versao >/dev/null 2>&1; then
+            gh release create ultima-versao --target "$GITHUB_SHA" --title "VoxIA — última versão" \
+              --notes-file .github/RELEASE_NOTES.md --latest || true
+          fi
+          gh release upload ultima-versao "$ZIP" --clobber
+          # Atualização com um clique: por último, o arquivo de versão que o app consulta
+          SHA=$(shasum -a 256 "$ZIP" | cut -d' ' -f1)
+          printf '{"build": %s, "url": "https://github.com/%s/releases/download/ultima-versao/VoxIA-Mac.zip", "sha256": "%s"}\n' \
+            "$GITHUB_RUN_NUMBER" "$GH_REPO" "$SHA" > "$RUNNER_TEMP/version-mac.json"
+          cat "$RUNNER_TEMP/version-mac.json"
+          gh release upload ultima-versao "$RUNNER_TEMP/version-mac.json" --clobber

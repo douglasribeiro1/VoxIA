@@ -2,7 +2,7 @@
 
 Fale e o texto aparece escrito, já com pontuação e ortografia corrigidas, em **qualquer programa**: prontuário, Word, WhatsApp, navegador, e-mail.
 
-Funciona no **Windows** e no **Android** (e no Mac, para quem sabe compilar). A transcrição é feita pela **Groq**, um serviço de IA gratuito: cada pessoa usa a **sua própria chave**, que se cria em 2 minutos com uma conta Google.
+Funciona no **Windows**, no **Android** e no **Mac**. A transcrição é feita pela **Groq**, um serviço de IA gratuito: cada pessoa usa a **sua própria chave**, que se cria em 2 minutos com uma conta Google.
 
 ---
 
@@ -12,7 +12,7 @@ Funciona no **Windows** e no **Android** (e no Mac, para quem sabe compilar). A 
 | :--- | :--- | :--- |
 | 🪟 **Windows** 10 / 11 | **[VoxIA-Windows.zip](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Windows.zip)** | [Como instalar](#-passo-2a--instalar-no-windows) |
 | 📱 **Android** 8 ou mais novo | **[VoxIA-Android.apk](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Android.apk)** | [Como instalar](#-passo-2b--instalar-no-android) |
-| 🍎 **Mac** | Precisa compilar | [Guia do Mac](mac/README_MAC.md) |
+| 🍎 **Mac** (macOS 12 ou mais novo) | **[VoxIA-Mac.zip](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Mac.zip)** | [Como instalar](mac/README_MAC.md) |
 
 Todas as versões ficam na página **[Releases](https://github.com/douglasribeiro1/VoxIA/releases)**.
 
@@ -119,7 +119,7 @@ Chave, dicionário e configurações continuam iguais. O arquivo baixado é conf
 
 ## 🍎 Mac
 
-A versão de Mac precisa ser compilada no próprio Mac (pelo Terminal). Veja o **[guia do Mac](mac/README_MAC.md)**. A chave da Groq é a mesma do Passo 1: no menu 🎙 → **Configurações**, cole a chave ou clique em **Criar chave na Groq**. Atalho para ditar: **Option + Espaço**.
+Baixe o **[VoxIA-Mac.zip](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Mac.zip)**, abra e arraste o VoxIA para **Aplicativos**. Na primeira vez, clique com o **botão direito → Abrir** e permita o **microfone** e a **Acessibilidade**. Atalho para ditar: **Option + Espaço**. Passo a passo no **[guia do Mac](mac/README_MAC.md)**.
 
 ---
 
