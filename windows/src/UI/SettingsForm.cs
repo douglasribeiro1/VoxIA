@@ -25,7 +25,6 @@ namespace VoxIA.UI
         private ComboBox _cboHotkeyChoice;
         private ComboBox _cboMicrophone;
         private ToggleSwitch _chkFieldContext;
-        private ToggleSwitch _chkDeleteCommand;
         private ToggleSwitch _chkBoostMic;
         private ToggleSwitch _chkAutoUpdate;
         private ComboBox _cboHistoryRetention;
@@ -333,10 +332,9 @@ namespace VoxIA.UI
             _chkAutoClipboard = CreateToggleRow(cardSys, "Copiar o texto final automaticamente", 128);
             _chkAudioBeep = CreateToggleRow(cardSys, "Sinal sonoro ao iniciar e parar", 172);
             _chkShowHud = CreateToggleRow(cardSys, "Indicador flutuante (HUD) durante o ditado", 216);
-            _chkDeleteCommand = CreateToggleRow(cardSys, "Comando de voz \"apaga isso\" (apaga a frase anterior)", 260);
-            _chkBoostMic = CreateToggleRow(cardSys, "Microfone no máximo durante o ditado (baixa sozinho se saturar)", 304);
+            _chkBoostMic = CreateToggleRow(cardSys, "Microfone no máximo durante o ditado (baixa sozinho se saturar)", 260);
             _chkBoostMic.Checked = true;
-            _chkAutoUpdate = CreateToggleRow(cardSys, "Procurar atualizações automaticamente", 348);
+            _chkAutoUpdate = CreateToggleRow(cardSys, "Procurar atualizações automaticamente", 304);
             _chkAutoUpdate.Checked = true;
             _chkAutoClipboard.Checked = true;
             _chkAudioBeep.Checked = true;
@@ -559,7 +557,6 @@ namespace VoxIA.UI
             _chkAudioBeep.Checked = s.AudioBeepFeedback;
             _chkShowHud.Checked = s.ShowFloatingHud;
             _chkFieldContext.Checked = s.EnableFieldContext;
-            _chkDeleteCommand.Checked = s.EnableDeleteCommand;
             _chkBoostMic.Checked = s.BoostMicrophoneDuringDictation;
             _chkAutoUpdate.Checked = s.AutoCheckUpdates;
             int retentionIndex = Array.IndexOf(HistoryRetentionDays, s.HistoryRetentionDays);
@@ -699,7 +696,6 @@ namespace VoxIA.UI
             s.AudioBeepFeedback = _chkAudioBeep.Checked;
             s.ShowFloatingHud = _chkShowHud.Checked;
             s.EnableFieldContext = _chkFieldContext.Checked;
-            s.EnableDeleteCommand = _chkDeleteCommand.Checked;
             s.BoostMicrophoneDuringDictation = _chkBoostMic.Checked;
             s.AutoCheckUpdates = _chkAutoUpdate.Checked;
             s.HistoryRetentionDays = HistoryRetentionDays[Math.Max(0, _cboHistoryRetention.SelectedIndex)];

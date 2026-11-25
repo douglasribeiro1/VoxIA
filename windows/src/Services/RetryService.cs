@@ -79,12 +79,6 @@ namespace VoxIA.Services
                 {
                     Logger.LogInfo(string.Format("Detected {0} spoken heading command(s).", headings.Count));
                 }
-                // "apaga isso" descarta a frase anterior antes de a IA ver o texto
-                if (SettingsService.Current.EnableDeleteCommand && VoiceCommands.HasDeleteCommand(markedRaw))
-                {
-                    markedRaw = VoiceCommands.ApplyDeletes(markedRaw);
-                    Logger.LogInfo("Applied spoken 'apaga isso' command(s).");
-                }
                 if (string.IsNullOrWhiteSpace(markedRaw))
                 {
                     PendingAudioRepository.MarkCompleted(item.Id, rawText, "");

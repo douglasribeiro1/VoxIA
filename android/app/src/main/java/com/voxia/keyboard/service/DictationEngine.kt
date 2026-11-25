@@ -10,7 +10,6 @@ import com.voxia.keyboard.data.DictionaryManager
 import com.voxia.keyboard.data.PromptManager
 import com.voxia.keyboard.data.TopicFormatter
 import com.voxia.keyboard.data.TopicHeading
-import com.voxia.keyboard.data.VoiceCommands
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,7 +18,7 @@ import java.io.File
 /**
  * Caminho único de um ditado, usado pelo teclado e pelo balão flutuante:
  * transcrição durante a fala (blocos longos) → tratamento do áudio restante → Whisper →
- * marcadores de título/tópico → comando "apaga isso" → correção pela LLM → dicionário → títulos.
+ * marcadores de título/tópico → correção pela LLM → dicionário → títulos.
  */
 class DictationEngine(context: Context) {
     enum class Stage { TRANSCRIBING, CORRECTING }
@@ -27,7 +26,6 @@ class DictationEngine(context: Context) {
     private val groqClient = GroqClient()
     private val promptManager = PromptManager(context)
     private val dictionaryManager = DictionaryManager(context)
-    private val settings = context.getSharedPreferences("voxia_settings", Context.MODE_PRIVATE)
     private var live: LiveTranscriber? = null
 
     /** Preenchido quando o último ditado saiu sem a correção da IA (ex.: limite de uso da Groq). */
@@ -120,11 +118,7 @@ class DictationEngine(context: Context) {
 
         // Comandos "abrir tópico ... fechar tópico" viram marcadores que a LLM não altera
         val headings = mutableListOf<TopicHeading>()
-        var markedRaw = TopicFormatter.extractMarkers(rawTranscript, headings)
-        // "apaga isso" descarta a frase anterior antes de a IA ver o texto
-        if (settings.getBoolean(PREF_DELETE_COMMAND, false) && VoiceCommands.hasDeleteCommand(markedRaw)) {
-            markedRaw = VoiceCommands.applyDeletes(markedRaw)
-        }
+        val markedRaw = TopicFormatter.extractMarkers(rawTranscript, headings)
         if (markedRaw.isBlank()) return Result.success("")
 
         val correctedText: String? = if (headings.isNotEmpty() && TopicFormatter.isOnlyMarkers(markedRaw)) {
@@ -161,9 +155,6 @@ class DictationEngine(context: Context) {
 
     companion object {
         private const val MAX_VOCABULARY_CHARS = 1500
-
-        /** Comando falado "apaga isso" (descarta a frase anterior). Desligado por padrão. */
-        const val PREF_DELETE_COMMAND = "voice_delete_command"
 
         /** Texto já transcrito durante a fala, guardado ao lado do áudio para o reenvio também usá-lo. */
         private fun prefixFile(audioFile: File) = File(audioFile.parentFile, audioFile.name + ".prefix.txt")
