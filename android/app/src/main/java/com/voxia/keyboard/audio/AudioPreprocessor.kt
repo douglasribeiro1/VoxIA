@@ -7,10 +7,13 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 /**
- * Prepara a gravação (PCM 16 bits mono) antes de ir ao Whisper, como na versão Windows:
- * tira o ronco grave (filtro passa-alta), corta o silêncio do começo e do fim, encurta pausas
- * muito longas e aumenta o volume de gravações baixas. A fala nunca é atenuada nem cortada:
- * quando algo parece arriscado, o áudio original volta intacto.
+ * Prepara a gravação (PCM 16 bits mono) antes de ir ao Whisper: tira o ronco grave (filtro
+ * passa-alta), aumenta o volume de gravações baixas e avisa quando não há fala nenhuma.
+ *
+ * No celular o áudio NUNCA é recortado (trimSilence = false). O corte de silêncios e de pausas
+ * longas da versão Windows decide o que é "silêncio" pelo volume, e no celular a voz varia
+ * muito (aparelho afastado, fala mais baixa): trechos inteiros de fala baixa eram tratados como
+ * pausa e sumiam do meio do ditado. O corte só existe como opção (trimSilence = true).
  */
 object AudioPreprocessor {
     class Result(
@@ -37,7 +40,7 @@ object AudioPreprocessor {
     private const val MIN_SPEECH_RMS = 150.0    // abaixo disso é ruído ambiente, não fala
     private const val MIN_SPEECH_FRAMES = 12    // 240 ms de energia de fala no mínimo
 
-    fun process(pcm: ByteArray, sampleRate: Int): Result {
+    fun process(pcm: ByteArray, sampleRate: Int, trimSilence: Boolean = false): Result {
         fun untouched(note: String, seconds: Double = 0.0, silent: Boolean = false) =
             Result(pcm, false, seconds, seconds, 1.0, note, silent)
 
@@ -97,23 +100,27 @@ object AudioPreprocessor {
         var first = active.indexOfFirst { it }
         var last = active.indexOfLast { it }
         if (first < 0) return untouched("nenhuma fala detectada", originalSeconds)
-        first = max(0, first - EDGE_PAD_FRAMES)
-        last = min(frames - 1, last + EDGE_PAD_FRAMES)
 
-        // 4. Trechos mantidos (pausas internas longas são encurtadas)
+        // 4. Trechos mantidos: sem trimSilence, o áudio inteiro, do começo ao fim
         val ranges = mutableListOf<IntArray>()
-        var segStart = first
-        var f2 = first
-        while (f2 <= last) {
-            if (active[f2]) { f2++; continue }
-            val runStart = f2
-            while (f2 <= last && !active[f2]) f2++
-            if (f2 - runStart > LONG_PAUSE_FRAMES) {
-                ranges.add(intArrayOf(segStart, runStart + KEPT_PAUSE_FRAMES - 1))
-                segStart = f2 - KEPT_PAUSE_FRAMES
+        if (!trimSilence) {
+            ranges.add(intArrayOf(0, frames - 1))
+        } else {
+            first = max(0, first - EDGE_PAD_FRAMES)
+            last = min(frames - 1, last + EDGE_PAD_FRAMES)
+            var segStart = first
+            var f2 = first
+            while (f2 <= last) {
+                if (active[f2]) { f2++; continue }
+                val runStart = f2
+                while (f2 <= last && !active[f2]) f2++
+                if (f2 - runStart > LONG_PAUSE_FRAMES) {
+                    ranges.add(intArrayOf(segStart, runStart + KEPT_PAUSE_FRAMES - 1))
+                    segStart = f2 - KEPT_PAUSE_FRAMES
+                }
             }
+            ranges.add(intArrayOf(segStart, last))
         }
-        ranges.add(intArrayOf(segStart, last))
 
         // 5. Ganho para gravações baixas (nunca atenua)
         var sumSq = 0.0
