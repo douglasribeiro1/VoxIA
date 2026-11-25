@@ -117,6 +117,21 @@ public class DictionaryService {
         }
     }
 
+    /// Grafias corretas dos termos do dicionário, separadas por vírgula, para orientar o Whisper e a
+    /// correção pela IA (as palavras "como deve ficar" e os termos só de vocabulário).
+    public static func vocabularyTerms() -> String {
+        var seen = Set<String>()
+        var terms: [String] = []
+        for e in getAll() {
+            let term = (e.isVocabularyOnly || e.replacement.isEmpty) ? e.original : e.replacement
+            let clean = term.trimmingCharacters(in: .whitespacesAndNewlines)
+            if clean.isEmpty || seen.contains(clean.lowercased()) { continue }
+            seen.insert(clean.lowercased())
+            terms.append(clean)
+        }
+        return terms.joined(separator: ", ")
+    }
+
     /// Applies deterministic local regex replacement with intelligent Case-Matching across the text.
     public static func applyReplacements(_ text: String) -> String {
         guard !text.isEmpty else { return text }

@@ -6,3 +6,5 @@ VoxIA-Compartilhar/data/*
 # Backups locais com dados pessoais (histórico, áudios, chave): nunca versionar
 backups/
 *.dpapi
+
+mac/build/

@@ -1,7 +1,10 @@
 import Foundation
 import AppKit
 
-public class RetryService {
+/// Processa a fila de áudios: Whisper (com o texto já transcrito durante a fala como prefixo) →
+/// correção pela IA → dicionário → texto inserido no app onde o ditado começou. Em falha de rede o
+/// áudio fica guardado e é reenviado a cada 30 s.
+public enum RetryService {
     private static var timer: Timer?
     private static var isProcessing = false
     private static let lock = NSLock()
@@ -9,9 +12,7 @@ public class RetryService {
     public static func start() {
         DispatchQueue.main.async {
             timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { _ in
-                checkAndRetry()
-            }
+            timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { _ in checkAndRetry() }
         }
     }
 
@@ -25,58 +26,67 @@ public class RetryService {
         isProcessing = true
         lock.unlock()
 
-        let fileURL = URL(fileURLWithPath: item.filePath)
-        PendingAudioRepository.updateStatus(id: item.id, status: .TRANSCRIBING)
-
-        TranscriptionService.transcribeAudio(fileURL: fileURL) { result in
-            switch result {
-            case .success(let rawText):
-                Logger.info("macOS Whisper Raw Transcript: \"\(rawText)\"")
-                PendingAudioRepository.updateStatus(id: item.id, status: .CORRECTING)
-
-                TextCorrectionService.correctText(rawText) { corrResult in
-                    let correctedText: String
-                    switch corrResult {
-                    case .success(let text): correctedText = text
-                    case .failure: correctedText = rawText
-                    }
-
-                    // Deterministic Local Dictionary & Custom Vocabulary Replacements
-                    let finalText = DictionaryService.applyReplacements(correctedText)
-
-                    Logger.info("macOS Final Post-Processed Text: \"\(finalText)\"")
-                    TextInsertionService.insertText(finalText, targetCtx: item.targetContext)
-
-                    if SettingsService.current.autoCopyToClipboard {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(finalText, forType: .string)
-                    }
-
-                    HistoryRepository.addRecord(rawText: rawText, finalText: finalText, durationSec: item.durationSeconds, targetProcess: item.targetContext?.appName ?? "MacApp")
-                    PendingAudioRepository.markCompleted(id: item.id)
-
-                    lock.lock()
-                    isProcessing = false
-                    lock.unlock()
-                    completion?(true)
-                }
-
-            case .failure(let error):
-                Logger.error("macOS queue item error: \(error.localizedDescription)")
-                PendingAudioRepository.updateStatus(id: item.id, status: .ERROR, error: error.localizedDescription)
-
-                lock.lock()
-                isProcessing = false
-                lock.unlock()
-                completion?(false)
-            }
+        Task.detached(priority: .userInitiated) {
+            let ok = await run(item)
+            lock.lock()
+            isProcessing = false
+            lock.unlock()
+            DispatchQueue.main.async { completion?(ok) }
         }
+    }
+
+    private static func run(_ item: AudioQueueItem) async -> Bool {
+        PendingAudioRepository.updateStatus(id: item.id, status: .TRANSCRIBING)
+        let prefix = item.prefixText ?? ""
+        do {
+            var tail = ""
+            if item.audioIsSilent != true {
+                if let pcm = WavFile.read(URL(fileURLWithPath: item.filePath)) {
+                    tail = try await TranscriptionService.transcribe(pcm: pcm, prefix: prefix, speechFrames: item.speechFrames ?? -1)
+                } else if prefix.isEmpty {
+                    Logger.error("Queued audio file is missing; item removed.")
+                    PendingAudioRepository.deleteItem(id: item.id)
+                    return false
+                }
+            }
+            return await finish(item, raw: TranscriptionService.join(prefix, tail))
+        } catch let error as TranscriptionService.TranscriptionError where error.permanent {
+            Logger.error("Unrecoverable transcription error; item removed: \(error.message)")
+            PendingAudioRepository.deleteItem(id: item.id)
+            return false
+        } catch {
+            Logger.error("macOS queue item error: \(error.localizedDescription)")
+            PendingAudioRepository.updateStatus(id: item.id, status: .ERROR, error: error.localizedDescription)
+            return false
+        }
+    }
+
+    private static func finish(_ item: AudioQueueItem, raw: String) async -> Bool {
+        if raw.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            PendingAudioRepository.markCompleted(id: item.id)
+            return true
+        }
+        PendingAudioRepository.updateStatus(id: item.id, status: .CORRECTING)
+        let corrected = await TextCorrectionService.correct(raw) ?? raw
+        let finalText = DictionaryService.applyReplacements(corrected.isEmpty ? raw : corrected)
+
+        await MainActor.run {
+            TargetAppTracker.reactivate(item.targetContext)
+        }
+        try? await Task.sleep(nanoseconds: 150_000_000)
+        await MainActor.run {
+            // Cola no cursor; o texto também fica na área de transferência
+            TextInsertionService.insertText(finalText + " ", targetCtx: item.targetContext)
+        }
+        HistoryRepository.addRecord(rawText: raw, finalText: finalText, durationSec: item.durationSeconds,
+                                    targetProcess: item.targetContext?.appName ?? "MacApp")
+        PendingAudioRepository.markCompleted(id: item.id)
+        return true
     }
 
     private static func checkAndRetry() {
         guard SettingsService.current.autoRetryOnReconnect else { return }
-        let pending = PendingAudioRepository.getPendingItems()
-        if let first = pending.first {
+        if let first = PendingAudioRepository.getPendingItems().first {
             processItem(first)
         }
     }
