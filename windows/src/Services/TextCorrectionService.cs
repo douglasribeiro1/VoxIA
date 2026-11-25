@@ -134,7 +134,7 @@ namespace VoxIA.Services
                                         Logger.LogWarning("LLM output repeated the document context. Using raw transcript.");
                                         return rawText;
                                     }
-                                    if (rawText.Length >= 200 && corrected.Length < rawText.Length * 0.75)
+                                    if (rawText.Length >= 200 && corrected.Length < rawText.Length * 0.85)
                                     {
                                         Logger.LogWarning(string.Format("LLM output suspiciously shorter than input ({0} vs {1} chars). Using raw transcript to avoid losing content.", corrected.Length, rawText.Length));
                                         return rawText;

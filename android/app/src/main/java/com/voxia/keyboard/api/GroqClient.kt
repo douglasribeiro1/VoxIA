@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit
 
 private const val CORRECTION_ATTEMPTS = 3
 private const val CLEAR_SPEECH_FRAMES = 25 // 0,5 s de fala em quadros de 20 ms
+// Correção da IA bem menor que o ditado = a IA pulou ou resumiu um trecho: fica o texto do Whisper
+private const val MIN_CORRECTED_RATIO = 0.85
 
 /** Motivo legível de a correção pela IA não ter sido aplicada. */
 class CorrectionException(message: String) : Exception(message)
@@ -378,7 +380,7 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
                     Log.w("GroqClient", "Saída da LLM repetiu o contexto do campo. Usando texto bruto.")
                     return@withContext Result.failure(CorrectionException("a IA repetiu o texto do campo"))
                 }
-                if (rawText.length >= 200 && cleaned.length < rawText.length * 0.75) {
+                if (rawText.length >= 200 && cleaned.length < rawText.length * MIN_CORRECTED_RATIO) {
                     Log.w("GroqClient", "Saída da LLM muito menor que a entrada (${cleaned.length} vs ${rawText.length}). Usando texto bruto.")
                     return@withContext Result.failure(CorrectionException("a IA encurtou demais o texto"))
                 }
