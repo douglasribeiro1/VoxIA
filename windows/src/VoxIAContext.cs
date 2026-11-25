@@ -36,6 +36,42 @@ namespace VoxIA
             RegisterHotkeys();
 
             Logger.LogInfo("VoxIA Context fully initialized and resident in System Tray.");
+
+            // Primeira vez (sem chave): mostra o passo a passo logo depois de o ícone aparecer na bandeja
+            if (string.IsNullOrEmpty(SecureCredentialService.GetApiKey()))
+            {
+                var welcomeTimer = new System.Windows.Forms.Timer { Interval = 800 };
+                welcomeTimer.Tick += (s, e) =>
+                {
+                    welcomeTimer.Stop();
+                    welcomeTimer.Dispose();
+                    ShowWelcomeGuide();
+                };
+                welcomeTimer.Start();
+            }
+        }
+
+        /// <summary>Passo a passo para quem abre o VoxIA pela primeira vez e ainda não tem a chave da Groq.</summary>
+        private void ShowWelcomeGuide()
+        {
+            string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
+
+            string msg = "Bem-vindo ao VoxIA!\n\n" +
+                         "Para funcionar, o VoxIA precisa da SUA chave gratuita da Groq (o serviço que transforma a voz em texto). Leva 2 minutos:\n\n" +
+                         "1. Clique em SIM: o site da Groq (console.groq.com/keys) vai abrir.\n" +
+                         "2. Entre com sua conta Google (ou crie uma conta com e-mail). É grátis e não pede cartão.\n" +
+                         "3. Clique em \"Create API Key\", dê um nome (ex.: VoxIA) e clique em \"Submit\".\n" +
+                         "4. Copie a chave (começa com gsk_). Ela só aparece uma vez!\n" +
+                         "5. Cole a chave na tela de Configurações do VoxIA e clique em Salvar.\n\n" +
+                         string.Format("Pronto: clique onde quer escrever, aperte {0}, fale e aperte {0} de novo.\n\n", hotkey) +
+                         "Abrir o site da Groq agora?";
+
+            DialogResult r = MessageBox.Show(msg, "VoxIA — Primeiros passos", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if (r == DialogResult.Yes)
+            {
+                try { System.Diagnostics.Process.Start("https://console.groq.com/keys"); } catch { }
+            }
+            OpenSettingsForm();
         }
 
         private void InitializeServices()
@@ -274,8 +310,7 @@ namespace VoxIA
             string apiKey = SecureCredentialService.GetApiKey();
             if (string.IsNullOrEmpty(apiKey))
             {
-                ShowNotification("API Key Ausente", "Por favor, configure sua API Key da Groq nas Configurações.");
-                OpenSettingsForm();
+                ShowWelcomeGuide();
                 return;
             }
 

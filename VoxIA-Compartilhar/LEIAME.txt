@@ -1,20 +1,50 @@
-VoxIA - versão para compartilhar (sem chave de API)
+VoxIA - Ditado por voz com IA (Windows)
+=======================================
 
-1. Coloque esta pasta em um local com permissão de escrita (ex.: Documentos). Não rode de dentro de um .zip.
-2. Execute VoxIA.exe.
-3. Abra as configurações do app e cole a SUA chave de API do Groq (gratuita em console.groq.com > API Keys).
-4. Atalho padrão para ditar: F8.
+Guia completo, com Android e solução de problemas:
+https://github.com/douglasribeiro1/VoxIA
 
-Modo portátil: histórico, dicionário e chave ficam na subpasta "data" desta pasta. Cada pessoa deve usar a sua própria cópia/chave; não compartilhe a pasta "data".
+PASSO 1 - CRIAR SUA CHAVE GRÁTIS DA GROQ (2 minutos, não pede cartão)
+  1. Abra https://console.groq.com/keys
+  2. Clique em "Continue with Google" e entre com sua conta Gmail
+     (ou use GitHub / e-mail).
+  3. Clique em "Create API Key", dê um nome (ex.: VoxIA) e clique em "Submit".
+  4. Clique em "Copy" para copiar a chave (começa com gsk_).
+     ATENÇÃO: ela só aparece uma vez. Se perder, crie outra.
+  A chave é pessoal, como uma senha: não compartilhe.
 
-Privacidade:
-- A chave e o histórico ficam protegidos pelo Windows: só abrem neste computador, com o seu usuário. Se copiar a pasta para outro PC, informe a chave de novo.
-- O histórico é apagado depois de 7 dias (dá para mudar ou desligar em Configurações > Privacidade). Os logs não guardam o texto ditado e são apagados após 7 dias.
-- Por padrão, só o áudio vai para a Groq. O texto que já está no campo só é enviado se você ligar essa opção em Privacidade.
-- O texto ditado fica na área de transferência para colar com Ctrl+V, mas não entra no histórico do Windows (Win+V) nem na sincronização com a nuvem.
+PASSO 2 - INSTALAR
+  1. Coloque esta pasta num lugar fixo (ex.: Documentos).
+     Não rode de dentro do .zip nem da pasta Downloads.
+  2. Dê dois cliques em VoxIA.exe.
+  3. Se aparecer "O Windows protegeu o computador":
+     clique em "Mais informações" > "Executar assim mesmo".
+  4. Na janela "Primeiros passos", clique em Sim se ainda não tiver a chave.
+  5. Em Configurações, cole a chave em "Chave de API Groq" e clique em Salvar.
+  O VoxIA fica no ícone 🎙 perto do relógio (se não aparecer, clique na setinha ^).
 
-Conferir se o VoxIA.exe não foi alterado: no Prompt de Comando, dentro desta pasta, rode
-    certutil -hashfile VoxIA.exe SHA256
-e compare com o código do arquivo VoxIA.exe.sha256.txt (e com o publicado no repositório).
+PASSO 3 - USAR
+  Clique onde quer escrever > aperte F8 > fale > aperte F8 de novo.
+  Esc cancela. Ctrl+Shift+W ensina uma palavra nova (selecione-a antes).
+  O atalho pode ser trocado em Configurações.
+  Comandos de voz: "abrir tópico exame físico fechar tópico" cria um título em
+  CAIXA ALTA; "abrir título ... fechar título" cria o título da primeira linha
+  (diga "traço" para o hífen).
 
-Comandos de voz: "abrir tópico exame físico fechar tópico" cria um título de tópico em CAIXA ALTA; "abrir título ... fechar título" cria o título da primeira linha (diga "traço" para o hífen).
+PRIVACIDADE
+- Modo portátil: histórico, dicionário e chave ficam na subpasta "data" desta
+  pasta. Cada pessoa usa a sua própria cópia e chave; não compartilhe a pasta "data".
+- A chave e o histórico ficam protegidos pelo Windows: só abrem neste computador,
+  com o seu usuário. Se copiar a pasta para outro PC, informe a chave de novo.
+- O histórico é apagado depois de 7 dias (dá para mudar ou desligar em
+  Configurações > Privacidade). Os logs não guardam o texto ditado e são apagados
+  após 7 dias.
+- Por padrão, só o áudio vai para a Groq. O texto que já está no campo só é enviado
+  se você ligar essa opção em Privacidade.
+- O texto ditado fica na área de transferência para colar com Ctrl+V, mas não entra
+  no histórico do Windows (Win+V) nem na sincronização com a nuvem.
+
+CONFERIR SE O VoxIA.exe NÃO FOI ALTERADO
+  No Prompt de Comando, dentro desta pasta, rode
+      certutil -hashfile VoxIA.exe SHA256
+  e compare com o código do arquivo VoxIA.exe.sha256.txt.

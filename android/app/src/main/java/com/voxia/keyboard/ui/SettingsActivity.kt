@@ -48,6 +48,7 @@ class SettingsActivity : AppCompatActivity() {
     // Chave
     private lateinit var etGroqApiKey: TextInputEditText
     private lateinit var btnSaveGroqKey: MaterialButton
+    private lateinit var btnOpenGroq: MaterialButton
 
     // Teclado
     private lateinit var btnEnableKeyboard: MaterialButton
@@ -90,6 +91,37 @@ class SettingsActivity : AppCompatActivity() {
         updateBubblePreview()
         renderDictionaryList()
         checkPermissions()
+        showWelcomeIfNoKey()
+    }
+
+    /** Primeira vez, sem chave: explica o passo a passo da Groq antes de tudo. */
+    private fun showWelcomeIfNoKey() {
+        if (apiKeyStore.get().isNotBlank()) return
+        if (prefs.getBoolean(PREF_WELCOME_SHOWN, false)) return
+        prefs.edit().putBoolean(PREF_WELCOME_SHOWN, true).apply()
+
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle("Bem-vindo ao VoxIA!")
+            .setMessage(
+                "Para funcionar, o VoxIA precisa da SUA chave gratuita da Groq (o serviço que transforma a voz em texto). Leva 2 minutos:\n\n" +
+                "1. Toque em \"Criar chave\": o site da Groq vai abrir.\n" +
+                "2. Entre com sua conta Google (ou crie uma com e-mail). É grátis e não pede cartão.\n" +
+                "3. Toque em \"Create API Key\", dê um nome (ex.: VoxIA) e confirme.\n" +
+                "4. Copie a chave (começa com gsk_). Ela só aparece uma vez!\n" +
+                "5. Volte ao VoxIA, cole no campo \"Chave da Groq\" e toque em Salvar chave.\n\n" +
+                "Depois, ative o Teclado e/ou o Balão nesta mesma tela."
+            )
+            .setPositiveButton("Criar chave") { _, _ -> openGroqKeysPage() }
+            .setNegativeButton("Já tenho a chave") { _, _ -> etGroqApiKey.requestFocus() }
+            .show()
+    }
+
+    private fun openGroqKeysPage() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(GROQ_KEYS_URL)))
+        } catch (e: Exception) {
+            toast("Abra no navegador: $GROQ_KEYS_URL")
+        }
     }
 
     override fun onResume() {
@@ -106,6 +138,7 @@ class SettingsActivity : AppCompatActivity() {
 
         etGroqApiKey = findViewById(R.id.etGroqApiKey)
         btnSaveGroqKey = findViewById(R.id.btnSaveGroqKey)
+        btnOpenGroq = findViewById(R.id.btnOpenGroq)
 
         btnEnableKeyboard = findViewById(R.id.btnEnableKeyboard)
         btnSelectKeyboard = findViewById(R.id.btnSelectKeyboard)
@@ -169,6 +202,8 @@ class SettingsActivity : AppCompatActivity() {
                 toast("Não foi possível salvar a chave: ${e.message}")
             }
         }
+
+        btnOpenGroq.setOnClickListener { openGroqKeysPage() }
 
         btnEnableKeyboard.setOnClickListener {
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
@@ -395,4 +430,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+
+    companion object {
+        private const val GROQ_KEYS_URL = "https://console.groq.com/keys"
+        private const val PREF_WELCOME_SHOWN = "welcome_groq_shown"
+    }
 }

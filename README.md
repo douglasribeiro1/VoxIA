@@ -1,105 +1,163 @@
-# 🎙 VoxIA — Ecossistema Multiplataforma de Ditado por Voz com IA (Groq)
+# 🎙 VoxIA — Ditado por voz com IA
 
-**VoxIA** é uma suíte completa de ditado por voz e transcrição ultra-rápida potencializada por Inteligência Artificial (Groq Whisper + Llama 3.3 / GPT OSS), disponível nativamente para **Windows**, **macOS** e **Android**.
+Fale e o texto aparece escrito, já com pontuação e ortografia corrigidas, em **qualquer programa**: prontuário, Word, WhatsApp, navegador, e-mail.
+
+Funciona no **Windows** e no **Android** (e no Mac, para quem sabe compilar). A transcrição é feita pela **Groq**, um serviço de IA gratuito: cada pessoa usa a **sua própria chave**, que se cria em 2 minutos com uma conta Google.
 
 ---
 
-## 📂 Estrutura do Repositório
+## ⬇️ Downloads
 
-O projeto é modular e organizado por plataformas e áreas funcionais:
+| Sistema | Arquivo | |
+| :--- | :--- | :--- |
+| 🪟 **Windows** 10 / 11 | **[VoxIA-Windows.zip](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Windows.zip)** | [Como instalar](#-passo-2a--instalar-no-windows) |
+| 📱 **Android** 8 ou mais novo | **[VoxIA-Android.apk](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Android.apk)** | [Como instalar](#-passo-2b--instalar-no-android) |
+| 🍎 **Mac** | Precisa compilar | [Guia do Mac](mac/README_MAC.md) |
+
+Todas as versões ficam na página **[Releases](https://github.com/douglasribeiro1/VoxIA/releases)**.
+
+> **Resumo:** ① criar a chave grátis na Groq → ② instalar o VoxIA → ③ colar a chave → ④ falar.
+
+---
+
+## 🔑 Passo 1 — Criar sua chave grátis da Groq
+
+O VoxIA usa a Groq para transformar sua voz em texto. Para isso, você precisa de uma **chave de API**, uma espécie de senha que liga o app à sua conta. **É grátis e não pede cartão de crédito.**
+
+1. Abra **[console.groq.com/keys](https://console.groq.com/keys)** (no computador ou no celular).
+2. **Crie sua conta / entre:** clique em **Continue with Google** e escolha sua conta Gmail. Também dá para entrar com GitHub ou com e-mail (nesse caso, a Groq manda um link de confirmação para o seu e-mail).
+3. Se o site perguntar seu nome ou para que vai usar, responda qualquer coisa (ex.: "uso pessoal") e continue.
+4. Na tela **API Keys**, clique em **Create API Key**.
+5. Dê um nome para a chave, por exemplo `VoxIA`, e clique em **Submit**.
+6. Aparece a chave, um código longo que **começa com `gsk_`**. Clique em **Copy** para copiar.
+
+> ⚠️ **A chave só aparece uma vez.** Cole num lugar seguro (ex.: um bloco de notas) até terminar a instalação. Se perder, é só voltar no passo 4 e criar outra.
+>
+> 🔒 **Não compartilhe sua chave.** Ela é pessoal, como uma senha: quem tiver a chave usa a sua conta. Se alguém pedir o app, mande o link desta página, não a sua chave.
+
+---
+
+## 🪟 Passo 2A — Instalar no Windows
+
+1. Baixe o **[VoxIA-Windows.zip](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Windows.zip)**.
+2. Clique com o botão direito no arquivo baixado → **Extrair tudo…** → escolha uma pasta fixa, por exemplo **Documentos**.
+   > Não abra o VoxIA de dentro do .zip nem da pasta Downloads, porque ele precisa salvar as configurações na própria pasta.
+3. Abra a pasta extraída e dê dois cliques em **VoxIA.exe**.
+4. **Aviso do Windows (normal na 1ª vez):** se aparecer "O Windows protegeu o computador", clique em **Mais informações** → **Executar assim mesmo**. Isso acontece porque o VoxIA é um app pequeno, sem assinatura digital paga, e não porque tenha vírus.
+5. Aparece a janela **"Primeiros passos"**. Se ainda não tiver a chave, clique em **Sim** para abrir o site da Groq (Passo 1).
+6. Na tela de **Configurações**, cole a chave no campo **Chave de API Groq** e clique em **Salvar**.
+7. O VoxIA fica rodando no **ícone 🎙 perto do relógio** (bandeja do Windows). Se não aparecer, clique na setinha **^** ao lado do relógio.
+
+### Como usar no Windows
+
+1. Clique no lugar onde quer escrever (prontuário, Word, WhatsApp Web…).
+2. Aperte **F8** e fale.
+3. Aperte **F8** de novo. Em poucos segundos o texto aparece escrito no lugar.
+
+| O que fazer | Como |
+| :--- | :--- |
+| Ditar | **F8** (começa) → fale → **F8** (termina) |
+| Cancelar a gravação | **Esc** |
+| Ensinar uma palavra (nomes, termos técnicos) | Selecione a palavra e aperte **Ctrl + Shift + W** |
+| Abrir as configurações | Dois cliques no ícone 🎙 da bandeja |
+| Mudar o atalho, iniciar com o Windows, histórico | Configurações |
+
+Comandos de voz: diga "**abrir tópico** exame físico **fechar tópico**" para criar um título em CAIXA ALTA.
+
+---
+
+## 📱 Passo 2B — Instalar no Android
+
+1. No celular, baixe o **[VoxIA-Android.apk](https://github.com/douglasribeiro1/VoxIA/releases/download/ultima-versao/VoxIA-Android.apk)**.
+2. Toque no arquivo baixado para instalar.
+   - Se aparecer **"Por segurança, seu telefone não pode instalar apps desconhecidos"**, toque em **Configurações** → ative **Permitir desta fonte** → volte e toque em **Instalar**.
+   - Se o **Play Protect** avisar que o app não é conhecido, toque em **Mais detalhes** → **Instalar mesmo assim**. O VoxIA não está na Play Store, e por isso aparece esse aviso.
+3. Abra o **VoxIA**. Na primeira vez aparece **"Bem-vindo ao VoxIA!"**:
+   - Toque em **Criar chave** se ainda não tiver (Passo 1), ou em **Já tenho a chave**.
+4. Cole a chave no campo **Chave da Groq** e toque em **Salvar chave**.
+5. Permita o uso do **microfone** quando o celular pedir.
+6. Escolha **como quer ditar** (pode usar os dois):
+
+**⌨️ Opção 1: Teclado VoxIA**
+1. Na tela do VoxIA, no cartão **Teclado VoxIA**, toque em **Ativar** → ligue o **VoxIA** na lista → confirme o aviso.
+2. Toque em **Trocar teclado** → escolha **VoxIA**.
+3. Em qualquer app, toque num campo de texto → toque no **microfone** do teclado → fale → toque de novo.
+
+**🫧 Opção 2: Balão flutuante** (um botão redondo que fica por cima dos apps e funciona com o seu teclado normal)
+1. Na tela do VoxIA, no cartão **Balão flutuante**, toque em **Ativar na Acessibilidade** → toque em **VoxIA** → ligue.
+2. Se o Android disser que a configuração é **restrita** (Android 13 ou mais novo): volte ao VoxIA, toque em **Opção bloqueada? Liberar configurações restritas** → nos **três pontinhos ⋮** → **Permitir configurações restritas** → e ligue de novo na Acessibilidade.
+3. Toque num campo de texto, toque no balão, fale e toque de novo.
+
+> Os três indicadores no topo da tela do VoxIA (**Teclado · Balão · Chave**) ficam verdes quando está tudo certo.
+
+---
+
+## 🍎 Mac
+
+A versão de Mac precisa ser compilada no próprio Mac (pelo Terminal). Veja o **[guia do Mac](mac/README_MAC.md)**. A chave da Groq é a mesma do Passo 1: no menu 🎙 → **Configurações**, cole a chave ou clique em **Criar chave na Groq**. Atalho para ditar: **Option + Espaço**.
+
+---
+
+## ❓ Problemas comuns
+
+| Problema | Solução |
+| :--- | :--- |
+| **"Chave recusada" / erro 401** | A chave foi copiada errada ou apagada. Crie outra em [console.groq.com/keys](https://console.groq.com/keys) e cole de novo (sem espaços antes ou depois). |
+| **Nada acontece ao apertar F8** | Veja se o ícone 🎙 está na bandeja. Outro programa pode estar usando o F8: troque o atalho em Configurações. |
+| **O texto não aparece no campo** | Clique dentro do campo antes de ditar. O texto também fica copiado: é só dar **Ctrl + V**. |
+| **"Limite atingido" / erro 429** | O plano grátis da Groq tem um limite de uso por minuto e por dia. Espere um pouco e tente de novo; o áudio não se perde (fica em **Áudios pendentes** e é reenviado). |
+| **Microfone não grava** | Windows: *Configurações → Privacidade → Microfone* e permita apps da área de trabalho. Android: *Configurações → Apps → VoxIA → Permissões → Microfone*. |
+| **Balão sumiu (Android)** | Abra o VoxIA e toque em **Religar na Acessibilidade**. Desative a economia de bateria para o VoxIA. |
+| **Antivírus bloqueou o VoxIA.exe** | Falso alarme comum em apps sem assinatura paga. Confira o código SHA-256 (arquivo `VoxIA.exe.sha256.txt`) e libere nas exceções do antivírus. |
+
+---
+
+## 💰 Custo e 🔒 privacidade
+
+- **O VoxIA é gratuito.** A Groq tem um plano gratuito que costuma dar para o uso de uma pessoa. Não é preciso cadastrar cartão.
+- **A sua chave fica só no seu aparelho**, guardada de forma criptografada. Ninguém além de você (nem o autor do app) tem acesso a ela.
+- **O áudio vai direto do seu aparelho para a Groq**, sem passar por nenhum outro servidor.
+- O histórico de ditados fica só no seu aparelho e é apagado após 7 dias (dá para mudar em Configurações → Privacidade).
+- Por padrão, só o áudio é enviado. O texto que já está escrito no campo só vai para a Groq se você ligar essa opção em Privacidade.
+
+---
+
+<details>
+<summary><b>🛠 Para desenvolvedores: estrutura do repositório e como compilar</b></summary>
+
+### Estrutura
 
 ```
 VoxIA/
-├── 📁 windows/                          # Aplicativo Desktop para Windows (C# .NET)
-│   ├── src/                             # Código-fonte C# (.NET Framework nativo)
-│   ├── data/                            # Banco de dados e configurações portáteis
-│   ├── VoxIA.exe                        # Executável nativo (System Tray)
-│   ├── build.bat / build.ps1            # Scripts de compilação rápida
-│   ├── app.ico                          # Ícone oficial
-│   └── test_prompt_fix.ps1              # Teste de persistência de prompts
-│
-├── 📁 mac/                              # Aplicativo para macOS (Swift / SwiftUI)
-│   ├── src/                             # Código-fonte nativo Swift (Menu Bar)
-│   ├── build_mac.sh                     # Script de compilação para macOS
-│   ├── README_MAC.md                    # Manual e guia da versão Mac
-│   └── COMO_TRANSFERIR_VIA_GOOGLE_DRIVE.md
-│
-├── 📁 android/                          # Teclado Virtual IME para Android (Kotlin)
-│   ├── app/                             # Código-fonte Android e recursos Gradle
-│   ├── VoxIA-Teclado-Android.apk        # APK compilado pronto para uso
-│   ├── install_android_usb.bat / .ps1   # Instalador e ativador automático via USB/ADB
-│   ├── GUIA_ANDROID_E_SINCRONIZACAO.md  # Guia de configuração e Supabase Sync
-│   └── GUIA_INSTALACAO_USB_ANDROID.md   # Guia detalhado de depuração USB
-│
-├── 📁 .github/                          # Automações de CI/CD (GitHub Actions)
-│   └── workflows/
-│       └── build-android.yml            # Compilação automática do APK
-│
-└── 📄 README.md                         # Este documento de índice geral
+├── windows/               # App Windows (C# .NET Framework, bandeja do sistema)
+├── mac/                   # App macOS (Swift, barra de menus)
+├── android/               # Teclado IME + balão flutuante (Kotlin)
+├── VoxIA-Compartilhar/    # Pasta pronta para compartilhar (sem chave de API)
+└── .github/workflows/     # Compilação automática (APK e EXE) e publicação na Release "ultima-versao"
 ```
 
----
+### Compilação automática
 
-## ⚡ Principais Características por Plataforma
+A cada push no `master`, o GitHub Actions compila o `VoxIA.exe` e o APK e atualiza a release **[ultima-versao](https://github.com/douglasribeiro1/VoxIA/releases/tag/ultima-versao)**, de onde saem os links de download acima.
 
-### 🪟 [Windows](windows/)
-- **Residente na Área de Notificação (System Tray)**: Ultra-leve (~80 KB), sem dependências pesadas.
-- **Atalho Global Universal (`Ctrl + Win`)**: Dite áudio em qualquer janela ou formulário do Windows.
-- **Inserção Inteligente com Fallbacks**: UI Automation, Safe Clipboard e SendInput.
-- **Modo Portátil**: Execute diretamente de um Pen Drive com dados salvos em `windows/data/`.
-- **Dicionário Técnico & Prompt Profiles**: Substituições customizadas em tempo real.
+### Compilar manualmente
 
-### 🍎 [macOS](mac/)
-- **Aplicativo na Barra de Menus (Menu Bar)**: 100% nativo em Swift e SwiftUI.
-- **Atalho Global (`Option + Space`)**: Ditado em qualquer app do Mac via Accessibility APIs.
-- **Floating HUD & Audio Feedback**: Indicador translúcido de status em tempo real.
-
-### 📱 [Android](android/)
-- **Teclado de Entrada IME Customizado**: Dite áudio com Whisper em qualquer aplicativo (WhatsApp, Notas, Navegador).
-- **Instalador USB de 1 Clique**: Script PowerShell/Batch que instala o APK, concede permissões de microfone e ativa o teclado via ADB automaticamente.
-- **Botão Enviar Instantâneo**: Despache mensagens no WhatsApp diretamente após a fala.
-
----
-
-## ⌨ Tabela Rápida de Atalhos Globais
-
-| Função | Atalho Windows | Atalho macOS | Atalho Android |
-| :--- | :--- | :--- | :--- |
-| **🎙 Ditado por Voz** | `Ctrl + Win` | `Option + Space` | Toque no Ícone do Microfone |
-| **📖 Adicionar ao Dicionário** | `Ctrl + Shift + W` | `Option + Shift + W` | Tela de Configurações |
-| **⏹ Cancelar Gravação** | `Esc` | `Esc` | Cancelar no Teclado |
-| **⚙ Configurações** | Duplo clique na bandeja | Ícone `🎙` na Menu Bar | Ícone de Engrenagem no Teclado |
-
----
-
-## 🛠 Como Compilar
-
-### Windows
+**Windows**
 ```powershell
 cd windows
 powershell -ExecutionPolicy Bypass -File build.ps1
-# Ou clique duas vezes em windows\build.bat
 ```
 
-### macOS
+**macOS**
 ```bash
-cd mac
-chmod +x build_mac.sh
-./build_mac.sh
+cd mac && chmod +x build_mac.sh && ./build_mac.sh
 ```
 
-### Android
-```powershell
-cd android
-powershell -ExecutionPolicy Bypass -File install_android_usb.ps1
-# Ou execute via Gradle:
-./gradlew assembleDebug
+**Android**
+```bash
+cd android && ./gradlew assembleRelease
 ```
 
----
+Guias detalhados: [Android e sincronização](android/GUIA_ANDROID_E_SINCRONIZACAO.md) · [Instalação via USB](android/GUIA_INSTALACAO_USB_ANDROID.md) · [Mac](mac/README_MAC.md)
 
-## 🔒 Privacidade e Segurança
-
-- Todo áudio gravado localmente é protegido e temporário.
-- Comunicação direta com a API oficial da Groq (sem intermediários).
-- Credenciais e chaves API armazenadas de forma segura e criptografada em cada sistema operacional.
+</details>

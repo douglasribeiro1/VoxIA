@@ -302,23 +302,26 @@ namespace VoxIA.UI
             };
             _chkShowApiKey.CheckedChanged += (s, e) => _txtApiKey.UseSystemPasswordChar = !_chkShowApiKey.Checked;
 
-            LinkLabel lnkGroq = new LinkLabel
+            Label lblKeySteps = Theme.CreateHint(
+                "Não tem chave? É grátis e leva 2 minutos:\n" +
+                "1. Clique em \"Abrir site da Groq\" e entre com sua conta Google (ou e-mail).\n" +
+                "2. Clique em \"Create API Key\", dê um nome (ex.: VoxIA) e copie a chave (começa com gsk_).\n" +
+                "3. Cole a chave no campo acima e clique em Salvar.",
+                new Point(16, 76), ColumnWidth - 32);
+
+            Button btnOpenGroq = new Button
             {
-                Text = "Obtenha sua chave gratuita em console.groq.com",
-                Location = new Point(16, 76),
-                Size = new Size(ColumnWidth - 32, 32),
-                Font = Theme.Small,
-                LinkColor = Theme.Accent,
-                ActiveLinkColor = Theme.AccentHover,
-                LinkBehavior = LinkBehavior.HoverUnderline,
-                BackColor = Color.Transparent
+                Text = "Abrir site da Groq",
+                Location = new Point(16, lblKeySteps.Bottom + 8),
+                Size = new Size(170, 32),
+                Cursor = Cursors.Hand
             };
-            lnkGroq.LinkArea = new LinkArea(lnkGroq.Text.IndexOf("console"), "console.groq.com".Length);
-            lnkGroq.LinkClicked += (s, e) =>
+            Theme.StyleSecondary(btnOpenGroq);
+            btnOpenGroq.Click += (s, e) =>
             {
                 try { System.Diagnostics.Process.Start("https://console.groq.com/keys"); } catch { }
             };
-            cardKey.Controls.AddRange(new Control[] { _txtApiKey, _chkShowApiKey, lnkGroq });
+            cardKey.Controls.AddRange(new Control[] { _txtApiKey, _chkShowApiKey, lblKeySteps, btnOpenGroq });
             EndCard(section, cardKey, ref leftY);
 
             Panel cardSys = BeginCard(leftX, leftY, ColumnWidth, "Sistema e comportamento");

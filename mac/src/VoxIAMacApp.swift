@@ -232,16 +232,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func openSettings() {
         let alert = NSAlert()
         alert.messageText = "Configurações — VoxIA macOS"
-        alert.informativeText = "Insira sua Groq API Key:"
-        
+        alert.informativeText = """
+        Cole sua chave da Groq (começa com gsk_).
+
+        Não tem chave? É grátis e leva 2 minutos:
+        1. Clique em "Criar chave na Groq" e entre com sua conta Google (ou e-mail).
+        2. Clique em "Create API Key", dê um nome (ex.: VoxIA) e copie a chave. Ela só aparece uma vez.
+        3. Volte aqui, cole a chave e clique em Salvar.
+        """
+
         let input = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
         input.stringValue = SecureCredentialService.getApiKey()
         alert.accessoryView = input
         alert.addButton(withTitle: "Salvar")
         alert.addButton(withTitle: "Cancelar")
+        alert.addButton(withTitle: "Criar chave na Groq")
 
-        if alert.runModal() == .alertFirstButtonReturn {
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
             SecureCredentialService.saveApiKey(input.stringValue)
+        } else if response == .alertThirdButtonReturn {
+            if let url = URL(string: "https://console.groq.com/keys") {
+                NSWorkspace.shared.open(url)
+            }
         }
     }
 
