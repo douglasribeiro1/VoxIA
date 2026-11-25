@@ -31,6 +31,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.voxia.keyboard.R
 import com.voxia.keyboard.data.ApiKeyStore
 import com.voxia.keyboard.data.DictionaryManager
+import com.voxia.keyboard.service.DictationEngine
 import com.voxia.keyboard.service.VoxIABubbleService
 
 class SettingsActivity : AppCompatActivity() {
@@ -68,6 +69,7 @@ class SettingsActivity : AppCompatActivity() {
     // Preferências
     private lateinit var switchSendContext: MaterialSwitch
     private lateinit var switchLearnCorrections: MaterialSwitch
+    private lateinit var switchDeleteCommand: MaterialSwitch
     private lateinit var switchAutoSend: MaterialSwitch
 
     // Dicionário
@@ -156,6 +158,7 @@ class SettingsActivity : AppCompatActivity() {
 
         switchSendContext = findViewById(R.id.switchSendContext)
         switchLearnCorrections = findViewById(R.id.switchLearnCorrections)
+        switchDeleteCommand = findViewById(R.id.switchDeleteCommand)
         switchAutoSend = findViewById(R.id.switchAutoSend)
 
         etNewDictOriginal = findViewById(R.id.etNewDictOriginal)
@@ -175,6 +178,7 @@ class SettingsActivity : AppCompatActivity() {
         switchAutoSend.isChecked = prefs.getBoolean("auto_send_enabled", false)
         switchSendContext.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_SEND_CONTEXT, VoxIABubbleService.DEFAULT_SEND_CONTEXT)
         switchLearnCorrections.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_LEARN, true)
+        switchDeleteCommand.isChecked = prefs.getBoolean(DictationEngine.PREF_DELETE_COMMAND, false)
         switchBubbleVisible.isChecked = prefs.getBoolean(VoxIABubbleService.PREF_ENABLED, true)
 
         val alpha = prefs.getInt(VoxIABubbleService.PREF_ALPHA, 100).coerceIn(30, 100)
@@ -255,6 +259,9 @@ class SettingsActivity : AppCompatActivity() {
             updateBubblePreview()
         }
 
+        switchDeleteCommand.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(DictationEngine.PREF_DELETE_COMMAND, isChecked).apply()
+        }
         switchLearnCorrections.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(VoxIABubbleService.PREF_LEARN, isChecked).apply()
         }
