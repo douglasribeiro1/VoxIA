@@ -72,6 +72,9 @@ namespace VoxIA.Services
         /// <summary>Comando falado "apaga isso" (descarta a frase anterior). Desligado por padrão.</summary>
         public bool EnableDeleteCommand { get; set; }
 
+        /// <summary>Sobe o volume de captação do microfone para 100% durante o ditado (e baixa se saturar).</summary>
+        public bool BoostMicrophoneDuringDictation { get; set; }
+
         /// <summary>Nome do microfone escolhido; vazio usa o padrão do sistema.</summary>
         public string PreferredMicrophone { get; set; }
 
@@ -112,6 +115,7 @@ namespace VoxIA.Services
             EnableAudioPreprocessing = true;
             EnableFieldContext = false;
             EnableDeleteCommand = false;
+            BoostMicrophoneDuringDictation = true;
             PreferredMicrophone = "";
             HistoryRetentionDays = 7;
             PrivacyVersion = 0;

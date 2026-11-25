@@ -79,6 +79,7 @@ namespace VoxIA
         private void InitializeServices()
         {
             AudioVolumeService.EnsureFullVolume();
+            MicrophoneLevelService.RestoreAfterCrash();
 
             _audioRecorder = new AudioRecorder();
             _hud = new FloatingHudOverlay(() => _audioRecorder.CurrentAudioLevel);
@@ -227,6 +228,7 @@ namespace VoxIA
             {
                 CancelLive();
                 _audioRecorder.CancelRecording();
+                MicrophoneLevelService.Restore();
                 _hud.Hide();
                 AudioFeedbackService.PlayStopBeep();
                 ShowNotification("Gravação Cancelada", "A gravação atual foi descartada.");
@@ -331,6 +333,9 @@ namespace VoxIA
                 // Capture active target window right before recording
                 _activeTargetContext = TargetAppTracker.CaptureActiveContext();
 
+                // Microfone no máximo durante o ditado (baixa sozinho se saturar; volta ao parar)
+                MicrophoneLevelService.Boost(SettingsService.Current.PreferredMicrophone);
+
                 // Start recording PCM stream
                 _audioRecorder.StartRecording();
                 AudioFeedbackService.PlayStartBeep();
@@ -347,6 +352,7 @@ namespace VoxIA
             }
             catch (Exception ex)
             {
+                MicrophoneLevelService.Restore();
                 _hud.ShowError(ex.Message);
                 ShowNotification("Erro ao Iniciar Gravação", ex.Message);
             }
@@ -363,6 +369,7 @@ namespace VoxIA
 
             double durationSec = _audioRecorder.RecordingDuration.TotalSeconds;
             bool captured = _audioRecorder.StopCapture();
+            MicrophoneLevelService.Restore();
             string hotkey = !string.IsNullOrEmpty(SettingsService.Current.HotkeyDisplay) ? SettingsService.Current.HotkeyDisplay : "F8";
             _menuRecord.Text = "Iniciar gravação";
             _menuRecord.ShortcutKeyDisplayString = hotkey;
@@ -563,6 +570,7 @@ namespace VoxIA
 
         private void OnMenuExitClick(object sender, EventArgs e)
         {
+            MicrophoneLevelService.Restore();
             GlobalHotkeyService.Stop();
             RetryService.Stop();
             if (_notifyIcon != null)
