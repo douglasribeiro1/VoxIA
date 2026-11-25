@@ -26,6 +26,7 @@ namespace VoxIA.UI
         private ComboBox _cboMicrophone;
         private ToggleSwitch _chkFieldContext;
         private ToggleSwitch _chkDeleteCommand;
+        private ToggleSwitch _chkBoostMic;
         private ComboBox _cboHistoryRetention;
 
         // Opções de "Guardar histórico" e os dias correspondentes (0 = não guardar, -1 = sem limite)
@@ -332,6 +333,8 @@ namespace VoxIA.UI
             _chkAudioBeep = CreateToggleRow(cardSys, "Sinal sonoro ao iniciar e parar", 172);
             _chkShowHud = CreateToggleRow(cardSys, "Indicador flutuante (HUD) durante o ditado", 216);
             _chkDeleteCommand = CreateToggleRow(cardSys, "Comando de voz \"apaga isso\" (apaga a frase anterior)", 260);
+            _chkBoostMic = CreateToggleRow(cardSys, "Microfone no máximo durante o ditado (baixa sozinho se saturar)", 304);
+            _chkBoostMic.Checked = true;
             _chkAutoClipboard.Checked = true;
             _chkAudioBeep.Checked = true;
             _chkShowHud.Checked = true;
@@ -554,6 +557,7 @@ namespace VoxIA.UI
             _chkShowHud.Checked = s.ShowFloatingHud;
             _chkFieldContext.Checked = s.EnableFieldContext;
             _chkDeleteCommand.Checked = s.EnableDeleteCommand;
+            _chkBoostMic.Checked = s.BoostMicrophoneDuringDictation;
             int retentionIndex = Array.IndexOf(HistoryRetentionDays, s.HistoryRetentionDays);
             _cboHistoryRetention.SelectedIndex = retentionIndex >= 0 ? retentionIndex : 2;
 
@@ -692,6 +696,7 @@ namespace VoxIA.UI
             s.ShowFloatingHud = _chkShowHud.Checked;
             s.EnableFieldContext = _chkFieldContext.Checked;
             s.EnableDeleteCommand = _chkDeleteCommand.Checked;
+            s.BoostMicrophoneDuringDictation = _chkBoostMic.Checked;
             s.HistoryRetentionDays = HistoryRetentionDays[Math.Max(0, _cboHistoryRetention.SelectedIndex)];
             s.PushToTalkMode = _segMode.SelectedIndex == 1;
             s.PreferredMicrophone = _cboMicrophone.SelectedIndex > 0 ? (string)_cboMicrophone.SelectedItem : "";

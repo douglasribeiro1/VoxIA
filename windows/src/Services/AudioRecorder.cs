@@ -253,11 +253,15 @@ namespace VoxIA.Services
                                 if (sampleCount > 0)
                                 {
                                     long sumSquares = 0;
+                                    int clipped = 0;
                                     for (int s = 0; s < hdr.dwBytesRecorded - 1; s += 2)
                                     {
                                         short sample = (short)(data[s] | (data[s + 1] << 8));
                                         sumSquares += (long)sample * sample;
+                                        if (sample >= MicrophoneLevelService.ClipPeak || sample <= -MicrophoneLevelService.ClipPeak) clipped++;
                                     }
+                                    // Microfone saturando (perto demais com o volume no máximo): avisa para baixar
+                                    if (clipped >= 3) MicrophoneLevelService.ReportClipping();
                                     double rms = Math.Sqrt(sumSquares / (double)sampleCount);
                                     // Scale RMS to 0.0 - 1.0 (typical speaking voice is ~1200 to 7000)
                                     float rawLevel = (float)Math.Min(1.0, Math.Max(0.0, (rms - 150.0) / 4500.0));
