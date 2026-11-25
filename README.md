@@ -62,7 +62,9 @@ O VoxIA usa a Groq para transformar sua voz em texto. Para isso, você precisa d
 | Abrir as configurações | Dois cliques no ícone 🎙 da bandeja |
 | Mudar o atalho, iniciar com o Windows, histórico | Configurações |
 
-Comandos de voz: diga "**abrir tópico** exame físico **fechar tópico**" para criar um título em CAIXA ALTA.
+Comandos de voz (Windows e Android):
+- "**abrir tópico** exame físico **fechar tópico**" cria um título em CAIXA ALTA.
+- "**apaga isso**" (ou "risca isso") descarta a frase que você acabou de dizer. Ex.: "Febre de 39 graus. **Apaga isso.** Febre de 38 graus." vira "Febre de 38 graus.". Vale só para o ditado atual.
 
 ---
 
@@ -89,6 +91,17 @@ Comandos de voz: diga "**abrir tópico** exame físico **fechar tópico**" para 
 3. Toque num campo de texto, toque no balão, fale e toque de novo.
 
 > Os três indicadores no topo da tela do VoxIA (**Teclado · Balão · Chave**) ficam verdes quando está tudo certo.
+
+**📚 O VoxIA aprende com as suas correções (balão):** se você corrigir à mão uma palavra que o balão acabou de escrever (ex.: "desartria" → "disartria"), aparece uma notificação **Ensinar ao VoxIA?**. Toque nela e em **Salvar**: das próximas vezes a palavra sai certa. Dá para desligar em Configurações → **Sugerir palavras corrigidas**.
+
+---
+
+## 🎯 Como o VoxIA acerta mais
+
+- **Dicionário:** as palavras que você ensina vão como vocabulário para o Whisper e para a correção pela IA, que também conserta palavras trocadas por outras de som parecido quando o contexto deixa claro.
+- **Áudio tratado antes de enviar** (Windows e Android): tira ruído grave, silêncios e pausas longas e aumenta o volume quando você fala baixo.
+- **Ditados longos ficam prontos mais rápido:** enquanto você ainda fala, os trechos já terminados vão sendo transcritos. Ao parar, só falta o último trecho.
+- **Envio compactado sem perda** (FLAC): o arquivo fica menor e chega mais rápido, com o mesmo som.
 
 ---
 
@@ -118,7 +131,8 @@ A versão de Mac precisa ser compilada no próprio Mac (pelo Terminal). Veja o *
 - **A sua chave fica só no seu aparelho**, guardada de forma criptografada. Ninguém além de você (nem o autor do app) tem acesso a ela.
 - **O áudio vai direto do seu aparelho para a Groq**, sem passar por nenhum outro servidor.
 - O histórico de ditados fica só no seu aparelho e é apagado após 7 dias (dá para mudar em Configurações → Privacidade).
-- Por padrão, só o áudio é enviado. O texto que já está escrito no campo só vai para a Groq se você ligar essa opção em Privacidade.
+- Por padrão, vão para a Groq só o áudio e as palavras do seu dicionário (para acertar a grafia). O texto que já está escrito no campo só vai se você ligar essa opção em Privacidade.
+- As sugestões de palavras corrigidas (Android) são feitas no próprio celular: o texto do campo não é enviado a lugar nenhum.
 
 ---
 

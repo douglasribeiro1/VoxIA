@@ -49,7 +49,15 @@ namespace VoxIA.Services
                 // Step 1: Transcribe with Groq Whisper
                 PendingAudioRepository.UpdateStatus(item.Id, AudioQueueStatus.TRANSCRIBING);
                 string fieldContext = item.TargetContext != null ? item.TargetContext.ContextText : null;
-                string rawText = await TranscriptionService.TranscribeAudioAsync(item.FilePath, null, fieldContext);
+                string prefix = item.PrefixText ?? "";
+                string tailText = item.AudioIsSilent
+                    ? ""
+                    : await TranscriptionService.TranscribeAudioAsync(item.FilePath, null, fieldContext, prefix, item.SpeechFrames == 0 ? -1 : item.SpeechFrames);
+                string rawText = TranscriptionService.JoinText(prefix, tailText);
+                if (prefix.Length > 0)
+                {
+                    Logger.LogInfo(string.Format("{0} chars were already transcribed while the user was speaking.", prefix.Length));
+                }
 
                 if (string.IsNullOrWhiteSpace(rawText))
                 {
@@ -70,6 +78,19 @@ namespace VoxIA.Services
                 if (headings.Count > 0)
                 {
                     Logger.LogInfo(string.Format("Detected {0} spoken heading command(s).", headings.Count));
+                }
+                // "apaga isso" descarta a frase anterior antes de a IA ver o texto
+                if (VoiceCommands.HasDeleteCommand(markedRaw))
+                {
+                    markedRaw = VoiceCommands.ApplyDeletes(markedRaw);
+                    Logger.LogInfo("Applied spoken 'apaga isso' command(s).");
+                }
+                if (string.IsNullOrWhiteSpace(markedRaw))
+                {
+                    PendingAudioRepository.MarkCompleted(item.Id, rawText, "");
+                    if (OnProcessingCompleted != null)
+                        OnProcessingCompleted(rawText, "");
+                    return;
                 }
 
                 string finalText = TopicFormatter.IsOnlyMarkers(markedRaw)

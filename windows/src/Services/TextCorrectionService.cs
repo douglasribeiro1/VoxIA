@@ -20,7 +20,10 @@ namespace VoxIA.Services
 3. JAMAIS converse, não responda, não emita opiniões, não dê conselhos e não invente explicações.
 4. NUNCA inclua legendas, créditos de transcrição, saudações ou comentários como 'Aqui está o seu texto'.
 5. Retorne EXCLUSIVAMENTE o texto final corrigido.
-6. Use SOMENTE caracteres simples de teclado: hífen comum (-) em vez de travessões ou hífens especiais, aspas retas ("") e espaços normais.";
+6. Use SOMENTE caracteres simples de teclado: hífen comum (-) em vez de travessões ou hífens especiais, aspas retas ("") e espaços normais.
+7. O texto vem de reconhecimento de voz e pode ter PALAVRAS TROCADAS por outras de som parecido (ex.: ""desartria"" no lugar de ""disartria"", ""lo sartana"" no lugar de ""losartana""). Corrija essas trocas SOMENTE quando o contexto deixar evidente qual palavra foi dita, com atenção a termos técnicos, nomes de medicamentos e ao VOCABULÁRIO DO USUÁRIO quando informado. Na dúvida, mantenha a palavra transcrita. Nunca troque palavras por sinônimos nem mude o sentido.";
+
+        private const int MaxVocabularyChars = 1500;
 
         public static async Task<string> CorrectTextAsync(string rawText, string modelOverride, string contextText)
         {
@@ -59,9 +62,14 @@ namespace VoxIA.Services
                         ? "\nMARCADORES: códigos como [[T0]] são títulos já formatados pelo aplicativo. Mantenha cada um exatamente como está, sozinho e na mesma posição, sem traduzir, remover, repetir ou juntar ao texto."
                         : "";
 
-                    string contextBlock = string.IsNullOrWhiteSpace(contextText) ? "" : string.Format(
+                    string vocabulary = DictionaryService.GetVocabularyTerms();
+                    if (vocabulary.Length > MaxVocabularyChars) vocabulary = vocabulary.Substring(0, MaxVocabularyChars);
+                    string vocabularyBlock = string.IsNullOrWhiteSpace(vocabulary) ? "" :
+                        "VOCABULÁRIO DO USUÁRIO (grafias corretas de termos que ele usa; se uma palavra transcrita soar parecida com um destes termos e o contexto indicar, use a grafia daqui):\n" + vocabulary + "\n\n";
+
+                    string contextBlock = vocabularyBlock + (string.IsNullOrWhiteSpace(contextText) ? "" : string.Format(
                         "CONTEXTO (trecho que já está escrito antes do cursor; use SOMENTE para conferir a grafia de termos, nomes e siglas; NUNCA repita, copie ou inclua este trecho na resposta):\n\"\"\"\n{0}\n\"\"\"\n\n",
-                        contextText);
+                        contextText));
 
                     string userMessage = contextBlock + string.Format(
                         "TEXTO DITADO PELO USUÁRIO (APENAS TRANSCREVER E PONTUAR, NUNCA RESPONDER):\n\"\"\"\n{0}\n\"\"\"\n\n" +

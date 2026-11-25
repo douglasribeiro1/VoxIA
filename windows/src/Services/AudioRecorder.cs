@@ -82,6 +82,9 @@ namespace VoxIA.Services
 
         /// <summary>Verdadeiro quando a última gravação não tinha fala (só silêncio ou ruído).</summary>
         public bool LastRecordingWasSilent { get; private set; }
+
+        /// <summary>Quadros de 20 ms com fala na última gravação salva (-1 = não medido).</summary>
+        public int LastSpeechFrames { get; private set; }
         private DateTime _recordingStartTime;
         private MemoryStream _recordedAudioStream;
         private List<IntPtr> _headerPointers = new List<IntPtr>();
@@ -285,6 +288,21 @@ namespace VoxIA.Services
         {
             if (!_isRecording)
                 return _currentFilePath;
+            if (!StopCapture())
+                return null;
+            return SaveCaptured(0);
+        }
+
+        private byte[] _capturedPcm;
+        private string _capturedFilePath;
+
+        /// <summary>
+        /// Para o microfone e guarda o áudio em memória, sem salvar ainda. Usado pela transcrição
+        /// durante a fala: o que já foi transcrito é descontado em SaveCaptured.
+        /// </summary>
+        public bool StopCapture()
+        {
+            if (!_isRecording) return false;
 
             _isRecording = false;
             _currentAudioLevel = 0f;
@@ -302,63 +320,135 @@ namespace VoxIA.Services
                     _recordThread.Join(500);
                 }
 
-                LastRecordingWasSilent = false;
                 lock (_recordedAudioStream)
                 {
-                    byte[] pcmData = _recordedAudioStream.ToArray();
-                    if (SettingsService.Current.EnableAudioPreprocessing)
-                    {
-                        try
-                        {
-                            var prep = AudioPreprocessor.Process(pcmData, (int)_format.nSamplesPerSec);
-                            LastRecordingWasSilent = prep.Silent;
-                            if (prep.Changed)
-                            {
-                                Logger.LogInfo(string.Format("Audio preprocessing: {0:F1}s -> {1:F1}s, gain x{2:F2} ({3}).", prep.OriginalSeconds, prep.NewSeconds, prep.Gain, prep.Note));
-                                pcmData = prep.Pcm;
-                            }
-                            else
-                            {
-                                Logger.LogInfo("Audio preprocessing skipped: " + prep.Note);
-                            }
-                        }
-                        catch (Exception prepEx)
-                        {
-                            Logger.LogError("Audio preprocessing failed; using the original recording", prepEx);
-                        }
-                    }
-                    AudioEncoderService.SaveAudioFile(pcmData, _currentFilePath, _format.nSamplesPerSec);
-                    try
-                    {
-                        AudioChunker.SaveParts(pcmData, (int)_format.nSamplesPerSec, _currentFilePath);
-                    }
-                    catch (Exception chunkEx)
-                    {
-                        AudioChunker.DeleteParts(_currentFilePath);
-                        Logger.LogError("Could not split the recording into blocks; it will be sent whole", chunkEx);
-                    }
+                    _capturedPcm = _recordedAudioStream.ToArray();
                 }
-
+                _capturedFilePath = _currentFilePath;
                 CleanupWaveIn();
-
-                if (File.Exists(_currentFilePath))
-                {
-                    FileInfo fi = new FileInfo(_currentFilePath);
-                    Logger.LogInfo(string.Format("Audio recording stopped and saved ({0} bytes): {1}", fi.Length, _currentFilePath));
-                    return _currentFilePath;
-                }
-                else
-                {
-                    Logger.LogWarning(string.Format("Recorded file not found after save: {0}", _currentFilePath));
-                    return null;
-                }
+                return true;
             }
             catch (Exception ex)
             {
                 CleanupWaveIn();
+                _capturedPcm = null;
                 Logger.LogError("Error stopping audio recording", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Trata (filtro, silêncios, volume), divide em blocos e salva o áudio capturado, a partir da
+        /// amostra <paramref name="skipSamples"/> (o que veio antes já foi transcrito durante a fala).
+        /// </summary>
+        public string SaveCaptured(int skipSamples)
+        {
+            byte[] pcmData = _capturedPcm;
+            string filePath = _capturedFilePath;
+            _capturedPcm = null;
+            _capturedFilePath = null;
+            if (pcmData == null || string.IsNullOrEmpty(filePath)) return null;
+
+            try
+            {
+                if (skipSamples > 0)
+                {
+                    int skipBytes = Math.Min(pcmData.Length, skipSamples * 2);
+                    byte[] tail = new byte[pcmData.Length - skipBytes];
+                    Buffer.BlockCopy(pcmData, skipBytes, tail, 0, tail.Length);
+                    pcmData = tail;
+                }
+
+                LastRecordingWasSilent = false;
+                LastSpeechFrames = -1;
+                if (SettingsService.Current.EnableAudioPreprocessing)
+                {
+                    try
+                    {
+                        var prep = AudioPreprocessor.Process(pcmData, (int)_format.nSamplesPerSec);
+                        LastRecordingWasSilent = prep.Silent;
+                        LastSpeechFrames = prep.SpeechFrames;
+                        if (prep.Changed)
+                        {
+                            Logger.LogInfo(string.Format("Audio preprocessing: {0:F1}s -> {1:F1}s, gain x{2:F2} ({3}).", prep.OriginalSeconds, prep.NewSeconds, prep.Gain, prep.Note));
+                            pcmData = prep.Pcm;
+                        }
+                        else
+                        {
+                            Logger.LogInfo("Audio preprocessing skipped: " + prep.Note);
+                        }
+                    }
+                    catch (Exception prepEx)
+                    {
+                        Logger.LogError("Audio preprocessing failed; using the original recording", prepEx);
+                    }
+                }
+                AudioEncoderService.SaveAudioFile(pcmData, filePath, _format.nSamplesPerSec);
+                try
+                {
+                    AudioChunker.SaveParts(pcmData, (int)_format.nSamplesPerSec, filePath);
+                }
+                catch (Exception chunkEx)
+                {
+                    AudioChunker.DeleteParts(filePath);
+                    Logger.LogError("Could not split the recording into blocks; it will be sent whole", chunkEx);
+                }
+
+                if (File.Exists(filePath))
+                {
+                    FileInfo fi = new FileInfo(filePath);
+                    Logger.LogInfo(string.Format("Audio recording stopped and saved ({0} bytes): {1}", fi.Length, filePath));
+                    return filePath;
+                }
+                Logger.LogWarning(string.Format("Recorded file not found after save: {0}", filePath));
                 return null;
             }
+            catch (Exception ex)
+            {
+                Logger.LogError("Error saving audio recording", ex);
+                return null;
+            }
+        }
+
+        /// <summary>Taxa de amostragem da gravação (PCM 16 bits mono).</summary>
+        public int SampleRate
+        {
+            get { return (int)_format.nSamplesPerSec; }
+        }
+
+        /// <summary>Quantas amostras já foram gravadas (gravação em andamento).</summary>
+        public int RecordedSamples
+        {
+            get
+            {
+                var stream = _recordedAudioStream;
+                if (!_isRecording || stream == null) return 0;
+                try
+                {
+                    lock (stream) { return (int)(stream.Length / 2); }
+                }
+                catch (ObjectDisposedException) { return 0; }
+            }
+        }
+
+        /// <summary>Cópia das amostras [fromSample, toSample) da gravação em andamento, ou null.</summary>
+        public byte[] ReadRecorded(int fromSample, int toSample)
+        {
+            var stream = _recordedAudioStream;
+            if (!_isRecording || stream == null || toSample <= fromSample) return null;
+            try
+            {
+                lock (stream)
+                {
+                    long end = Math.Min(stream.Length, toSample * 2L);
+                    long begin = fromSample * 2L;
+                    if (end <= begin) return null;
+                    byte[] data = new byte[end - begin];
+                    Buffer.BlockCopy(stream.GetBuffer(), (int)begin, data, 0, data.Length);
+                    return data;
+                }
+            }
+            catch (ObjectDisposedException) { return null; }
         }
 
         public void CancelRecording()

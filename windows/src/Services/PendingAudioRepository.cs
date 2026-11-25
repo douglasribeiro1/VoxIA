@@ -28,6 +28,15 @@ namespace VoxIA.Services
         public string RawTranscript { get; set; }
         public string FinalText { get; set; }
         public TargetContext TargetContext { get; set; }
+
+        /// <summary>Texto já transcrito durante a fala; o arquivo de áudio tem só o restante.</summary>
+        public string PrefixText { get; set; }
+
+        /// <summary>O áudio restante não tem fala: só o PrefixText vale.</summary>
+        public bool AudioIsSilent { get; set; }
+
+        /// <summary>Quadros de 20 ms com fala no áudio (0 ou -1 = não medido).</summary>
+        public int SpeechFrames { get; set; }
     }
 
     public static class PendingAudioRepository
@@ -58,7 +67,19 @@ namespace VoxIA.Services
 
         public static AudioQueueItem AddRecording(string filePath, double durationSeconds, TargetContext targetContext)
         {
-            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            return AddRecording(filePath, durationSeconds, targetContext, null, false, -1);
+        }
+
+        public static AudioQueueItem AddRecording(string filePath, double durationSeconds, TargetContext targetContext,
+            string prefixText, bool audioIsSilent, int speechFrames)
+        {
+            bool hasPrefix = !string.IsNullOrWhiteSpace(prefixText);
+            if (hasPrefix && (audioIsSilent || string.IsNullOrEmpty(filePath) || !File.Exists(filePath)))
+            {
+                // Tudo já foi transcrito durante a fala; o fim da gravação não tinha fala
+                audioIsSilent = true;
+            }
+            else if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 Logger.LogWarning("AddRecording called with missing or null file path.");
                 return null;
@@ -66,8 +87,8 @@ namespace VoxIA.Services
 
             try
             {
-                var fi = new FileInfo(filePath);
-                if (fi.Length < 2000 || durationSeconds < 0.2)
+                var fi = (hasPrefix || string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) ? null : new FileInfo(filePath);
+                if (fi != null && (fi.Length < 2000 || durationSeconds < 0.2))
                 {
                     Logger.LogWarning(string.Format("Discarded too short or empty audio recording ({0} bytes, {1:F2}s): {2}", fi.Length, durationSeconds, filePath));
                     try { File.Delete(filePath); } catch { }
@@ -89,7 +110,10 @@ namespace VoxIA.Services
                 Status = AudioQueueStatus.PENDING,
                 RetryCount = 0,
                 LastError = string.Empty,
-                TargetContext = targetContext
+                TargetContext = targetContext,
+                PrefixText = hasPrefix ? prefixText.Trim() : null,
+                AudioIsSilent = audioIsSilent,
+                SpeechFrames = speechFrames
             };
 
             lock (_lock)

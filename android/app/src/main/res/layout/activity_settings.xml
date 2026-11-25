@@ -559,6 +559,41 @@
                             style="@style/VoxIA.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="Sugerir palavras corrigidas" />
+
+                        <TextView
+                            style="@style/VoxIA.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Quando você corrigir à mão uma palavra que o balão acabou de escrever, aparece uma notificação para ensiná-la ao dicionário. Nada é enviado para a internet." />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchLearnCorrections"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:contentDescription="Sugerir palavras corrigidas" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/VoxIA.Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="Enviar mensagem após ditar" />
 
                         <TextView

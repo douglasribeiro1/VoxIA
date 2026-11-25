@@ -16,8 +16,23 @@ namespace VoxIA.Services
 
         private const string BasePrompt = "Ditado por voz em português brasileiro sem legendas.";
 
-        public static async Task<string> TranscribeAudioAsync(string audioFilePath, string modelOverride, string contextText)
+        private const int ClearSpeechFrames = 25; // 0,5 s de fala em quadros de 20 ms
+
+        public static Task<string> TranscribeAudioAsync(string audioFilePath, string modelOverride, string contextText)
         {
+            return TranscribeAudioAsync(audioFilePath, modelOverride, contextText, null, -1);
+        }
+
+        /// <summary>
+        /// <paramref name="prefixText"/> = o que já foi transcrito durante a fala (blocos anteriores
+        /// deste ditado); ele serve de prompt no lugar do texto do campo. Devolve só o texto deste arquivo.
+        /// <paramref name="speechFrames"/> = quadros de 20 ms com fala (-1 = não medido).
+        /// </summary>
+        public static async Task<string> TranscribeAudioAsync(string audioFilePath, string modelOverride, string contextText, string prefixText, int speechFrames)
+        {
+            string vocabulary = DictionaryService.GetVocabularyTerms();
+            string firstContext = string.IsNullOrWhiteSpace(prefixText) ? contextText : prefixText.Trim();
+
             string apiKey = SecureCredentialService.GetApiKey();
             if (string.IsNullOrEmpty(apiKey))
             {
@@ -36,11 +51,12 @@ namespace VoxIA.Services
             List<string> parts = AudioChunker.GetParts(audioFilePath);
             if (parts.Count == 0)
             {
-                string rawText = await SendToWhisperAsync(audioFilePath, model, apiKey, BuildPrompt(contextText));
+                string prompt = BuildPrompt(vocabulary, firstContext);
+                string rawText = await SendToWhisperAsync(audioFilePath, model, apiKey, prompt);
                 string cleaned = SanitizeWhisperText(rawText);
-                if (IsPromptEcho(cleaned, contextText))
+                if (IsPromptEcho(cleaned, firstContext) || IsVocabularyEcho(cleaned, vocabulary, speechFrames))
                 {
-                    Logger.LogInfo("Whisper returned only the context it was given (no real speech). Discarding.");
+                    Logger.LogInfo("Whisper returned only the context or vocabulary it was given (no real speech). Discarding.");
                     return string.Empty;
                 }
                 Logger.LogInfo(string.Format("Groq Whisper transcription success (raw: {0} chars, cleaned: {1} chars).", rawText.Length, cleaned.Length));
@@ -53,9 +69,10 @@ namespace VoxIA.Services
             for (int i = 0; i < parts.Count; i++)
             {
                 string soFar = sb.ToString();
-                string prompt = i == 0 ? BuildPrompt(contextText) : BuildPrompt(soFar);
+                string promptContext = soFar.Length == 0 ? firstContext : JoinText(prefixText, soFar);
+                string prompt = BuildPrompt(vocabulary, promptContext);
                 string piece = StripSoundTags(await SendToWhisperAsync(parts[i], model, apiKey, prompt));
-                if (IsPromptEcho(piece, i == 0 ? contextText : soFar))
+                if (IsPromptEcho(piece, promptContext))
                 {
                     Logger.LogInfo(string.Format("Whisper block {0}/{1} only repeated its prompt; ignored.", i + 1, parts.Count));
                     continue;
@@ -72,7 +89,46 @@ namespace VoxIA.Services
             return result;
         }
 
-        private static async Task<string> SendToWhisperAsync(string audioFilePath, string model, string apiKey, string prompt)
+        /// <summary>
+        /// Um bloco cortado numa pausa enquanto a pessoa ainda fala (ver LiveTranscriber). Vai em FLAC
+        /// (sem perdas). Devolve "" quando o Whisper só repetiu o prompt.
+        /// </summary>
+        public static async Task<string> TranscribeLiveChunkAsync(byte[] pcm, int sampleRate, string promptContext, int speechFrames)
+        {
+            string apiKey = SecureCredentialService.GetApiKey();
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                throw new InvalidOperationException("Groq API key is missing. Please configure your API key in Settings.");
+            }
+            string vocabulary = DictionaryService.GetVocabularyTerms();
+            string prompt = BuildPrompt(vocabulary, promptContext);
+            byte[] flac = FlacEncoder.Encode(pcm, sampleRate);
+            string piece = StripSoundTags(await SendBytesToWhisperAsync(flac, "bloco.flac", "audio/flac", "whisper-large-v3", apiKey, prompt));
+            piece = SanitizeWhisperText(piece);
+            if (IsPromptEcho(piece, promptContext) || IsVocabularyEcho(piece, vocabulary, speechFrames))
+            {
+                Logger.LogInfo("Live block only repeated its prompt; ignored.");
+                return string.Empty;
+            }
+            return piece;
+        }
+
+        public static string JoinText(string a, string b)
+        {
+            a = (a ?? "").Trim();
+            b = (b ?? "").Trim();
+            if (a.Length == 0) return b;
+            if (b.Length == 0) return a;
+            return a + " " + b;
+        }
+
+        private static Task<string> SendToWhisperAsync(string audioFilePath, string model, string apiKey, string prompt)
+        {
+            byte[] fileBytes = File.ReadAllBytes(audioFilePath);
+            return SendBytesToWhisperAsync(fileBytes, Path.GetFileName(audioFilePath), AudioEncoderService.GetMimeType(audioFilePath), model, apiKey, prompt);
+        }
+
+        private static async Task<string> SendBytesToWhisperAsync(byte[] fileBytes, string fileName, string mimeType, string model, string apiKey, string prompt)
         {
             using (var httpClient = new HttpClient())
             {
@@ -81,12 +137,10 @@ namespace VoxIA.Services
 
                 using (var content = new MultipartFormDataContent())
                 {
-                    byte[] fileBytes = File.ReadAllBytes(audioFilePath);
                     var byteArrayContent = new ByteArrayContent(fileBytes);
-                    string mimeType = AudioEncoderService.GetMimeType(audioFilePath);
                     byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
 
-                    content.Add(byteArrayContent, "file", Path.GetFileName(audioFilePath));
+                    content.Add(byteArrayContent, "file", fileName);
                     content.Add(new StringContent(model), "model");
                     content.Add(new StringContent("pt"), "language");
                     content.Add(new StringContent("0.0"), "temperature");
@@ -133,13 +187,37 @@ namespace VoxIA.Services
         }
 
         // Whisper conditions on the end of the prompt, so the text already written goes last.
-        private static string BuildPrompt(string contextText)
+        // The dictionary terms come before it, so Whisper prefers their spelling for similar sounds.
+        private static string BuildPrompt(string vocabulary, string contextText)
         {
-            if (string.IsNullOrWhiteSpace(contextText)) return BasePrompt;
+            string basePrompt = string.IsNullOrWhiteSpace(vocabulary) ? BasePrompt : BasePrompt + " Vocabulário: " + vocabulary;
+            if (string.IsNullOrWhiteSpace(contextText)) return basePrompt;
             string tail = contextText.Length > 220 ? contextText.Substring(contextText.Length - 220) : contextText;
             int firstSpace = tail.IndexOf(' ');
             if (contextText.Length > 220 && firstSpace > 0 && firstSpace < 40) tail = tail.Substring(firstSpace + 1);
-            return BasePrompt + " " + tail;
+            return basePrompt + " " + tail;
+        }
+
+        /// <summary>
+        /// Fala real não sai só com termos do vocabulário. Uma resposta curta feita apenas deles
+        /// ("Disartria.") com pouca fala no áudio é o Whisper repetindo o prompt diante de ruído.
+        /// Com fala clara (meio segundo ou mais), ou sem medida (-1), a palavra fica.
+        /// </summary>
+        private static bool IsVocabularyEcho(string transcript, string vocabulary, int speechFrames)
+        {
+            if (speechFrames < 0 || speechFrames >= ClearSpeechFrames) return false;
+            if (string.IsNullOrWhiteSpace(transcript) || string.IsNullOrWhiteSpace(vocabulary)) return false;
+            var words = new Regex(@"[\p{L}\p{N}]+");
+            var spoken = new List<string>();
+            foreach (Match m in words.Matches(transcript.ToLowerInvariant())) spoken.Add(m.Value);
+            if (spoken.Count == 0 || spoken.Count > 4) return false;
+            var known = new HashSet<string>();
+            foreach (Match m in words.Matches((BasePrompt + " " + vocabulary).ToLowerInvariant())) known.Add(m.Value);
+            foreach (string w in spoken)
+            {
+                if (!known.Contains(w)) return false;
+            }
+            return true;
         }
 
         private static bool IsPromptEcho(string transcript, string contextText)

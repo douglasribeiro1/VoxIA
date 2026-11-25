@@ -46,7 +46,13 @@ class AddWordActivity : AppCompatActivity() {
         }
 
         val selected = intent.getStringExtra(EXTRA_ORIGINAL)?.trim().orEmpty()
+        val suggested = intent.getStringExtra(EXTRA_REPLACEMENT)?.trim().orEmpty()
         etOriginal.setText(selected)
+        if (suggested.isNotEmpty()) {
+            // Veio da sugestão "você corrigiu esta palavra": já está tudo preenchido, só confirmar
+            etReplacement.setText(suggested)
+            etReplacement.setSelection(suggested.length)
+        }
         if (selected.isNotEmpty()) etReplacement.requestFocus() else etOriginal.requestFocus()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
@@ -83,7 +89,15 @@ class AddWordActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_ORIGINAL = "original"
+        private const val EXTRA_REPLACEMENT = "replacement"
         private const val MAX_SELECTION = 80
+
+        /** Janela já preenchida com "como sai errado" → "como deve ficar". */
+        fun intentFor(context: Context, original: String, replacement: String): Intent =
+            Intent(context, AddWordActivity::class.java)
+                .putExtra(EXTRA_ORIGINAL, original.trim().take(MAX_SELECTION))
+                .putExtra(EXTRA_REPLACEMENT, replacement.trim().take(MAX_SELECTION))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         fun open(context: Context, selectedText: String) {
             val text = selectedText.trim().take(MAX_SELECTION)

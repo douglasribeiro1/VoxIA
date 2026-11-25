@@ -296,6 +296,19 @@ namespace VoxIA.Services
             if (pcmData == null || pcmData.Length == 0)
                 return new byte[0];
 
+            if (channels == 1 && bitsPerSample == 16)
+            {
+                try
+                {
+                    // Compressão de verdade (sem perdas): arquivo ~40 % menor, mesmas amostras
+                    return FlacEncoder.Encode(pcmData, sampleRate);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("FLAC compression failed; writing uncompressed FLAC", ex);
+                }
+            }
+
             int totalSamples = pcmData.Length / (channels * (bitsPerSample / 8));
             int blockSize = 4096;
 
@@ -350,8 +363,10 @@ namespace VoxIA.Services
             {
                 WriteBigEndian16(frameBw, 0xFFF8);
 
-                byte bsCode = (blockSize == 4096) ? (byte)0x0C : (byte)0x06;
-                byte srCode = (sampleRate == 44100) ? (byte)0x09 : (sampleRate == 16000 ? (byte)0x08 : (byte)0x04);
+                // 0x06 = tamanho em 8 bits (até 256 amostras); 0x07 = em 16 bits. Antes o último quadro
+                // de cada arquivo usava sempre 8 bits e o decodificador perdia o fim do áudio.
+                byte bsCode = (blockSize == 4096) ? (byte)0x0C : (blockSize <= 256 ? (byte)0x06 : (byte)0x07);
+                byte srCode = (sampleRate == 44100) ? (byte)0x09 : (sampleRate == 16000 ? (byte)0x05 : (byte)0x00);
                 frameBw.Write((byte)((bsCode << 4) | (srCode & 0x0F)));
                 frameBw.Write((byte)0x08);
                 WriteUtf8UInt32(frameBw, (uint)frameNumber);
@@ -359,6 +374,10 @@ namespace VoxIA.Services
                 if (bsCode == 0x06)
                 {
                     frameBw.Write((byte)(blockSize - 1));
+                }
+                else if (bsCode == 0x07)
+                {
+                    WriteBigEndian16(frameBw, (ushort)(blockSize - 1));
                 }
 
                 byte[] headerBytes = frameMs.ToArray();
