@@ -99,7 +99,7 @@ Comandos de voz (Windows e Android):
 ## 🎯 Como o VoxIA acerta mais
 
 - **Dicionário:** as palavras que você ensina vão como vocabulário para o Whisper e para a correção pela IA, que também conserta palavras trocadas por outras de som parecido quando o contexto deixa claro.
-- **Áudio tratado antes de enviar:** tira o ruído grave e aumenta o volume quando você fala baixo. No Windows também corta silêncios e pausas longas; no Android o áudio nunca é recortado, para não perder trechos de fala baixa.
+- **Áudio tratado antes de enviar:** tira o ruído grave e aumenta o volume quando você fala baixo ou com o microfone longe. O áudio nunca é recortado, para não perder trechos de fala baixa.
 - **Ditados longos ficam prontos mais rápido:** enquanto você ainda fala, os trechos já terminados vão sendo transcritos. Ao parar, só falta o último trecho.
 - **Envio compactado sem perda** (FLAC): o arquivo fica menor e chega mais rápido, com o mesmo som.
 

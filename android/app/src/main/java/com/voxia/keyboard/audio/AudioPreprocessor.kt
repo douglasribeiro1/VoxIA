@@ -24,7 +24,9 @@ object AudioPreprocessor {
         val gain: Double,
         val note: String,
         /** Sem fala nenhuma: não deve ser enviado ao Whisper (ele inventaria palavras). */
-        val silent: Boolean
+        val silent: Boolean,
+        /** Praticamente mudo (nem ruído de ambiente). */
+        val mute: Boolean = false
     )
 
     private const val FRAME_MS = 20
@@ -37,12 +39,12 @@ object AudioPreprocessor {
     private const val QUIET_RMS = 2200.0
     private const val MAX_GAIN = 4.0
     private const val MAX_PEAK = 30000.0
-    private const val MIN_SPEECH_RMS = 150.0    // abaixo disso é ruído ambiente, não fala
+    private const val MIN_SPEECH_RMS = 60.0     // baixo de propósito: celular afastado ainda é fala
     private const val MIN_SPEECH_FRAMES = 12    // 240 ms de energia de fala no mínimo
 
     fun process(pcm: ByteArray, sampleRate: Int, trimSilence: Boolean = false): Result {
-        fun untouched(note: String, seconds: Double = 0.0, silent: Boolean = false) =
-            Result(pcm, false, seconds, seconds, 1.0, note, silent)
+        fun untouched(note: String, seconds: Double = 0.0, silent: Boolean = false, mute: Boolean = false) =
+            Result(pcm, false, seconds, seconds, 1.0, note, silent, mute)
 
         if (pcm.size < 4 || sampleRate < 8000) return untouched("curto demais")
         val n = pcm.size / 2
@@ -79,7 +81,7 @@ object AudioPreprocessor {
         val sorted = rms.sortedArray()
         val noise = sorted[(frames * 0.10).toInt()]
         val loud = sorted[min(frames - 1, (frames * 0.90).toInt())]
-        if (loud < 60.0) return untouched("gravação praticamente muda", originalSeconds, silent = true)
+        if (loud < 60.0) return untouched("gravação praticamente muda", originalSeconds, silent = true, mute = true)
 
         // Sem fala de verdade (só ruído do ambiente), o Whisper inventa palavras: não enviar
         val speechLevel = max(MIN_SPEECH_RMS, noise * 3.0)

@@ -134,7 +134,7 @@ object AudioChunker {
         }
     }
 
-    private const val MIN_SPEECH_RMS = 250.0     // abaixo disso é silêncio/ruído de ambiente em qualquer celular
+    private const val MIN_SPEECH_RMS = 60.0      // baixo de propósito: celular afastado ainda é fala
     private const val SPEECH_OVER_NOISE = 3.0     // fala fica bem acima do ruído de fundo da própria gravação
     private const val MIN_SPEECH_FRAMES = 12      // pelo menos ~240 ms somados de fala
 
