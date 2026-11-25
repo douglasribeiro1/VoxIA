@@ -62,9 +62,8 @@ O VoxIA usa a Groq para transformar sua voz em texto. Para isso, você precisa d
 | Abrir as configurações | Dois cliques no ícone 🎙 da bandeja |
 | Mudar o atalho, iniciar com o Windows, histórico | Configurações |
 
-Comandos de voz (Windows e Android):
+Comando de voz (Windows e Android):
 - "**abrir tópico** exame físico **fechar tópico**" cria um título em CAIXA ALTA.
-- "**apaga isso**" (ou "risca isso"), **desligado por padrão** (ligue em Configurações): seguido de uma pausa, descarta a frase que você acabou de dizer. Ex.: "Febre de 39 graus. **Apaga isso.** Febre de 38 graus." vira "Febre de 38 graus.". Nunca apaga mais de 30 palavras, não dispara no meio de uma frase e vale só para o ditado atual.
 
 ---
 

@@ -69,9 +69,6 @@ namespace VoxIA.Services
         public bool EnableAudioPreprocessing { get; set; }
         public bool EnableFieldContext { get; set; }
 
-        /// <summary>Comando falado "apaga isso" (descarta a frase anterior). Desligado por padrão.</summary>
-        public bool EnableDeleteCommand { get; set; }
-
         /// <summary>Sobe o volume de captação do microfone para 100% durante o ditado (e baixa se saturar).</summary>
         public bool BoostMicrophoneDuringDictation { get; set; }
 
@@ -120,7 +117,6 @@ namespace VoxIA.Services
 
             EnableAudioPreprocessing = true;
             EnableFieldContext = false;
-            EnableDeleteCommand = false;
             BoostMicrophoneDuringDictation = true;
             AutoCheckUpdates = true;
             LastUpdateCheckTicks = 0;
