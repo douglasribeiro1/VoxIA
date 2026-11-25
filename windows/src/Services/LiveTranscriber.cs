@@ -68,7 +68,9 @@ namespace VoxIA.Services
                     byte[] chunk = new byte[cut * 2];
                     Buffer.BlockCopy(pcm, 0, chunk, 0, chunk.Length);
                     var prep = AudioPreprocessor.Process(chunk, sampleRate);
-                    if (!prep.Silent)
+                    // Bloco do meio do ditado só é pulado se estiver praticamente mudo: fala baixa
+                    // (microfone longe) também vai para o Whisper
+                    if (!prep.Mute)
                     {
                         byte[] toSend = (prep.Changed && SettingsService.Current.EnableAudioPreprocessing) ? prep.Pcm : chunk;
                         string promptContext = _text.Length == 0 ? _fieldContext : _text.ToString();

@@ -64,7 +64,9 @@ class LiveTranscriber(
 
             val chunk = pcm.copyOfRange(0, cut * 2)
             val prep = AudioPreprocessor.process(chunk, sampleRate)
-            if (!prep.silent) {
+            // Bloco do meio do ditado só é pulado se estiver praticamente mudo: fala baixa
+            // (celular afastado) também vai para o Whisper
+            if (!prep.mute) {
                 val promptContext = if (text.isEmpty()) fieldContext else text.toString()
                 val result = groq.transcribeLiveChunk(if (prep.changed) prep.pcm else chunk, apiKey, vocabulary, promptContext)
                 if (result.isFailure) {

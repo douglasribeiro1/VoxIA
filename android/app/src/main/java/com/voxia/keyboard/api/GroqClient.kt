@@ -109,11 +109,10 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
 
             val soFar = StringBuilder()
             for ((index, part) in parts.withIndex()) {
+                // Nenhum bloco do meio é pulado por "parecer sem fala": com o celular afastado, um
+                // trecho inteiro de fala baixa era descartado. Silêncio que o Whisper transformar em
+                // frase inventada é filtrado depois (sanitizeWhisperText e eco do prompt).
                 val speech = AudioChunker.wavSpeechFrames(part)
-                if (!AudioChunker.hasSpeech(speech)) {
-                    Log.i("GroqClient", "Bloco ${index + 1}/${parts.size} sem fala. Ignorando.")
-                    continue
-                }
                 val promptContext = if (soFar.isEmpty()) firstContext else joinText(prefixText, soFar.toString())
                 val prompt = buildWhisperPrompt(initialPrompt, promptContext)
                 val text = sendToWhisper(part, model, trimmedKey, prompt, maxRetries)
@@ -148,7 +147,6 @@ DIRETRIZ SUPREMA DE DITADO POR VOZ (MODO TRANSCRIÇÃO SILENCIOSA - REGRA ZERO A
         val trimmedKey = apiKey.trim()
         if (trimmedKey.isBlank()) return@withContext Result.failure(Exception("Chave da Groq API não configurada."))
         val speech = AudioChunker.speechFrames(pcm, AudioRecorder.SAMPLE_RATE)
-        if (!AudioChunker.hasSpeech(speech)) return@withContext Result.success("")
         val prompt = buildWhisperPrompt(vocabulary, promptContext)
         val flac = FlacEncoder.encode(pcm, AudioRecorder.SAMPLE_RATE)
         val text = sendAudio(flac, "bloco.flac", "audio/flac", model, trimmedKey, prompt, 3)

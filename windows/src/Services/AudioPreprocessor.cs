@@ -4,10 +4,12 @@ using System.Collections.Generic;
 namespace VoxIA.Services
 {
     /// <summary>
-    /// Prepares a recording (16-bit mono PCM) before it is encoded and sent to Whisper:
-    /// removes low-frequency rumble, trims silence at both ends, shortens very long pauses
-    /// and lifts quiet recordings. Speech is never attenuated or cut: whenever something looks
-    /// unsafe the original audio is returned untouched.
+    /// Prepara a gravação (PCM 16 bits mono) antes de ir ao Whisper: tira o ronco grave (filtro
+    /// passa-alta), aumenta o volume de gravações baixas e avisa quando não há fala nenhuma.
+    ///
+    /// O áudio NUNCA é recortado (trimSilence = false). O antigo corte de silêncios e de pausas
+    /// longas decidia o que é "silêncio" pelo volume, e com o microfone longe da boca trechos de
+    /// fala baixa eram tratados como pausa e sumiam do ditado. Ele só existe como opção.
     /// </summary>
     public static class AudioPreprocessor
     {
@@ -20,6 +22,7 @@ namespace VoxIA.Services
             public double Gain;
             public string Note;
             public bool Silent;   // true quando não há fala nenhuma (não deve ser enviado ao Whisper)
+            public bool Mute;     // true quando o áudio está praticamente mudo (nem ruído de ambiente)
             public int SpeechFrames = -1; // quadros de 20 ms com fala; -1 = não medido
         }
 
@@ -33,10 +36,15 @@ namespace VoxIA.Services
         private const double QuietRms = 2200.0;
         private const double MaxGain = 4.0;
         private const double MaxPeak = 30000.0;
-        private const double MinSpeechRms = 150.0;  // abaixo disso é ruído ambiente, não fala
+        private const double MinSpeechRms = 60.0;   // baixo de propósito: microfone longe da boca ainda é fala
         private const int MinSpeechFrames = 12;     // 240 ms de energia de fala no mínimo
 
         public static Result Process(byte[] pcm, int sampleRate)
+        {
+            return Process(pcm, sampleRate, false);
+        }
+
+        public static Result Process(byte[] pcm, int sampleRate, bool trimSilence)
         {
             var res = new Result { Pcm = pcm, Changed = false, Gain = 1.0, Note = "" };
             if (pcm == null || pcm.Length < 4 || sampleRate < 8000)
@@ -89,6 +97,7 @@ namespace VoxIA.Services
             {
                 res.Note = "recording is essentially silent; left untouched";
                 res.Silent = true;
+                res.Mute = true;
                 return res;
             }
 
@@ -134,26 +143,32 @@ namespace VoxIA.Services
                 return res;
             }
 
-            first = Math.Max(0, first - EdgePadFrames);
-            last = Math.Min(frames - 1, last + EdgePadFrames);
-
-            // 4. Build the list of kept frame ranges (long inner pauses are shortened)
+            // 4. Trechos mantidos: sem trimSilence, o áudio inteiro, do começo ao fim
             var ranges = new List<int[]>();
-            int segStart = first;
-            int f2 = first;
-            while (f2 <= last)
+            if (!trimSilence)
             {
-                if (active[f2]) { f2++; continue; }
-                int runStart = f2;
-                while (f2 <= last && !active[f2]) f2++;
-                int runLen = f2 - runStart;
-                if (runLen > LongPauseFrames)
-                {
-                    ranges.Add(new int[] { segStart, runStart + KeptPauseFrames - 1 });
-                    segStart = f2 - KeptPauseFrames;
-                }
+                ranges.Add(new int[] { 0, frames - 1 });
             }
-            ranges.Add(new int[] { segStart, last });
+            else
+            {
+                first = Math.Max(0, first - EdgePadFrames);
+                last = Math.Min(frames - 1, last + EdgePadFrames);
+                int segStart = first;
+                int f2 = first;
+                while (f2 <= last)
+                {
+                    if (active[f2]) { f2++; continue; }
+                    int runStart = f2;
+                    while (f2 <= last && !active[f2]) f2++;
+                    int runLen = f2 - runStart;
+                    if (runLen > LongPauseFrames)
+                    {
+                        ranges.Add(new int[] { segStart, runStart + KeptPauseFrames - 1 });
+                        segStart = f2 - KeptPauseFrames;
+                    }
+                }
+                ranges.Add(new int[] { segStart, last });
+            }
 
             // 5. Gain for quiet recordings (never attenuates)
             double sumSq = 0; long cnt = 0; double peak = 0;
