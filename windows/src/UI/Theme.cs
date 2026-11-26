@@ -150,6 +150,39 @@ namespace VoxIA.UI
             return new Label { Text = text, Font = SectionTitle, ForeColor = Text, AutoSize = true, Location = location, BackColor = Color.Transparent };
         }
 
+        private static ToolTip _helpTips;
+
+        /// <summary>
+        /// Ícone "?" que mostra a explicação ao passar o mouse (ou ao clicar). Deixa a tela limpa:
+        /// a explicação só aparece para quem quiser.
+        /// </summary>
+        public static Label CreateHelpIcon(string text, Point location)
+        {
+            if (_helpTips == null)
+            {
+                _helpTips = new ToolTip { AutoPopDelay = 30000, InitialDelay = 150, ReshowDelay = 100, ShowAlways = true };
+            }
+            Label icon = new Label
+            {
+                Text = "?",
+                Font = new Font(FontFamily, 8.5F, FontStyle.Bold),
+                ForeColor = TextMuted,
+                BackColor = SurfaceAlt,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Size = new Size(20, 20),
+                Location = location,
+                Cursor = Cursors.Help
+            };
+            using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+            {
+                path.AddEllipse(0, 0, 20, 20);
+                icon.Region = new Region(path);
+            }
+            _helpTips.SetToolTip(icon, text);
+            icon.Click += (s, e) => _helpTips.Show(text, icon, 24, 0, 15000);
+            return icon;
+        }
+
         public static Label CreateHint(string text, Point location, int width)
         {
             Label lbl = new Label { Text = text, Font = Small, ForeColor = TextMuted, Location = location, BackColor = Color.Transparent };

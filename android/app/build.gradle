@@ -14,7 +14,7 @@ android {
         // No GitHub Actions o número do build vira o versionCode: cresce a cada compilação, e a
         // busca de atualizações do app compara com ele (ver UpdateManager e build-android.yml)
         versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '16').toInteger())
-        versionName "1.10.1"
+        versionName "1.11.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

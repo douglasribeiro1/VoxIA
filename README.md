@@ -1,6 +1,6 @@
 # 🎙 VoxIA — Ditado por voz com IA
 
-Fale e o texto aparece escrito, já com pontuação e ortografia corrigidas, em **qualquer programa**: prontuário, Word, WhatsApp, navegador, e-mail.
+Fale e o texto aparece escrito, já com pontuação e ortografia corrigidas, em **qualquer programa**: Word, WhatsApp, navegador, e-mail, sistemas da empresa.
 
 Funciona no **Windows**, no **Android** e no **Mac**. A transcrição é feita pela **Groq**, um serviço de IA gratuito: cada pessoa usa a **sua própria chave**, que se cria em 2 minutos com uma conta Google.
 
@@ -50,7 +50,7 @@ O VoxIA usa a Groq para transformar sua voz em texto. Para isso, você precisa d
 
 ### Como usar no Windows
 
-1. Clique no lugar onde quer escrever (prontuário, Word, WhatsApp Web…).
+1. Clique no lugar onde quer escrever (Word, WhatsApp Web, e-mail…).
 2. Aperte **F8** e fale.
 3. Aperte **F8** de novo. Em poucos segundos o texto aparece escrito no lugar.
 

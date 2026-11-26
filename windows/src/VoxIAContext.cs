@@ -42,6 +42,7 @@ namespace VoxIA
             InitializeTray();
             RegisterHotkeys();
             StartUpdateChecks();
+            SettingsForm.RequestUpdateCheck = () => OnMenuUpdateClick();
 
             Logger.LogInfo("VoxIA Context fully initialized and resident in System Tray.");
 
@@ -297,7 +298,7 @@ namespace VoxIA
                          string.Format("Iniciar / parar ditado:  {0}\n", hotkey) +
                          "   No modo push-to-talk, mantenha pressionado para falar.\n\n" +
                          "Adicionar palavra ao dicionário:  Ctrl + Shift + W  (ou Ctrl + Shift + D)\n" +
-                         "   Selecione o texto em qualquer aplicativo (Word, navegador, prontuário) e pressione o atalho.\n\n" +
+                         "   Selecione o texto em qualquer aplicativo (Word, navegador, e-mail) e pressione o atalho.\n\n" +
                          "Cancelar gravação em andamento:  Esc\n\n" +
                          "Configurações:  clique duplo no ícone do VoxIA na bandeja do Windows.";
 

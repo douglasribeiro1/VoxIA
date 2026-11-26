@@ -23,6 +23,11 @@ Corrija a ortografia, acentuação, capitalização e pontuação da frase falad
 NUNCA REESCREVA A FRASE, NUNCA OMITA NENHUMA PALAVRA, NUNCA resuma, comente ou adicione informações.
 """
 
+    private static let singleLineProfile = """
+Corrija a ortografia, acentuação, capitalização e pontuação, mantendo TODO O TEXTO EM UMA ÚNICA LINHA (sem quebras de linha).
+NUNCA REESCREVA A FRASE, NUNCA OMITA NENHUMA PALAVRA, NUNCA resuma, comente ou adicione informações.
+"""
+
     /// Texto corrigido, ou nil se a correção falhar (quem chamou usa o texto do Whisper).
     public static func correct(_ rawText: String) async -> String? {
         let trimmed = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -31,8 +36,15 @@ NUNCA REESCREVA A FRASE, NUNCA OMITA NENHUMA PALAVRA, NUNCA resuma, comente ou a
         if apiKey.isEmpty { return nil }
 
         let settings = SettingsService.current
-        let profile = (settings.selectedPromptPreset == "Customizado" && !settings.customPromptText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            ? settings.customPromptText : defaultProfile
+        let custom = settings.customPromptText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let profile: String
+        if settings.selectedPromptPreset == "Personalizado" && !custom.isEmpty {
+            profile = custom
+        } else if settings.selectedPromptPreset == "Linha única" {
+            profile = singleLineProfile
+        } else {
+            profile = defaultProfile
+        }
         var vocabulary = DictionaryService.vocabularyTerms()
         if vocabulary.count > maxVocabularyChars { vocabulary = String(vocabulary.prefix(maxVocabularyChars)) }
 

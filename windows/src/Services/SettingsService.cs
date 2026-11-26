@@ -128,6 +128,9 @@ namespace VoxIA.Services
 
     public static class SettingsService
     {
+        /// <summary>Perfil "Personalizado": o prompt escrito pela própria pessoa.</summary>
+        public const string CustomPromptId = "custom";
+
         private const int CurrentPrivacyVersion = 1;
 
         private static AppSettings _currentSettings;
@@ -253,14 +256,20 @@ RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO EM UMA ÚNICA LINHA.",
                 _currentSettings = new AppSettings();
             }
 
-            // Enforce the two streamlined transcription modes: Parágrafos or Linha Única
+            // Três modos: Parágrafos, Linha Única ou Personalizado (o prompt escrito pela pessoa)
             _currentSettings.PromptProfiles = GetDefaultProfiles();
-            if (_currentSettings.ActivePromptId != "default_single_line")
+            string custom = (_currentSettings.CustomPromptText ?? "").Trim();
+            _currentSettings.CustomPromptText = custom;
+            if (custom.Length > 0)
+            {
+                _currentSettings.PromptProfiles.Add(new PromptProfile(CustomPromptId, "Personalizado", custom));
+            }
+            bool customActive = _currentSettings.ActivePromptId == CustomPromptId && custom.Length > 0;
+            if (_currentSettings.ActivePromptId != "default_single_line" && !customActive)
             {
                 _currentSettings.ActivePromptId = "default_paragraphs";
             }
             _currentSettings.SelectedPromptPreset = GetActivePrompt().Title;
-            _currentSettings.CustomPromptText = "";
 
             // Default hotkey migration to F8
             if (_currentSettings.HotkeyVirtualKey == 0 || _currentSettings.HotkeyDisplay == "Ctrl + Win" || string.IsNullOrEmpty(_currentSettings.HotkeyDisplay))

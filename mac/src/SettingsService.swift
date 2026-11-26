@@ -3,7 +3,8 @@ import Foundation
 public struct MacAppSettings: Codable {
     public var whisperModel = "whisper-large-v3"
     public var correctionModel = "openai/gpt-oss-120b"
-    public var selectedPromptPreset = "Geral / Ortografia"
+    /// "Parágrafos", "Linha única" ou "Personalizado" (usa customPromptText).
+    public var selectedPromptPreset = "Parágrafos"
     public var customPromptText = ""
     public var autoCopyToClipboard = true
     public var hotkeyDisplay = "Option + Space"
@@ -46,6 +47,9 @@ public enum SettingsService {
         }
         // Precisão em primeiro lugar: o modelo completo do Whisper, como no Windows e no Android
         current.whisperModel = "whisper-large-v3"
+        if !["Parágrafos", "Linha única", "Personalizado"].contains(current.selectedPromptPreset) {
+            current.selectedPromptPreset = "Parágrafos"
+        }
         let allowed = ["openai/gpt-oss-120b", "llama-3.3-70b-versatile", "openai/gpt-oss-20b"]
         if !allowed.contains(current.correctionModel) { current.correctionModel = "openai/gpt-oss-120b" }
     }
