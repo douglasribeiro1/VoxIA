@@ -150,18 +150,15 @@ namespace VoxIA.UI
             return new Label { Text = text, Font = SectionTitle, ForeColor = Text, AutoSize = true, Location = location, BackColor = Color.Transparent };
         }
 
-        private static ToolTip _helpTips;
-
         /// <summary>
         /// Ícone "?" que mostra a explicação ao passar o mouse (ou ao clicar). Deixa a tela limpa:
         /// a explicação só aparece para quem quiser.
         /// </summary>
         public static Label CreateHelpIcon(string text, Point location)
         {
-            if (_helpTips == null)
-            {
-                _helpTips = new ToolTip { AutoPopDelay = 30000, InitialDelay = 150, ReshowDelay = 100, ShowAlways = true };
-            }
+            // Cada ícone tem a sua dica, descartada junto com ele: uma dica compartilhada continuava
+            // tentando esconder ícones de janelas já fechadas e derrubava o app
+            ToolTip tip = new ToolTip { AutoPopDelay = 30000, InitialDelay = 150, ReshowDelay = 100, ShowAlways = true };
             Label icon = new Label
             {
                 Text = "?",
@@ -178,8 +175,9 @@ namespace VoxIA.UI
                 path.AddEllipse(0, 0, 20, 20);
                 icon.Region = new Region(path);
             }
-            _helpTips.SetToolTip(icon, text);
-            icon.Click += (s, e) => _helpTips.Show(text, icon, 24, 0, 15000);
+            tip.SetToolTip(icon, text);
+            icon.Click += (s, e) => { if (!icon.IsDisposed) tip.Show(text, icon, 24, 0, 15000); };
+            icon.Disposed += (s, e) => tip.Dispose();
             return icon;
         }
 
