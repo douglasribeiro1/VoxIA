@@ -25,6 +25,13 @@ public class HistoryRepository {
         }
     }
 
+    /// Ditados mais recentes primeiro (usado pela janela principal).
+    public static func recent(limit: Int = 20) -> [DictationHistoryItem] {
+        lock.lock()
+        defer { lock.unlock() }
+        return Array(history.sorted { $0.timestamp > $1.timestamp }.prefix(limit))
+    }
+
     public static func addRecord(rawText: String, finalText: String, durationSec: Double, targetProcess: String) {
         guard !finalText.isEmpty else { return }
         let wordCount = finalText.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.count
