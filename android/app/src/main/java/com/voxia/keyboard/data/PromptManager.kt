@@ -1,4 +1,4 @@
-﻿package com.voxia.keyboard.data
+package com.voxia.keyboard.data
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -40,12 +40,6 @@ class PromptManager(context: Context) {
             isBuiltIn = true
         ),
         PromptProfile(
-            id = "default_medical",
-            title = "Prontuário Médico / Evolução Clínica",
-            promptText = "Você é um especialista em transcrição de laudos, anamneses e prontuários médicos. Corrija termos anatômicos, nomes de medicamentos, dosagens e jargões clínicos com precisão cirúrgica sem alterar a estrutura clínica do relato.",
-            isBuiltIn = true
-        ),
-        PromptProfile(
             id = "default_bullets",
             title = "Tópicos & Resumo Rápido",
             promptText = "Formate o texto falado em tópicos claros, organizados e objetivos (bullet points), mantendo as informações essenciais com pontuação perfeita.",
@@ -66,7 +60,8 @@ class PromptManager(context: Context) {
         }
         return try {
             val type = object : TypeToken<List<PromptProfile>>() {}.type
-            val loaded: List<PromptProfile> = gson.fromJson(json, type)
+            // O antigo perfil médico saiu: o VoxIA é para ditado geral
+            val loaded: List<PromptProfile> = gson.fromJson<List<PromptProfile>>(json, type).filter { it.id != "default_medical" }
             if (loaded.isEmpty()) defaultPrompts else loaded
         } catch (e: Exception) {
             defaultPrompts
@@ -76,6 +71,13 @@ class PromptManager(context: Context) {
     fun savePrompts(profiles: List<PromptProfile>) {
         val json = gson.toJson(profiles)
         prefs.edit().putString("prompt_profiles_json", json).apply()
+    }
+
+    /** Prompt escrito pela própria pessoa (modo Personalizado). */
+    fun getCustomPromptText(): String = getPrompts().find { it.id == CUSTOM_ID }?.promptText.orEmpty()
+
+    fun saveCustomPrompt(text: String) {
+        addOrUpdatePrompt(CUSTOM_ID, "Personalizado", text)
     }
 
     fun getActivePromptId(): String {
@@ -136,5 +138,9 @@ class PromptManager(context: Context) {
             setActivePromptId("default_paragraphs")
         }
         return true
+    }
+
+    companion object {
+        const val CUSTOM_ID = "custom"
     }
 }

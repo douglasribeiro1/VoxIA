@@ -27,6 +27,12 @@ namespace VoxIA.UI
         private ToggleSwitch _chkFieldContext;
         private ToggleSwitch _chkBoostMic;
         private ToggleSwitch _chkAutoUpdate;
+        private TextBox _txtCustomPrompt;
+        private const string CustomPromptExample =
+            "Corrija ortografia e pontuação e organize o texto em parágrafos por assunto, como um texto bem escrito em português. Mantenha todas as informações ditadas.";
+
+        /// <summary>Chamado ao clicar em "Procurar atualizações" (definido pelo VoxIAContext).</summary>
+        public static Action RequestUpdateCheck;
         private ComboBox _cboHistoryRetention;
 
         // Opções de "Guardar histórico" e os dias correspondentes (0 = não guardar, -1 = sem limite)
@@ -92,6 +98,8 @@ namespace VoxIA.UI
             Theme.StylePrimary(_btnSave);
 
             _btnSave.Click += BtnSave_Click;
+            // A janela é aberta com Show() (não modal): o botão precisa fechar por conta própria
+            _btnCancel.Click += (s, e) => this.Close();
 
             // Botões à direita do rodapé: posição calculada pela largura real do rodapé (sem Anchor,
             // que empurrava os botões para fora da tela quando o rodapé ainda tinha a largura padrão)
@@ -212,6 +220,12 @@ namespace VoxIA.UI
             return card;
         }
 
+        /// <summary>Ícone "?" no canto do título do cartão, com a explicação ao passar o mouse.</summary>
+        private static void AddHelp(Panel card, int width, string text)
+        {
+            card.Controls.Add(Theme.CreateHelpIcon(text, new Point(width - 36, 14)));
+        }
+
         /// <summary>Ajusta a altura do cartão ao conteúdo, adiciona à página e devolve a próxima posição vertical da coluna.</summary>
         private static void EndCard(Panel section, Panel card, ref int columnY)
         {
@@ -304,17 +318,17 @@ namespace VoxIA.UI
             };
             _chkShowApiKey.CheckedChanged += (s, e) => _txtApiKey.UseSystemPasswordChar = !_chkShowApiKey.Checked;
 
-            Label lblKeySteps = Theme.CreateHint(
+            Label lblKeySteps = Theme.CreateHelpIcon(
                 "Não tem chave? É grátis e leva 2 minutos:\n" +
                 "1. Clique em \"Abrir site da Groq\" e entre com sua conta Google (ou e-mail).\n" +
                 "2. Clique em \"Create API Key\", dê um nome (ex.: VoxIA) e copie a chave (começa com gsk_).\n" +
-                "3. Cole a chave no campo acima e clique em Salvar.",
-                new Point(16, 76), ColumnWidth - 32);
+                "3. Cole a chave no campo acima e clique em Salvar alterações.",
+                new Point(ColumnWidth - 36, 14));
 
             Button btnOpenGroq = new Button
             {
                 Text = "Abrir site da Groq",
-                Location = new Point(16, lblKeySteps.Bottom + 8),
+                Location = new Point(16, 76),
                 Size = new Size(170, 32),
                 Cursor = Cursors.Hand
             };
@@ -343,11 +357,10 @@ namespace VoxIA.UI
 
             Panel cardPrivacy = BeginCard(leftX, leftY, ColumnWidth, "Privacidade");
             _chkFieldContext = CreateToggleRow(cardPrivacy, "Enviar o texto já escrito no campo", 40);
-            Label hintContext = Theme.CreateHint(
-                "Ajuda a pontuar a continuação, mas manda à Groq parte do que já está no campo (no prontuário, dados do paciente). Desligado por padrão.",
-                new Point(16, 80), ColumnWidth - 32);
-            cardPrivacy.Controls.Add(hintContext);
-            int historyTop = hintContext.Bottom + 14;
+            AddHelp(cardPrivacy, ColumnWidth,
+                "Enviar o texto já escrito no campo: ajuda a pontuar a continuação, mas manda à Groq parte do que já está escrito (que pode ter dados pessoais). Desligado por padrão.\n\n" +
+                "O histórico e a chave ficam protegidos pelo Windows e só abrem neste computador, com o seu usuário. Os logs não guardam o texto ditado e são apagados após 7 dias.");
+            int historyTop = 92;
             Label lblHistory = new Label
             {
                 Text = "Guardar histórico",
@@ -372,19 +385,36 @@ namespace VoxIA.UI
             _cboHistoryRetention.SelectedIndex = 2;
             cardPrivacy.Controls.Add(lblHistory);
             cardPrivacy.Controls.Add(_cboHistoryRetention);
-            cardPrivacy.Controls.Add(Theme.CreateHint(
-                "O histórico e a chave ficam protegidos pelo Windows e só abrem neste computador, com o seu usuário. Os logs não guardam o texto ditado e são apagados após 7 dias.",
-                new Point(16, historyTop + 40), ColumnWidth - 32));
             EndCard(section, cardPrivacy, ref leftY);
 
             // Coluna direita: texto e compatibilidade
             Panel cardFormat = BeginCard(rightX, rightY, ColumnWidth, "Idioma e texto");
             _segFormat = new SegmentedControl { Location = new Point(16, 40), Size = new Size(ColumnWidth - 32, 36) };
-            _segFormat.SetItems("Parágrafos", "Linha única");
+            _segFormat.SetItems("Parágrafos", "Linha única", "Personalizado");
             cardFormat.Controls.Add(_segFormat);
-            cardFormat.Controls.Add(Theme.CreateHint(
-                "Parágrafos detecta pausas e organiza o texto em blocos. Linha única mantém tudo em uma linha só, bom para buscas e chats.",
-                new Point(16, 88), ColumnWidth - 32));
+            AddHelp(cardFormat, ColumnWidth,
+                "Parágrafos: a IA organiza o texto em parágrafos por assunto.\n" +
+                "Linha única: tudo numa linha só, bom para buscas e chats.\n" +
+                "Personalizado: você escreve como a IA deve corrigir e formatar o texto (ex.: \"use tópicos\", \"escreva de forma formal\"). A IA continua proibida de responder perguntas ou inventar conteúdo.");
+            _txtCustomPrompt = new TextBox
+            {
+                Location = new Point(16, 86),
+                Size = new Size(ColumnWidth - 32, 96),
+                Multiline = true,
+                ScrollBars = ScrollBars.Vertical,
+                BackColor = Theme.SurfaceAlt,
+                ForeColor = Theme.Text,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font(Theme.FontFamily, 9.5F)
+            };
+            cardFormat.Controls.Add(_txtCustomPrompt);
+            Action syncCustom = () =>
+            {
+                bool custom = _segFormat.SelectedIndex == 2;
+                _txtCustomPrompt.Enabled = custom;
+                if (custom && string.IsNullOrWhiteSpace(_txtCustomPrompt.Text)) _txtCustomPrompt.Text = CustomPromptExample;
+            };
+            _segFormat.UserSelectionChanged += (s, e) => syncCustom();
             EndCard(section, cardFormat, ref rightY);
 
             Panel cardMic = BeginCard(rightX, rightY, ColumnWidth, "Microfone");
@@ -405,16 +435,26 @@ namespace VoxIA.UI
             }
             _cboMicrophone.SelectedIndex = 0;
             cardMic.Controls.Add(_cboMicrophone);
-            cardMic.Controls.Add(Theme.CreateHint(
-                "Microfone usado para ditar. \"Padrão do sistema\" segue o que o Windows estiver usando.",
-                new Point(16, 80), ColumnWidth - 32));
+            AddHelp(cardMic, ColumnWidth, "Microfone usado para ditar. \"Padrão do sistema\" segue o que o Windows estiver usando.");
             EndCard(section, cardMic, ref rightY);
 
             Panel cardCompat = BeginCard(rightX, rightY, ColumnWidth, "Compatibilidade");
-            cardCompat.Controls.Add(Theme.CreateHint(
-                "Travessões e hífens especiais viram hífen comum (-), aspas curvas viram aspas retas e espaços especiais viram espaço normal. Os acentos são mantidos.",
-                new Point(16, 40), ColumnWidth - 32));
+            cardCompat.Controls.Add(Theme.CreateHint("Texto compatível com qualquer programa.", new Point(16, 44), ColumnWidth - 72));
+            AddHelp(cardCompat, ColumnWidth, "Travessões e hífens especiais viram hífen comum (-), aspas curvas viram aspas retas e espaços especiais viram espaço normal. Os acentos são mantidos.");
             EndCard(section, cardCompat, ref rightY);
+
+            // Versão instalada e busca de atualizações
+            Panel cardAbout = BeginCard(rightX, rightY, ColumnWidth, "Versão do VoxIA");
+            string versionText = BuildInfo.Build > 0
+                ? string.Format("Você está na versão build {0}.", BuildInfo.Build)
+                : "Versão compilada à mão (sem atualização automática).";
+            cardAbout.Controls.Add(new Label { Text = versionText, Font = Theme.Body, ForeColor = Theme.Text, BackColor = Color.Transparent, AutoSize = true, Location = new Point(16, 44) });
+            Button btnCheckUpdate = new Button { Text = "Procurar atualizações", Location = new Point(16, 74), Size = new Size(190, 32), Cursor = Cursors.Hand };
+            Theme.StyleSecondary(btnCheckUpdate);
+            btnCheckUpdate.Click += (s, e) => { if (RequestUpdateCheck != null) RequestUpdateCheck(); };
+            cardAbout.Controls.Add(btnCheckUpdate);
+            AddHelp(cardAbout, ColumnWidth, "O VoxIA procura versões novas sozinho (ao abrir e uma vez por dia) e avisa perto do relógio. A opção fica em Sistema e comportamento.");
+            EndCard(section, cardAbout, ref rightY);
 
             return section;
         }
@@ -451,16 +491,14 @@ namespace VoxIA.UI
             _cboHotkeyChoice.Items.Add("Ctrl + Shift + Espaço");
             _cboHotkeyChoice.SelectedIndex = 0;
             cardHotkey.Controls.Add(_cboHotkeyChoice);
-            cardHotkey.Controls.Add(Theme.CreateHint("Funciona em qualquer aplicativo, inclusive no prontuário.", new Point(16, 80), ColumnWidth - 32));
+            AddHelp(cardHotkey, ColumnWidth, "Funciona em qualquer aplicativo: clique onde quer escrever, aperte o atalho e fale.");
             EndCard(section, cardHotkey, ref leftY);
 
             Panel cardMode = BeginCard(leftX, leftY, ColumnWidth, "Modo de acionamento");
             _segMode = new SegmentedControl { Location = new Point(16, 40), Size = new Size(ColumnWidth - 32, 36) };
             _segMode.SetItems("Alternar", "Segurar");
             cardMode.Controls.Add(_segMode);
-            cardMode.Controls.Add(Theme.CreateHint(
-                "Alternar: uma vez inicia e outra para e envia. Segurar: fale enquanto mantém pressionado e solte para enviar.",
-                new Point(16, 88), ColumnWidth - 32));
+            AddHelp(cardMode, ColumnWidth, "Alternar: uma vez inicia e outra para e envia. Segurar: fale enquanto mantém pressionado e solte para enviar.");
             EndCard(section, cardMode, ref leftY);
 
             Panel cardShortcuts = BeginCard(rightX, rightY, ColumnWidth, "Outros atalhos");
@@ -480,7 +518,7 @@ namespace VoxIA.UI
             AddPageHeader(section, "Vocabulário", "Palavras que o VoxIA aprende.");
 
             Panel card = BeginCard(PageLeft, PageTop, PageWidth, "Dicionário");
-            card.Controls.Add(Theme.CreateHint("Dica: selecione uma palavra em qualquer aplicativo e pressione Ctrl + Shift + W.", new Point(16, 40), PageWidth - 32));
+            AddHelp(card, PageWidth, "Ensine palavras que o VoxIA erra (nomes, termos técnicos). Dica: selecione uma palavra em qualquer aplicativo e pressione Ctrl + Shift + W.");
 
             Label lblSearch = new Label { Text = "Buscar", Location = new Point(16, 86), AutoSize = true, ForeColor = Theme.Text, BackColor = Color.Transparent, Font = Theme.BodyBold };
             _txtDictSearch = new TextBox { Location = new Point(70, 82), Width = 260 };
@@ -549,7 +587,9 @@ namespace VoxIA.UI
             var s = SettingsService.Current;
             _txtApiKey.Text = SecureCredentialService.GetApiKey();
 
-            _segFormat.SelectedIndex = s.ActivePromptId == "default_single_line" ? 1 : 0;
+            _segFormat.SelectedIndex = s.ActivePromptId == "default_single_line" ? 1 : (s.ActivePromptId == SettingsService.CustomPromptId ? 2 : 0);
+            _txtCustomPrompt.Text = s.CustomPromptText ?? "";
+            _txtCustomPrompt.Enabled = _segFormat.SelectedIndex == 2;
 
             _chkAutoClipboard.Checked = s.AutoCopyToClipboard;
             _chkAutoStart.Checked = AutoStartService.IsAutoStartEnabled();
@@ -679,18 +719,33 @@ namespace VoxIA.UI
             s.WhisperModel = "whisper-large-v3";
             s.CorrectionModel = "openai/gpt-oss-120b";
 
+            string customText = (_txtCustomPrompt.Text ?? "").Trim();
+            if (_segFormat.SelectedIndex == 2 && customText.Length == 0)
+            {
+                MessageBox.Show("Escreva o seu prompt no modo Personalizado (ou escolha Parágrafos ou Linha única).", "VoxIA", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            s.PromptProfiles = SettingsService.GetDefaultProfiles();
+            s.CustomPromptText = customText;
+            if (customText.Length > 0)
+            {
+                s.PromptProfiles.Add(new PromptProfile(SettingsService.CustomPromptId, "Personalizado", customText));
+            }
             if (_segFormat.SelectedIndex == 1)
             {
                 s.ActivePromptId = "default_single_line";
                 s.SelectedPromptPreset = "Transcrever em Linha Única";
+            }
+            else if (_segFormat.SelectedIndex == 2)
+            {
+                s.ActivePromptId = SettingsService.CustomPromptId;
+                s.SelectedPromptPreset = "Personalizado";
             }
             else
             {
                 s.ActivePromptId = "default_paragraphs";
                 s.SelectedPromptPreset = "Transcrever em Parágrafos";
             }
-            s.PromptProfiles = SettingsService.GetDefaultProfiles();
-            s.CustomPromptText = "";
 
             s.AutoCopyToClipboard = _chkAutoClipboard.Checked;
             s.AudioBeepFeedback = _chkAudioBeep.Checked;

@@ -98,6 +98,8 @@ class SettingsActivity : AppCompatActivity() {
         checkPermissions()
         showWelcomeIfNoKey()
         setupUpdateCard()
+        setupFormatCard()
+        setupHelpIcons(findViewById<View>(android.R.id.content))
         if (intent?.getBooleanExtra(EXTRA_START_UPDATE, false) == true) checkForUpdate(manual = true, startRightAway = true)
     }
 
@@ -105,6 +107,86 @@ class SettingsActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         if (intent.getBooleanExtra(EXTRA_START_UPDATE, false)) checkForUpdate(manual = true, startRightAway = true)
+    }
+
+    // ---------- Formato do texto (Parágrafos / Linha única / Personalizado) ----------
+
+    private fun setupFormatCard() {
+        val promptManager = com.voxia.keyboard.data.PromptManager(this)
+        val toggle = findViewById<MaterialButtonToggleGroup>(R.id.toggleFormat)
+        val box = findViewById<View>(R.id.customPromptBox)
+        val etCustom = findViewById<TextInputEditText>(R.id.etCustomPrompt)
+        etCustom.setText(promptManager.getCustomPromptText())
+
+        val active = promptManager.getActivePromptId()
+        toggle.check(when (active) {
+            "default_single_line" -> R.id.btnFormatSingleLine
+            com.voxia.keyboard.data.PromptManager.CUSTOM_ID -> R.id.btnFormatCustom
+            else -> R.id.btnFormatParagraphs
+        })
+        box.visibility = if (active == com.voxia.keyboard.data.PromptManager.CUSTOM_ID) View.VISIBLE else View.GONE
+
+        toggle.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            when (checkedId) {
+                R.id.btnFormatParagraphs -> { promptManager.setActivePromptId("default_paragraphs"); box.visibility = View.GONE }
+                R.id.btnFormatSingleLine -> { promptManager.setActivePromptId("default_single_line"); box.visibility = View.GONE }
+                R.id.btnFormatCustom -> {
+                    box.visibility = View.VISIBLE
+                    if (promptManager.getCustomPromptText().isNotBlank()) {
+                        promptManager.setActivePromptId(com.voxia.keyboard.data.PromptManager.CUSTOM_ID)
+                    } else {
+                        etCustom.setText(CUSTOM_PROMPT_EXAMPLE)
+                        etCustom.requestFocus()
+                    }
+                }
+            }
+        }
+        findViewById<MaterialButton>(R.id.btnSaveCustomPrompt).setOnClickListener {
+            val text = etCustom.text?.toString()?.trim().orEmpty()
+            if (text.isEmpty()) {
+                toast("Escreva o seu prompt antes de salvar.")
+                return@setOnClickListener
+            }
+            promptManager.saveCustomPrompt(text) // também deixa o Personalizado ativo
+            toast("Prompt salvo. Os próximos ditados usam o modo Personalizado.")
+        }
+    }
+
+    /**
+     * Explicações longas (marcadas com android:tag="help" no layout) ficam escondidas: o título acima
+     * ganha um "ⓘ" e, ao tocar, a explicação abre numa janelinha. A tela fica limpa para quem começa.
+     */
+    private fun setupHelpIcons(view: View) {
+        if (view is android.view.ViewGroup) {
+            for (i in 0 until view.childCount) setupHelpIcons(view.getChildAt(i))
+            return
+        }
+        if (view !is TextView || view.tag != "help") return
+        val helpText = view.text?.toString().orEmpty()
+        if (helpText.isBlank()) return
+        val parent = view.parent as? android.view.ViewGroup ?: return
+        val index = parent.indexOfChild(view)
+        val label = (if (index > 0) parent.getChildAt(index - 1) else null) as? TextView
+        val show = { title: String ->
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(title)
+                .setMessage(helpText)
+                .setPositiveButton("Entendi", null)
+                .show()
+            Unit
+        }
+        if (label != null && label !is android.widget.Button) {
+            view.visibility = View.GONE
+            val title = label.text.toString()
+            label.text = "$title  ⓘ"
+            label.setOnClickListener { show(title) }
+        } else {
+            // Sem título logo acima: a própria explicação vira um link curto
+            view.text = "ⓘ Saiba mais"
+            view.setTextColor(ContextCompat.getColor(this, R.color.m3_primary))
+            view.setOnClickListener { show("Como funciona") }
+        }
     }
 
     // ---------- Atualização com um clique ----------
@@ -560,6 +642,8 @@ class SettingsActivity : AppCompatActivity() {
     companion object {
         /** Aberto pela notificação "versão nova": já começa a atualizar. */
         const val EXTRA_START_UPDATE = "start_update"
+        private const val CUSTOM_PROMPT_EXAMPLE =
+            "Corrija ortografia e pontuação e organize o texto em parágrafos por assunto, como um texto bem escrito em português. Mantenha todas as informações ditadas."
         private const val GROQ_KEYS_URL = "https://console.groq.com/keys"
         private const val PREF_WELCOME_SHOWN = "welcome_groq_shown"
     }

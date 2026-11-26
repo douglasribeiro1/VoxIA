@@ -74,6 +74,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         trayMenu = NSMenu()
+        let build = UpdateService.currentBuild
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let versionItem = NSMenuItem(title: build > 0 ? "VoxIA \(version) (build \(build))" : "VoxIA (compilado à mão)", action: nil, keyEquivalent: "")
+        versionItem.isEnabled = false
+        trayMenu.addItem(versionItem)
+        trayMenu.addItem(NSMenuItem.separator())
         recordItem = NSMenuItem(title: "🎙 Iniciar ditado (Option + Espaço)", action: #selector(toggleDictation), keyEquivalent: "")
         trayMenu.addItem(recordItem)
         trayMenu.addItem(NSMenuItem(title: "📖 Dicionário de palavras (Option + Shift + W)", action: #selector(openDictionary), keyEquivalent: ""))
@@ -284,7 +290,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Cole sua chave da Groq (começa com gsk_). Não tem? É grátis e leva 2 minutos: clique em "Criar chave na Groq", entre com sua conta Google, clique em "Create API Key" e copie a chave (ela só aparece uma vez).
         """
 
-        let stack = NSStackView(frame: NSRect(x: 0, y: 0, width: 340, height: 104))
+        let stack = NSStackView(frame: NSRect(x: 0, y: 0, width: 340, height: 230))
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 8
@@ -297,7 +303,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updates.state = SettingsService.current.autoCheckUpdates ? .on : .off
         let copy = NSButton(checkboxWithTitle: "Deixar o texto também na área de transferência", target: nil, action: nil)
         copy.state = SettingsService.current.autoCopyToClipboard ? .on : .off
-        for v in [keyField, boost, updates, copy] { stack.addArrangedSubview(v) }
+        let formatLabel = NSTextField(labelWithString: "Formato do texto:")
+        let format = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 200, height: 26), pullsDown: false)
+        format.addItems(withTitles: ["Parágrafos", "Linha única", "Personalizado"])
+        format.selectItem(withTitle: SettingsService.current.selectedPromptPreset)
+        let customField = NSTextField(frame: NSRect(x: 0, y: 0, width: 340, height: 60))
+        customField.placeholderString = "Personalizado: escreva como a IA deve corrigir e formatar o texto"
+        customField.stringValue = SettingsService.current.customPromptText
+        customField.toolTip = "Usado só no formato Personalizado. A IA continua proibida de responder perguntas ou inventar conteúdo."
+        for v in [keyField, boost, updates, copy, formatLabel, format, customField] { stack.addArrangedSubview(v) }
+        customField.widthAnchor.constraint(equalToConstant: 340).isActive = true
+        customField.heightAnchor.constraint(equalToConstant: 60).isActive = true
         keyField.widthAnchor.constraint(equalToConstant: 340).isActive = true
 
         alert.accessoryView = stack
@@ -311,6 +327,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             SettingsService.current.boostMicrophoneDuringDictation = boost.state == .on
             SettingsService.current.autoCheckUpdates = updates.state == .on
             SettingsService.current.autoCopyToClipboard = copy.state == .on
+            let custom = customField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            var preset = format.titleOfSelectedItem ?? "Parágrafos"
+            if preset == "Personalizado" && custom.isEmpty { preset = "Parágrafos" }
+            SettingsService.current.selectedPromptPreset = preset
+            SettingsService.current.customPromptText = custom
             SettingsService.save()
         } else if response == .alertThirdButtonReturn, let url = URL(string: "https://console.groq.com/keys") {
             NSWorkspace.shared.open(url)

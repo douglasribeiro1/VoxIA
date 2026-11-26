@@ -189,6 +189,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    android:tag="help"
                     android:text="Não tem chave? É grátis e leva 2 minutos:\n1. Toque em &quot;Criar minha chave na Groq&quot; e entre com sua conta Google (ou e-mail).\n2. Toque em &quot;Create API Key&quot;, dê um nome (ex.: VoxIA) e copie a chave (começa com gsk_). Ela só aparece uma vez.\n3. Volte aqui, cole a chave no campo acima e toque em Salvar chave." />
 
                 <com.google.android.material.button.MaterialButton
@@ -334,6 +335,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:tag="help"
                     android:text="Aparece ao lado de qualquer teclado quando você toca numa caixa de texto. Toque para gravar e de novo para parar; o X ao lado cancela; arraste para mudar de lugar; toque longo abre o VoxIA. Com uma palavra selecionada no texto, o toque longo cadastra essa palavra no dicionário." />
 
                 <com.google.android.material.button.MaterialButton
@@ -349,6 +351,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:tag="help"
                     android:text="Atalho rápido: puxe a barra do topo da tela, toque no lápis (editar) e arraste o bloco &quot;Balão VoxIA&quot; para cima. Se o balão parar (por exemplo, depois da economia de energia), um toque nele leva direto à chave para religar. Com o balão ligado, o toque mostra ou oculta o balão." />
 
                 <com.google.android.material.button.MaterialButton
@@ -531,7 +534,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Até 400 caracteres já escritos antes do cursor vão junto com o áudio para a Groq, para acertar nomes e termos. No prontuário, isso inclui dados do paciente. Desligado (padrão), só o áudio é enviado. Campos de senha nunca são lidos." />
+                            android:tag="help"
+                    android:text="Até 400 caracteres já escritos antes do cursor vão junto com o áudio para a Groq, para acertar nomes e termos. Pode incluir dados pessoais que já estão no campo. Desligado (padrão), só o áudio é enviado. Campos de senha nunca são lidos." />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
@@ -566,7 +570,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Quando você corrigir à mão uma palavra que o balão acabou de escrever, aparece uma notificação para ensiná-la ao dicionário. Nada é enviado para a internet." />
+                            android:tag="help"
+                    android:text="Quando você corrigir à mão uma palavra que o balão acabou de escrever, aparece uma notificação para ensiná-la ao dicionário. Nada é enviado para a internet." />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
@@ -610,6 +615,96 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:contentDescription="@string/setting_auto_send" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Formato do texto -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/VoxIA.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/VoxIA.SectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Formato do texto" />
+
+                <TextView
+                    android:tag="help"
+                    style="@style/VoxIA.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parágrafos: a IA organiza o texto em parágrafos por assunto. Linha única: tudo numa linha só, bom para chats. Personalizado: você escreve como a IA deve corrigir e formatar o texto (ex.: &quot;use tópicos&quot;, &quot;escreva de forma formal&quot;). A IA continua proibida de responder perguntas ou inventar conteúdo." />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/toggleFormat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFormatParagraphs"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Parágrafos" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFormatSingleLine"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Linha única" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFormatCustom"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Personal." />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <LinearLayout
+                    android:id="@+id/customPromptBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Seu prompt">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCustomPrompt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:minLines="3" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveCustomPrompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Salvar prompt" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -738,7 +833,8 @@
                             style="@style/VoxIA.Body"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Corrige palavras que o áudio erra (ex.: Sara → Sarah). Atalho: selecione a palavra no texto e toque no livro do teclado ou segure o balão." />
+                            android:tag="help"
+                    android:text="Corrige palavras que o áudio erra (ex.: Sara → Sarah). Atalho: selecione a palavra no texto e toque no livro do teclado ou segure o balão." />
                     </LinearLayout>
                 </LinearLayout>
 
