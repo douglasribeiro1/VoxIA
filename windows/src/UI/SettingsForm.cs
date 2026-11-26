@@ -52,7 +52,7 @@ namespace VoxIA.UI
         private Button _btnCancel;
 
         // Navegação lateral (substitui as abas)
-        private readonly List<Button> _navButtons = new List<Button>();
+        private readonly List<Control> _navButtons = new List<Control>();
         private readonly List<Panel> _sections = new List<Panel>();
         private int _selectedSection = -1;
 
@@ -74,121 +74,160 @@ namespace VoxIA.UI
             LoadDictionaryList();
         }
 
+        // Índices das páginas da janela principal
+        public const int PageHome = 0;
+        public const int PageHistory = 1;
+        public const int PageDictionary = 2;
+        public const int PagePending = 3;
+        public const int PageSettings = 4;
+        public const int PageShortcuts = 5;
+
+        private Panel _footer;
+        private HomePage _home;
+
         private void InitializeComponent()
         {
-            // A janela nunca passa da área útil da tela, para o rodapé (Salvar / Cancelar) sempre aparecer
+            // Janela principal: abre com o tamanho do protótipo (ou menor, se a tela não couber) e pode ser maximizada
             Rectangle workArea = Screen.FromPoint(Cursor.Position).WorkingArea;
-            int clientHeight = Math.Min(FormHeight, Math.Max(440, workArea.Height - 80));
-            Theme.ApplyForm(this, "Configurações — VoxIA", new Size(FormWidth, clientHeight));
+            int clientWidth = Math.Min(1240, Math.Max(1000, workArea.Width - 60));
+            int clientHeight = Math.Min(780, Math.Max(560, workArea.Height - 60));
+            Theme.ApplyForm(this, "VoxIA", new Size(clientWidth, clientHeight));
+            Theme.MakeResizable(this, new Size(1000, 600));
 
             Panel content = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
             Panel sidebar = BuildSidebar();
-            Panel footer = Theme.CreateFooter();
+            _footer = Theme.CreateFooter();
 
-            AddSection(sidebar, content, "Configurações", BuildSettingsSection());
-            AddSection(sidebar, content, "Atalhos", BuildShortcutsSection());
-            AddSection(sidebar, content, "Vocabulário", BuildDictionarySection());
+            _home = new HomePage();
+            _home.NavigateTo = (i) => SelectTab(i);
+            AddSection(sidebar, content, "Início", NavIcons.Home, _home);
+            AddSection(sidebar, content, "Histórico", NavIcons.History, EmbedForm(new HistoryForm()));
+            AddSection(sidebar, content, "Dicionário", NavIcons.Book, BuildDictionarySection());
+            AddSection(sidebar, content, "Áudios pendentes", NavIcons.Inbox, EmbedForm(new PendingAudiosForm()));
+            AddSection(sidebar, content, "Configurações", NavIcons.Sliders, BuildSettingsSection());
+            AddSection(sidebar, content, "Atalhos", NavIcons.Keyboard, BuildShortcutsSection());
 
             // FORM BUTTONS
-            _btnCancel = new Button { Text = "Cancelar", Size = new Size(120, 38), DialogResult = DialogResult.Cancel };
+            _btnCancel = new Button { Text = "Cancelar", Size = new Size(120, 38) };
             Theme.StyleSecondary(_btnCancel);
             _btnCancel.Font = Theme.BodyBold;
-            _btnCancel.FlatAppearance.BorderColor = Color.FromArgb(84, 90, 104);
-            _btnSave = new Button { Text = "Salvar alterações", Size = new Size(170, 38), DialogResult = DialogResult.OK };
+            _btnSave = new Button { Text = "Salvar alterações", Size = new Size(170, 38) };
             Theme.StylePrimary(_btnSave);
 
             _btnSave.Click += BtnSave_Click;
-            // A janela é aberta com Show() (não modal): o botão precisa fechar por conta própria
-            _btnCancel.Click += (s, e) => this.Close();
+            // Cancelar desfaz as mudanças não salvas e volta ao Início
+            _btnCancel.Click += (s, e) => { LoadSettings(); SelectTab(PageHome); };
 
-            // Botões à direita do rodapé: posição calculada pela largura real do rodapé (sem Anchor,
-            // que empurrava os botões para fora da tela quando o rodapé ainda tinha a largura padrão)
-            footer.Height = 58;
-            footer.Width = this.ClientSize.Width;
+            _footer.Height = 58;
+            _footer.Width = this.ClientSize.Width;
             Action placeButtons = () =>
             {
-                _btnCancel.Location = new Point(footer.ClientSize.Width - _btnCancel.Width - 24, 10);
+                _btnCancel.Location = new Point(_footer.ClientSize.Width - _btnCancel.Width - 24, 10);
                 _btnSave.Location = new Point(_btnCancel.Left - _btnSave.Width - 12, 10);
             };
-            footer.Resize += (s, e) => placeButtons();
+            _footer.Resize += (s, e) => placeButtons();
             placeButtons();
-            footer.Controls.Add(_btnSave);
-            footer.Controls.Add(_btnCancel);
+            _footer.Controls.Add(_btnSave);
+            _footer.Controls.Add(_btnCancel);
 
-            // Ordem de adição importa para o Dock: Fill por primeiro, o rodapé por último
+            // Ordem de adição importa para o Dock: Fill por primeiro
             this.Controls.Add(content);
+            this.Controls.Add(_footer);
             this.Controls.Add(sidebar);
-            this.Controls.Add(footer);
 
-            this.AcceptButton = _btnSave;
-            this.CancelButton = _btnCancel;
+            this.Activated += (s, e) => { if (_home != null) _home.RefreshData(); };
 
-            SelectTab(0);
+            SelectTab(PageHome);
         }
 
-        /// <summary>Barra lateral com a marca VoxIA, a navegação e o status do serviço.</summary>
+        /// <summary>Coloca uma janela existente (Histórico, Pendentes) dentro de uma página da janela principal.</summary>
+        private static Panel EmbedForm(Form form)
+        {
+            Panel host = new Panel { BackColor = Theme.Background };
+            int width = form.ClientSize.Width;
+            StretchWide(form, width);
+            form.TopLevel = false;
+            form.FormBorderStyle = FormBorderStyle.None;
+            form.Dock = DockStyle.Fill;
+            HideCloseButtons(form);
+            host.Controls.Add(form);
+            form.Visible = true;
+            return host;
+        }
+
+        /// <summary>Listas e caixas de texto largas acompanham a largura da janela quando ela cresce.</summary>
+        private static void StretchWide(Control parent, int width)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if ((c is ListView || c is TextBox) && c.Width > width / 2)
+                    c.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                if (c.HasChildren) StretchWide(c, width);
+            }
+        }
+
+        private static void HideCloseButtons(Control parent)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if (c is Button && c.Text == "Fechar") c.Visible = false;
+                if (c.HasChildren) HideCloseButtons(c);
+            }
+        }
+
+        /// <summary>Barra lateral escura com a marca, a navegação e o estado do serviço.</summary>
         private Panel BuildSidebar()
         {
-            Panel sidebar = new Panel { Dock = DockStyle.Left, Width = SidebarWidth, BackColor = Theme.Surface };
+            Panel sidebar = new Panel { Dock = DockStyle.Left, Width = 232, BackColor = Theme.Sidebar };
             sidebar.Paint += (s, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-                // Barras do logotipo
-                int[] heights = { 8, 16, 24, 12, 18 };
-                using (SolidBrush bars = new SolidBrush(Theme.Accent))
+                e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+                using (Font brand = new Font(Theme.FontFamily, 17F, FontStyle.Bold))
                 {
-                    for (int i = 0; i < heights.Length; i++)
-                        e.Graphics.FillRectangle(bars, 24 + i * 6, 36 - heights[i] / 2, 3, heights[i]);
+                    TextRenderer.DrawText(e.Graphics, "VoxIA", brand, new Point(22, 22), Color.White);
+                    int w = TextRenderer.MeasureText("VoxIA", brand).Width;
+                    TextRenderer.DrawText(e.Graphics, "ditado por voz", Theme.Small, new Point(22 + w, 34), Theme.SidebarMuted);
                 }
-
-                using (SolidBrush text = new SolidBrush(Theme.Text))
-                    e.Graphics.DrawString("VoxIA", Theme.HeaderTitle, text, 60, 20);
-
-                using (Pen p = new Pen(Theme.Border))
-                    e.Graphics.DrawLine(p, sidebar.Width - 1, 0, sidebar.Width - 1, sidebar.Height);
             };
 
-            Panel status = new Panel { Dock = DockStyle.Bottom, Height = 48, BackColor = Color.Transparent };
-            status.Paint += (s, e) =>
+            Panel status = new Panel { Dock = DockStyle.Bottom, Height = 104, BackColor = Theme.Sidebar, Padding = new Padding(14, 0, 14, 18) };
+            Theme.RoundPanel card = new Theme.RoundPanel { Dock = DockStyle.Fill, Radius = 12, Fill = Theme.SidebarCard, Stroke = Color.Empty, BackColor = Theme.SidebarCard };
+            card.Paint += (s, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (SolidBrush dot = new SolidBrush(Theme.Success))
-                    e.Graphics.FillEllipse(dot, 24, 20, 7, 7);
-                TextRenderer.DrawText(e.Graphics, "Groq · Whisper + GPT-OSS", Theme.Small, new Point(38, 16), Theme.TextMuted);
+                using (SolidBrush dot = new SolidBrush(Theme.LiveGreen))
+                    e.Graphics.FillEllipse(dot, 14, 17, 8, 8);
+                TextRenderer.DrawText(e.Graphics, "Pronto para ditar", Theme.BodyBold, new Point(28, 12), Color.FromArgb(233, 231, 224));
+                TextRenderer.DrawText(e.Graphics, "Rodando na bandeja, perto do relógio. Pode fechar esta janela.", Theme.Small,
+                    new Rectangle(14, 36, card.Width - 28, card.Height - 40), Theme.SidebarMuted, TextFormatFlags.WordBreak);
             };
+            status.Controls.Add(card);
             sidebar.Controls.Add(status);
 
             return sidebar;
         }
 
-        private void AddSection(Panel sidebar, Panel content, string title, Panel section)
+        private void AddSection(Panel sidebar, Panel content, string title, string iconPath, Panel section)
         {
             int index = _sections.Count;
 
-            Button nav = new Button
+            NavButton nav = new NavButton(title, iconPath)
             {
-                Text = "   " + title,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Location = new Point(12, 84 + index * 42),
-                Size = new Size(SidebarWidth - 24, 36),
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font(Theme.FontFamily, 9.75F),
-                Cursor = Cursors.Hand,
-                TabStop = false,
-                UseVisualStyleBackColor = false
+                Location = new Point(14, 78 + index * 48),
+                Size = new Size(204, 44)
             };
-            nav.FlatAppearance.BorderSize = 0;
-            nav.FlatAppearance.MouseOverBackColor = Theme.SurfaceAlt;
-            nav.FlatAppearance.MouseDownBackColor = Theme.SurfaceAlt;
             nav.Click += (s, e) => SelectTab(index);
 
-            // Se a janela for baixa demais para a página, o conteúdo rola em vez de ser cortado
-            int bottom = 0;
-            foreach (Control c in section.Controls)
-                bottom = Math.Max(bottom, c.Bottom);
-            section.AutoScroll = true;
-            section.AutoScrollMinSize = new Size(0, bottom + 24);
+            if (!(section is HomePage))
+            {
+                // Se a janela for baixa demais para a página, o conteúdo rola em vez de ser cortado
+                int bottom = 0;
+                foreach (Control c in section.Controls)
+                    bottom = Math.Max(bottom, c.Bottom);
+                section.AutoScroll = true;
+                section.AutoScrollMinSize = new Size(0, bottom + 24);
+            }
 
             section.Dock = DockStyle.Fill;
             section.Visible = false;
@@ -575,11 +614,11 @@ namespace VoxIA.UI
             {
                 bool active = (i == index);
                 _sections[i].Visible = active;
-                _navButtons[i].BackColor = active ? Theme.SurfaceAlt : Theme.Surface;
-                _navButtons[i].ForeColor = active ? Theme.Text : Theme.TextMuted;
-                _navButtons[i].Font = new Font(Theme.FontFamily, 9.75F, active ? FontStyle.Bold : FontStyle.Regular);
-                _navButtons[i].Invalidate();
+                ((NavButton)_navButtons[i]).Active = active;
             }
+            // Salvar / Cancelar só fazem sentido na página de Configurações
+            if (_footer != null) _footer.Visible = (index == PageSettings);
+            if (index == PageHome && _home != null) _home.RefreshData();
         }
 
         private void LoadSettings()
@@ -824,7 +863,7 @@ namespace VoxIA.UI
             SecureCredentialService.SaveApiKey(apiKey);
             SettingsService.Save();
             HistoryRepository.ApplyRetention();
-            this.Close();
+            SelectTab(PageHome);
         }
     }
 }

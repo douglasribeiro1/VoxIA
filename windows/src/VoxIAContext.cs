@@ -130,6 +130,7 @@ namespace VoxIA
             var menuTitle = new ToolStripLabel("VoxIA  ·  Ditado por voz") { ForeColor = Theme.Navy, Font = new Font(_trayMenu.Font, FontStyle.Bold), Margin = new Padding(0, 4, 0, 4) };
             _trayMenu.Items.Add(menuTitle);
             _trayMenu.Items.Add(new ToolStripSeparator());
+            _trayMenu.Items.Add(new ToolStripMenuItem("Abrir o VoxIA", null, (s, e) => OpenMainWindow(SettingsForm.PageHome)));
             _trayMenu.Items.Add(_menuRecord);
             _trayMenu.Items.Add(_menuPrompts);
             _trayMenu.Items.Add(_menuDict);
@@ -183,7 +184,7 @@ namespace VoxIA
                     OpenSettingsForm();
                 }
             };
-            _notifyIcon.DoubleClick += (s, e) => OpenSettingsForm();
+            _notifyIcon.DoubleClick += (s, e) => OpenMainWindow(SettingsForm.PageHome);
             UpdatePendingBadge();
             UpdatePromptsMenu();
             UpdateAutoStartMenu();
@@ -624,11 +625,17 @@ namespace VoxIA
 
         private void OpenSettingsForm()
         {
+            OpenMainWindow(SettingsForm.PageSettings);
+        }
+
+        /// <summary>Abre (ou traz para a frente) a janela principal, já na página pedida.</summary>
+        private void OpenMainWindow(int page)
+        {
             if (_activeSettingsForm != null && !_activeSettingsForm.IsDisposed)
             {
                 if (_activeSettingsForm.WindowState == FormWindowState.Minimized)
                     _activeSettingsForm.WindowState = FormWindowState.Normal;
-                _activeSettingsForm.SelectTab(0);
+                _activeSettingsForm.SelectTab(page);
                 _activeSettingsForm.BringToFront();
                 _activeSettingsForm.Activate();
                 return;
@@ -640,8 +647,9 @@ namespace VoxIA
                 _activeSettingsForm = null;
                 UpdatePromptsMenu();
                 UpdateAutoStartMenu();
+                UpdatePendingBadge();
             };
-            _activeSettingsForm.SelectTab(0);
+            _activeSettingsForm.SelectTab(page);
             _activeSettingsForm.Show();
             _activeSettingsForm.BringToFront();
             _activeSettingsForm.Activate();
@@ -649,19 +657,12 @@ namespace VoxIA
 
         private void OpenPendingForm()
         {
-            using (var form = new PendingAudiosForm())
-            {
-                form.ShowDialog();
-                UpdatePendingBadge();
-            }
+            OpenMainWindow(SettingsForm.PagePending);
         }
 
         private void OpenHistoryForm()
         {
-            using (var form = new HistoryForm())
-            {
-                form.ShowDialog();
-            }
+            OpenMainWindow(SettingsForm.PageHistory);
         }
 
         private void OnMenuExitClick(object sender, EventArgs e)

@@ -384,7 +384,7 @@ namespace VoxIA.UI
                 float yBottom = centerY + halfH;
 
                 // Barra laranja arredondada, na cor do logotipo
-                using (Pen barPen = new Pen(Theme.Accent, 3f))
+                using (Pen barPen = new Pen(Theme.SidebarIconActive, 3f))
                 {
                     barPen.StartCap = LineCap.Round;
                     barPen.EndCap = LineCap.Round;

@@ -11,40 +11,55 @@ namespace VoxIA.UI
     /// </summary>
     public static class Theme
     {
-        // Paleta
-        public static readonly Color Background = Color.FromArgb(14, 15, 18);
-        public static readonly Color Surface = Color.FromArgb(22, 24, 29);
-        public static readonly Color SurfaceAlt = Color.FromArgb(30, 33, 39);
-        public static readonly Color Border = Color.FromArgb(38, 42, 51);
-        public static readonly Color Text = Color.FromArgb(242, 239, 233);
-        public static readonly Color TextMuted = Color.FromArgb(138, 143, 152);
-        public static readonly Color Accent = Color.FromArgb(255, 90, 54);
-        public static readonly Color AccentHover = Color.FromArgb(232, 74, 39);
-        public static readonly Color AccentSoft = Color.FromArgb(42, 23, 19);
-        public static readonly Color Cream = Color.FromArgb(242, 237, 228);
-        public static readonly Color OnAccent = Color.FromArgb(20, 16, 14);
-        public static readonly Color Danger = Color.FromArgb(248, 113, 113);
-        public static readonly Color DangerHover = Color.FromArgb(239, 68, 68);
-        public static readonly Color Success = Color.FromArgb(52, 211, 153);
-        public static readonly Color Warning = Color.FromArgb(251, 191, 36);
+        // Paleta (claro: papel quente + índigo, igual ao protótipo do Claude Design)
+        public static readonly Color Background = Color.FromArgb(244, 242, 236);   // #F4F2EC
+        public static readonly Color Surface = Color.FromArgb(255, 255, 255);
+        public static readonly Color SurfaceAlt = Color.FromArgb(241, 239, 232);   // #F1EFE8
+        public static readonly Color Border = Color.FromArgb(228, 225, 216);       // #E4E1D8
+        public static readonly Color BorderStrong = Color.FromArgb(213, 209, 198); // #D5D1C6
+        public static readonly Color Divider = Color.FromArgb(239, 237, 230);      // #EFEDE6
+        public static readonly Color Text = Color.FromArgb(22, 24, 29);            // #16181D
+        public static readonly Color TextSecondary = Color.FromArgb(58, 63, 74);   // #3A3F4A
+        public static readonly Color TextMuted = Color.FromArgb(94, 99, 110);      // #5E636E
+        public static readonly Color Accent = Color.FromArgb(67, 56, 202);         // #4338CA
+        public static readonly Color AccentHover = Color.FromArgb(55, 48, 163);    // #3730A3
+        public static readonly Color AccentSoft = Color.FromArgb(236, 234, 253);   // #ECEAFD
+        public static readonly Color Cream = Color.FromArgb(255, 255, 255);
+        public static readonly Color OnAccent = Color.FromArgb(255, 255, 255);
+        public static readonly Color Danger = Color.FromArgb(217, 45, 58);         // #D92D3A
+        public static readonly Color DangerHover = Color.FromArgb(185, 30, 44);
+        public static readonly Color DangerSoft = Color.FromArgb(251, 227, 229);
+        public static readonly Color Success = Color.FromArgb(30, 123, 79);        // #1E7B4F
+        public static readonly Color SuccessSoft = Color.FromArgb(227, 244, 234);  // #E3F4EA
+        public static readonly Color Warning = Color.FromArgb(180, 110, 0);
 
-        // Títulos em destaque (antes azul-marinho; agora o texto claro do tema)
+        // Barra lateral escura
+        public static readonly Color Sidebar = Color.FromArgb(22, 24, 29);         // #16181D
+        public static readonly Color SidebarActive = Color.FromArgb(42, 45, 54);   // #2A2D36
+        public static readonly Color SidebarCard = Color.FromArgb(35, 38, 46);     // #23262E
+        public static readonly Color SidebarText = Color.FromArgb(201, 203, 210);  // #C9CBD2
+        public static readonly Color SidebarMuted = Color.FromArgb(163, 167, 177); // #A3A7B1
+        public static readonly Color SidebarIcon = Color.FromArgb(139, 143, 154);  // #8B8F9A
+        public static readonly Color SidebarIconActive = Color.FromArgb(165, 180, 252); // #A5B4FC
+        public static readonly Color LiveGreen = Color.FromArgb(74, 222, 128);     // #4ADE80
+
+        // Títulos em destaque
         public static readonly Color Navy = Text;
         public static readonly Color NavyLight = TextMuted;
 
         // Tipografia
         public const string FontFamily = "Segoe UI";
-        public const string SerifFamily = "Georgia";
+        public const string SerifFamily = "Segoe UI Semibold";
         public static readonly Font Body = new Font(FontFamily, 9F, FontStyle.Regular);
         public static readonly Font BodyBold = new Font(FontFamily, 9F, FontStyle.Bold);
         public static readonly Font Small = new Font(FontFamily, 8.25F, FontStyle.Regular);
-        public static readonly Font Eyebrow = new Font(FontFamily, 7.5F, FontStyle.Regular);
+        public static readonly Font Eyebrow = new Font(FontFamily, 7.5F, FontStyle.Bold);
         public static readonly Font Heading = new Font(FontFamily, 13F, FontStyle.Bold);
-        public static readonly Font SectionTitle = new Font(SerifFamily, 20F, FontStyle.Italic);
-        public static readonly Font CardTitle = new Font(FontFamily, 9.75F, FontStyle.Bold);
-        public static readonly Font HeaderTitle = new Font(SerifFamily, 15F, FontStyle.Italic);
+        public static readonly Font SectionTitle = new Font(FontFamily, 20F, FontStyle.Bold);
+        public static readonly Font CardTitle = new Font(FontFamily, 10.5F, FontStyle.Bold);
+        public static readonly Font HeaderTitle = new Font(FontFamily, 15F, FontStyle.Bold);
         public static readonly Font HeaderSubtitle = new Font(FontFamily, 8.5F, FontStyle.Regular);
-        public static readonly Font StatValue = new Font(SerifFamily, 18F, FontStyle.Italic);
+        public static readonly Font StatValue = new Font(FontFamily, 18F, FontStyle.Bold);
 
         public const int HeaderHeight = 64;
         public const int FooterHeight = 58;
@@ -61,6 +76,45 @@ namespace VoxIA.UI
             form.ForeColor = Text;
             form.Font = Body;
             TrySetAppIcon(form);
+        }
+
+        /// <summary>Janela redimensionável e maximizável (janela principal).</summary>
+        public static void MakeResizable(Form form, Size minimum)
+        {
+            form.FormBorderStyle = FormBorderStyle.Sizable;
+            form.MaximizeBox = true;
+            form.MinimizeBox = true;
+            form.MinimumSize = minimum;
+        }
+
+        /// <summary>Painel com cantos arredondados que acompanha o tamanho (para layouts com Dock).</summary>
+        public class RoundPanel : Panel
+        {
+            public int Radius = 18;
+            public Color Fill = Surface;
+            public Color Stroke = Border;
+
+            public RoundPanel()
+            {
+                DoubleBuffered = true;
+                SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+                BackColor = Surface;
+            }
+
+            protected override void OnPaintBackground(PaintEventArgs e)
+            {
+                Color outer = Parent != null ? Parent.BackColor : Background;
+                e.Graphics.Clear(outer);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (GraphicsPath path = RoundedRect(new RectangleF(0.5f, 0.5f, Width - 1.5f, Height - 1.5f), Radius))
+                {
+                    using (SolidBrush b = new SolidBrush(Fill))
+                        e.Graphics.FillPath(b, path);
+                    if (Stroke != Color.Empty && Stroke.A > 0)
+                        using (Pen p = new Pen(Stroke))
+                            e.Graphics.DrawPath(p, path);
+                }
+            }
         }
 
         public static void TrySetAppIcon(Form form)
@@ -247,12 +301,12 @@ namespace VoxIA.UI
 
         public static void StyleSecondary(Button b)
         {
-            StyleFlat(b, SurfaceAlt, Color.FromArgb(40, 44, 52), Text, Border);
+            StyleFlat(b, Surface, SurfaceAlt, Text, BorderStrong);
         }
 
         public static void StyleDanger(Button b)
         {
-            StyleFlat(b, SurfaceAlt, AccentSoft, Danger, Color.FromArgb(90, 52, 52));
+            StyleFlat(b, Surface, DangerSoft, Danger, Color.FromArgb(240, 190, 195));
         }
 
         public static void StyleDangerSolid(Button b)
