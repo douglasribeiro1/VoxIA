@@ -34,8 +34,8 @@ namespace VoxIA.UI
             g.Clear(back);
 
             Rectangle track = new Rectangle(0, 0, Width - 1, Height - 1);
-            Color trackColor = Checked ? Theme.Accent : Color.FromArgb(44, 48, 57);
-            if (!Enabled) trackColor = Color.FromArgb(34, 37, 44);
+            Color trackColor = Checked ? Theme.Accent : Theme.BorderStrong;
+            if (!Enabled) trackColor = Theme.SurfaceAlt;
 
             using (GraphicsPath path = Theme.RoundedRect(track, track.Height / 2f))
             using (SolidBrush b = new SolidBrush(trackColor))
@@ -43,7 +43,7 @@ namespace VoxIA.UI
 
             int knob = Height - 8;
             int knobX = Checked ? Width - knob - 4 : 4;
-            Color knobColor = Checked ? Color.FromArgb(255, 250, 245) : Color.FromArgb(138, 143, 152);
+            Color knobColor = Checked ? Color.FromArgb(255, 250, 245) : Color.White;
             using (SolidBrush k = new SolidBrush(knobColor))
                 g.FillEllipse(k, knobX, 4, knob, knob);
         }

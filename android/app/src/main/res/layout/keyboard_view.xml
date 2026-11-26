@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -91,6 +92,7 @@
                 android:background="@drawable/bg_key"
                 android:contentDescription="@string/settings_title"
                 android:src="@drawable/ic_settings"
+                app:tint="@color/text_primary"
                 android:scaleType="centerInside" />
         </LinearLayout>
 
@@ -176,6 +178,7 @@
                 android:background="@drawable/bg_key"
                 android:contentDescription="Alternar Teclado"
                 android:src="@drawable/ic_globe"
+                app:tint="@color/text_primary"
                 android:scaleType="centerInside" />
 
             <!-- Pontuação Rápida -->
@@ -224,6 +227,7 @@
                 android:background="@drawable/bg_key"
                 android:contentDescription="Apagar"
                 android:src="@drawable/ic_backspace"
+                app:tint="@color/text_primary"
                 android:scaleType="centerInside" />
 
             <!-- Nova Linha / Enter -->
@@ -235,6 +239,7 @@
                 android:background="@drawable/bg_key"
                 android:contentDescription="Nova Linha"
                 android:src="@drawable/ic_enter"
+                app:tint="@color/text_primary"
                 android:scaleType="centerInside" />
 
             <!-- BOTÃO ENVIAR MENSAGEM DIRETO (SEND ACTION) -->

@@ -26,6 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var finishing = false
     private var pendingUpdate: UpdateService.UpdateInfo?
     private var updateTimer: Timer?
+    private var mainWindow: MainWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         SettingsService.load()
@@ -80,6 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         versionItem.isEnabled = false
         trayMenu.addItem(versionItem)
         trayMenu.addItem(NSMenuItem.separator())
+        trayMenu.addItem(NSMenuItem(title: "Abrir o VoxIA", action: #selector(openMainWindow), keyEquivalent: "o"))
         recordItem = NSMenuItem(title: "🎙 Iniciar ditado (Option + Espaço)", action: #selector(toggleDictation), keyEquivalent: "")
         trayMenu.addItem(recordItem)
         trayMenu.addItem(NSMenuItem(title: "📖 Dicionário de palavras (Option + Shift + W)", action: #selector(openDictionary), keyEquivalent: ""))
@@ -249,6 +251,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.addButton(withTitle: "Adicionar palavra")
         alert.addButton(withTitle: "Fechar")
         if alert.runModal() == .alertFirstButtonReturn { promptAddDictionaryEntry() }
+    }
+
+    // MARK: - Janela principal
+
+    @objc private func openMainWindow() {
+        if mainWindow == nil {
+            mainWindow = MainWindowController(actions: MainWindowActions(
+                openDictionaryAdd: { [weak self] in self?.promptAddDictionaryEntry() },
+                openPending: { [weak self] in self?.openPendingQueue() },
+                openSettings: { [weak self] in self?.openSettings() },
+                openShortcuts: { [weak self] in self?.showShortcutsGuide() },
+                checkUpdates: { [weak self] in self?.onUpdateMenu() }
+            ))
+        }
+        mainWindow?.present()
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag { openMainWindow() }
+        return true
     }
 
     // MARK: - Outras telas

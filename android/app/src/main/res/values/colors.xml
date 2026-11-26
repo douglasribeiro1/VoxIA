@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Paleta do VoxIA: tema escuro, acento laranja-avermelhado, texto creme -->
-    <color name="primary">#FF5A36</color>
-    <color name="primary_dark">#E84A27</color>
-    <color name="accent">#F2EDE4</color>
-    <color name="danger">#F87171</color>
-    <color name="background_dark">#0E0F12</color>
-    <color name="surface_dark">#16181D</color>
-    <color name="surface_dark_light">#262A33</color>
-    <color name="text_primary">#F2EFE9</color>
-    <color name="text_secondary">#8A8F98</color>
-    <color name="keyboard_bg">#16181D</color>
-    <color name="key_bg">#22252C</color>
-    <color name="key_pressed">#2F333C</color>
-    <color name="mic_idle">#FF5A36</color>
-    <color name="mic_recording">#FF5A36</color>
+    <!-- Paleta do VoxIA (protótipo do Claude Design): papel quente, índigo e barra escura -->
+    <color name="primary">#4338CA</color>
+    <color name="primary_dark">#3730A3</color>
+    <color name="accent">#ECEAFD</color>
+    <color name="danger">#D92D3A</color>
+    <color name="background_dark">#F4F2EC</color>
+    <color name="surface_dark">#FFFFFF</color>
+    <color name="surface_dark_light">#E4E1D8</color>
+    <color name="text_primary">#16181D</color>
+    <color name="text_secondary">#5E636E</color>
+    <color name="keyboard_bg">#F4F2EC</color>
+    <color name="key_bg">#FFFFFF</color>
+    <color name="key_pressed">#E9E7E0</color>
+    <color name="mic_idle">#4338CA</color>
+    <color name="mic_recording">#D92D3A</color>
 
-    <!-- Tela de configurações e janelinhas (Material 3) -->
-    <color name="m3_bg">#0E0F12</color>
-    <color name="m3_surface">#16181D</color>
-    <color name="m3_surface_high">#1E2127</color>
-    <color name="m3_outline">#262A33</color>
-    <color name="m3_primary">#FF5A36</color>
-    <color name="m3_on_primary">#14100E</color>
-    <color name="m3_primary_container">#3A1A14</color>
-    <color name="m3_on_primary_container">#FFD8CE</color>
-    <color name="m3_text">#F2EFE9</color>
-    <color name="m3_text_muted">#8A8F98</color>
-    <color name="m3_success">#34D399</color>
-    <color name="m3_warning">#FBBF24</color>
+    <!-- Tela principal e janelinhas (Material 3, tema claro) -->
+    <color name="m3_bg">#F4F2EC</color>
+    <color name="m3_surface">#FFFFFF</color>
+    <color name="m3_surface_high">#F1EFE8</color>
+    <color name="m3_outline">#E4E1D8</color>
+    <color name="m3_primary">#4338CA</color>
+    <color name="m3_on_primary">#FFFFFF</color>
+    <color name="m3_primary_container">#ECEAFD</color>
+    <color name="m3_on_primary_container">#1E1B5A</color>
+    <color name="m3_text">#16181D</color>
+    <color name="m3_text_muted">#5E636E</color>
+    <color name="m3_success">#1E7B4F</color>
+    <color name="m3_success_soft">#E3F4EA</color>
+    <color name="m3_warning">#B46E00</color>
+
+    <!-- Cartão escuro de destaque e barra de abas -->
+    <color name="hero_bg">#16181D</color>
+    <color name="hero_card">#23262E</color>
+    <color name="hero_text">#FFFFFF</color>
+    <color name="hero_text_soft">#C9CBD2</color>
+    <color name="hero_muted">#A3A7B1</color>
+    <color name="live_green">#4ADE80</color>
 </resources>

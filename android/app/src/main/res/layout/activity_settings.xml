@@ -1,48 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/m3_bg"
-    android:fillViewport="true">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="20dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="32dp">
-
-        <!-- Cabeçalho -->
+    <ScrollView
+            android:id="@+id/mainScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+        android:background="@color/m3_bg"
+        android:fillViewport="true">
+    
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:contentDescription="@null"
-                android:src="@mipmap/ic_launcher" />
-
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="32dp">
+    
+            <!-- Cabeçalho -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+    
                 <TextView
                     style="@style/VoxIA.Brand"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="VoxIA" />
-
+    
                 <TextView
                     android:id="@+id/tvAppVersion"
                     style="@style/VoxIA.Body"
@@ -50,862 +46,1085 @@
                     android:layout_height="wrap_content"
                     android:text="Ditado por voz com IA" />
             </LinearLayout>
-        </LinearLayout>
-
-        <!-- Título da página -->
-        <TextView
-            style="@style/VoxIA.Eyebrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:text="Preferências" />
-
-        <TextView
-            style="@style/VoxIA.Display"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Como o VoxIA escuta você." />
-
-        <!-- Situação -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvStatusKeyboard"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_status_pill"
-                android:gravity="center"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvStatusBubble"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_status_pill"
-                android:gravity="center"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvStatusKey"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_status_pill"
-                android:gravity="center"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Chave da Groq -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp">
-
+    
+            <!-- Destaque: estado e como ditar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_badge"
-                        android:contentDescription="@null"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_key"
-                        app:tint="@color/m3_primary" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.SectionTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chave da Groq" />
-
-                        <TextView
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Guardada criptografada neste aparelho" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:hint="@string/settings_groq_key_hint"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:endIconMode="password_toggle">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etGroqApiKey"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSaveGroqKey"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Salvar chave" />
-
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_hero"
+                android:orientation="vertical"
+                android:padding="20dp">
+    
                 <TextView
-                    style="@style/VoxIA.Body"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:tag="help"
-                    android:text="Não tem chave? É grátis e leva 2 minutos:\n1. Toque em &quot;Criar minha chave na Groq&quot; e entre com sua conta Google (ou e-mail).\n2. Toque em &quot;Create API Key&quot;, dê um nome (ex.: VoxIA) e copie a chave (começa com gsk_). Ela só aparece uma vez.\n3. Volte aqui, cole a chave no campo acima e toque em Salvar chave." />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnOpenGroq"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="match_parent"
+                    android:drawablePadding="8dp"
+                    android:text="●  Pronto para ditar"
+                    android:textColor="@color/hero_muted"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium" />
+    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="sans-serif"
+                    android:letterSpacing="-0.02"
+                    android:text="Dite em qualquer app."
+                    android:textColor="@color/hero_text"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+    
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Criar minha chave na Groq" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Teclado -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_badge"
-                        android:contentDescription="@null"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_keyboard"
-                        app:tint="@color/m3_primary" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.SectionTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Teclado VoxIA" />
-
-                        <TextView
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Para apps que não aceitam o balão, como chats de banco" />
-                    </LinearLayout>
-                </LinearLayout>
-
+                    android:text="Mensagens, e-mail, navegador, documentos: o texto já sai com pontuação e ortografia corrigidas."
+                    android:textColor="@color/hero_text_soft"
+                    android:textSize="14sp" />
+    
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnEnableKeyboard"
-                        style="@style/Widget.Material3.Button.TonalButton"
+    
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Ativar" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSelectKeyboard"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:background="@drawable/bg_hero_step"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+    
+                        <TextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/bg_step_number"
+                            android:gravity="center"
+                            android:text="1"
+                            android:textColor="@color/hero_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+    
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Toque num campo de texto"
+                            android:textColor="#E9E7E0"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:text="Trocar teclado" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Balão flutuante -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_badge"
-                        android:contentDescription="@null"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_bubble"
-                        app:tint="@color/m3_primary" />
-
+                        android:background="@drawable/bg_hero_step"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+    
+                        <TextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/bg_step_number"
+                            android:gravity="center"
+                            android:text="2"
+                            android:textColor="@color/hero_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+    
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Toque no microfone do teclado ou no balão"
+                            android:textColor="#E9E7E0"
+                            android:textSize="12sp" />
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:orientation="vertical">
-
+                        android:background="@drawable/bg_hero_step"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+    
+                        <TextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/bg_step_number"
+                            android:gravity="center"
+                            android:text="3"
+                            android:textColor="@color/hero_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+    
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Fale e toque de novo"
+                            android:textColor="#E9E7E0"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+    
+                    <TextView
+                        android:id="@+id/tvStatusKeyboard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_hero_pill"
+                        android:gravity="center"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tvStatusBubble"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_hero_pill"
+                        android:gravity="center"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tvStatusKey"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_hero_pill"
+                        android:gravity="center"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+    
+            <!-- Chave da Groq -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/VoxIA.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp">
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_badge"
+                            android:contentDescription="@null"
+                            android:padding="9dp"
+                            android:src="@drawable/ic_key"
+                            app:tint="@color/m3_primary" />
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.SectionTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chave da Groq" />
+    
+                            <TextView
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Guardada criptografada neste aparelho" />
+                        </LinearLayout>
+                    </LinearLayout>
+    
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="@string/settings_groq_key_hint"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:endIconMode="password_toggle">
+    
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etGroqApiKey"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword" />
+                    </com.google.android.material.textfield.TextInputLayout>
+    
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveGroqKey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Salvar chave" />
+    
+                    <TextView
+                        style="@style/VoxIA.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:tag="help"
+                        android:text="Não tem chave? É grátis e leva 2 minutos:\n1. Toque em &quot;Criar minha chave na Groq&quot; e entre com sua conta Google (ou e-mail).\n2. Toque em &quot;Create API Key&quot;, dê um nome (ex.: VoxIA) e copie a chave (começa com gsk_). Ela só aparece uma vez.\n3. Volte aqui, cole a chave no campo acima e toque em Salvar chave." />
+    
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnOpenGroq"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Criar minha chave na Groq" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+    
+            <!-- Teclado -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sectionKeyboard"
+                style="@style/VoxIA.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_badge"
+                            android:contentDescription="@null"
+                            android:padding="9dp"
+                            android:src="@drawable/ic_keyboard"
+                            app:tint="@color/m3_primary" />
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.SectionTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Teclado VoxIA" />
+    
+                            <TextView
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Para apps que não aceitam o balão, como chats de banco" />
+                        </LinearLayout>
+                    </LinearLayout>
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEnableKeyboard"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ativar" />
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSelectKeyboard"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:text="Trocar teclado" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+    
+            <!-- Balão flutuante -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/VoxIA.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_badge"
+                            android:contentDescription="@null"
+                            android:padding="9dp"
+                            android:src="@drawable/ic_bubble"
+                            app:tint="@color/m3_primary" />
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.SectionTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Balão flutuante" />
+    
+                            <TextView
+                                android:id="@+id/tvBubbleStatus"
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+    
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchBubbleVisible"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Mostrar o balão" />
+                    </LinearLayout>
+    
+                    <TextView
+                        style="@style/VoxIA.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:tag="help"
+                        android:text="Aparece ao lado de qualquer teclado quando você toca numa caixa de texto. Toque para gravar e de novo para parar; o X ao lado cancela; arraste para mudar de lugar; toque longo abre o VoxIA. Com uma palavra selecionada no texto, o toque longo cadastra essa palavra no dicionário." />
+    
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEnableBubble"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Ativar na Acessibilidade" />
+    
+                    <TextView
+                        style="@style/VoxIA.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:tag="help"
+                        android:text="Atalho rápido: puxe a barra do topo da tela, toque no lápis (editar) e arraste o bloco &quot;Balão VoxIA&quot; para cima. Se o balão parar (por exemplo, depois da economia de energia), um toque nele leva direto à chave para religar. Com o balão ligado, o toque mostra ou oculta o balão." />
+    
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBubbleRestricted"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Opção bloqueada? Liberar configurações restritas" />
+    
+                    <!-- Aparência -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@color/m3_outline" />
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <TextView
+                            style="@style/VoxIA.Label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Aparência" />
+    
+                        <!-- Prévia do balão -->
+                        <FrameLayout
+                            android:layout_width="64dp"
+                            android:layout_height="64dp">
+    
+                            <View
+                                android:id="@+id/bubblePreviewCircle"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center" />
+    
+                            <ImageView
+                                android:id="@+id/bubblePreviewIcon"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="@null"
+                                android:src="@drawable/ic_mic" />
+                        </FrameLayout>
+                    </LinearLayout>
+    
+                    <TextView
+                        style="@style/VoxIA.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Cor" />
+    
+                    <LinearLayout
+                        android:id="@+id/layoutBubbleColors"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal" />
+    
+                    <TextView
+                        android:id="@+id/tvBubbleAlpha"
+                        style="@style/VoxIA.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp" />
+    
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderBubbleAlpha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stepSize="5"
+                        android:valueFrom="30"
+                        android:valueTo="100"
+                        app:labelBehavior="gone" />
+    
+                    <TextView
+                        style="@style/VoxIA.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Tamanho" />
+    
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggleBubbleSize"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSizeSmall"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Pequeno" />
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSizeMedium"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Médio" />
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSizeLarge"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Grande" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+    
+            <!-- Preferências -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sectionPreferences"
+                style="@style/VoxIA.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_badge"
+                            android:contentDescription="@null"
+                            android:padding="9dp"
+                            android:src="@drawable/ic_tune"
+                            app:tint="@color/m3_primary" />
+    
                         <TextView
                             style="@style/VoxIA.SectionTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Balão flutuante" />
-
-                        <TextView
-                            android:id="@+id/tvBubbleStatus"
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_marginStart="12dp"
+                            android:text="Preferências" />
                     </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchBubbleVisible"
-                        android:layout_width="wrap_content"
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:contentDescription="Mostrar o balão" />
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.Label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Enviar contexto do campo" />
+    
+                            <TextView
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:tag="help"
+                        android:text="Até 400 caracteres já escritos antes do cursor vão junto com o áudio para a Groq, para acertar nomes e termos. Pode incluir dados pessoais que já estão no campo. Desligado (padrão), só o áudio é enviado. Campos de senha nunca são lidos." />
+                        </LinearLayout>
+    
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchSendContext"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:contentDescription="Enviar contexto do campo" />
+                    </LinearLayout>
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.Label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sugerir palavras corrigidas" />
+    
+                            <TextView
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:tag="help"
+                        android:text="Quando você corrigir à mão uma palavra que o balão acabou de escrever, aparece uma notificação para ensiná-la ao dicionário. Nada é enviado para a internet." />
+                        </LinearLayout>
+    
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchLearnCorrections"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:contentDescription="Sugerir palavras corrigidas" />
+                    </LinearLayout>
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.Label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Enviar mensagem após ditar" />
+    
+                            <TextView
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Só no teclado VoxIA" />
+                        </LinearLayout>
+    
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchAutoSend"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:contentDescription="@string/setting_auto_send" />
+                    </LinearLayout>
                 </LinearLayout>
-
-                <TextView
-                    style="@style/VoxIA.Body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:tag="help"
-                    android:text="Aparece ao lado de qualquer teclado quando você toca numa caixa de texto. Toque para gravar e de novo para parar; o X ao lado cancela; arraste para mudar de lugar; toque longo abre o VoxIA. Com uma palavra selecionada no texto, o toque longo cadastra essa palavra no dicionário." />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnEnableBubble"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Ativar na Acessibilidade" />
-
-                <TextView
-                    style="@style/VoxIA.Body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:tag="help"
-                    android:text="Atalho rápido: puxe a barra do topo da tela, toque no lápis (editar) e arraste o bloco &quot;Balão VoxIA&quot; para cima. Se o balão parar (por exemplo, depois da economia de energia), um toque nele leva direto à chave para religar. Com o balão ligado, o toque mostra ou oculta o balão." />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBubbleRestricted"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Opção bloqueada? Liberar configurações restritas" />
-
-                <!-- Aparência -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="14dp"
-                    android:background="@color/m3_outline" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/VoxIA.Label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Aparência" />
-
-                    <!-- Prévia do balão -->
-                    <FrameLayout
-                        android:layout_width="64dp"
-                        android:layout_height="64dp">
-
-                        <View
-                            android:id="@+id/bubblePreviewCircle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:layout_gravity="center" />
-
-                        <ImageView
-                            android:id="@+id/bubblePreviewIcon"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="@null"
-                            android:src="@drawable/ic_mic" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <TextView
-                    style="@style/VoxIA.Body"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Cor" />
-
-                <LinearLayout
-                    android:id="@+id/layoutBubbleColors"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal" />
-
-                <TextView
-                    android:id="@+id/tvBubbleAlpha"
-                    style="@style/VoxIA.Body"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp" />
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/sliderBubbleAlpha"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stepSize="5"
-                    android:valueFrom="30"
-                    android:valueTo="100"
-                    app:labelBehavior="gone" />
-
-                <TextView
-                    style="@style/VoxIA.Body"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Tamanho" />
-
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/toggleBubbleSize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:selectionRequired="true"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSizeSmall"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Pequeno" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSizeMedium"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Médio" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSizeLarge"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Grande" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Preferências -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
+            </com.google.android.material.card.MaterialCardView>
+    
+            <!-- Formato do texto -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/VoxIA.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
+                android:layout_marginTop="12dp">
+    
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_badge"
-                        android:contentDescription="@null"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_tune"
-                        app:tint="@color/m3_primary" />
-
+                    android:orientation="vertical">
+    
                     <TextView
                         style="@style/VoxIA.SectionTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Preferências" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.Label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Enviar contexto do campo" />
-
-                        <TextView
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:tag="help"
-                    android:text="Até 400 caracteres já escritos antes do cursor vão junto com o áudio para a Groq, para acertar nomes e termos. Pode incluir dados pessoais que já estão no campo. Desligado (padrão), só o áudio é enviado. Campos de senha nunca são lidos." />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchSendContext"
+                        android:text="Formato do texto" />
+    
+                    <TextView
+                        android:tag="help"
+                        style="@style/VoxIA.Body"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:contentDescription="Enviar contexto do campo" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.Label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sugerir palavras corrigidas" />
-
-                        <TextView
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:tag="help"
-                    android:text="Quando você corrigir à mão uma palavra que o balão acabou de escrever, aparece uma notificação para ensiná-la ao dicionário. Nada é enviado para a internet." />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchLearnCorrections"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:contentDescription="Sugerir palavras corrigidas" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.Label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Enviar mensagem após ditar" />
-
-                        <TextView
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Só no teclado VoxIA" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchAutoSend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:contentDescription="@string/setting_auto_send" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Formato do texto -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/VoxIA.SectionTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Formato do texto" />
-
-                <TextView
-                    android:tag="help"
-                    style="@style/VoxIA.Body"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Parágrafos: a IA organiza o texto em parágrafos por assunto. Linha única: tudo numa linha só, bom para chats. Personalizado: você escreve como a IA deve corrigir e formatar o texto (ex.: &quot;use tópicos&quot;, &quot;escreva de forma formal&quot;). A IA continua proibida de responder perguntas ou inventar conteúdo." />
-
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/toggleFormat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:singleSelection="true"
-                    app:selectionRequired="true">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnFormatParagraphs"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Parágrafos" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnFormatSingleLine"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Linha única" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnFormatCustom"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Personal." />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
-
-                <LinearLayout
-                    android:id="@+id/customPromptBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <com.google.android.material.textfield.TextInputLayout
+                        android:text="Parágrafos: a IA organiza o texto em parágrafos por assunto. Linha única: tudo numa linha só, bom para chats. Personalizado: você escreve como a IA deve corrigir e formatar o texto (ex.: &quot;use tópicos&quot;, &quot;escreva de forma formal&quot;). A IA continua proibida de responder perguntas ou inventar conteúdo." />
+    
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggleFormat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Seu prompt">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etCustomPrompt"
+                        android:layout_marginTop="10dp"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnFormatParagraphs"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Parágrafos" />
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnFormatSingleLine"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Linha única" />
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnFormatCustom"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Personal." />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+    
+                    <LinearLayout
+                        android:id="@+id/customPromptBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+    
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:inputType="textMultiLine|textCapSentences"
-                            android:minLines="3" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
+                            android:hint="Seu prompt">
+    
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etCustomPrompt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="top"
+                                android:inputType="textMultiLine|textCapSentences"
+                                android:minLines="3" />
+                        </com.google.android.material.textfield.TextInputLayout>
+    
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSaveCustomPrompt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Salvar prompt" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+    
+            <!-- Atualizações -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/VoxIA.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_badge"
+                            android:contentDescription="@null"
+                            android:padding="9dp"
+                            android:src="@drawable/ic_refresh"
+                            app:tint="@color/m3_primary" />
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.SectionTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Atualizações" />
+    
+                            <TextView
+                                android:id="@+id/tvUpdateStatus"
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="" />
+                        </LinearLayout>
+                    </LinearLayout>
+    
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSaveCustomPrompt"
+                        android:id="@+id/btnUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Procurar atualizações" />
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <TextView
+                            style="@style/VoxIA.Label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Procurar automaticamente (uma vez por dia)" />
+    
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchAutoUpdate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:contentDescription="Procurar atualizações automaticamente" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+    
+            <!-- Dicionário -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sectionDictionary"
+                style="@style/VoxIA.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+    
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+    
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_badge"
+                            android:contentDescription="@null"
+                            android:padding="9dp"
+                            android:src="@drawable/ic_book"
+                            app:tint="@color/m3_primary" />
+    
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+    
+                            <TextView
+                                style="@style/VoxIA.SectionTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dicionário" />
+    
+                            <TextView
+                                style="@style/VoxIA.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tag="help"
+                        android:text="Corrige palavras que o áudio erra (ex.: Sara → Sarah). Atalho: selecione a palavra no texto e toque no livro do teclado ou segure o balão." />
+                        </LinearLayout>
+                    </LinearLayout>
+    
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="Como sai errado (ex.: hospital Sara)"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp">
+    
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNewDictOriginal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+    
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Salvar prompt" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Atualizações -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_badge"
-                        android:contentDescription="@null"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_refresh"
-                        app:tint="@color/m3_primary" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                        android:hint="Como deve ficar (ex.: hospital Sarah)"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp">
+    
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNewDictReplacement"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+    
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbNewDictVocabOnly"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.SectionTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Atualizações" />
-
-                        <TextView
-                            android:id="@+id/tvUpdateStatus"
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUpdate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Procurar atualizações" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
+                        android:layout_marginTop="4dp"
+                        android:text="Só vocabulário técnico para o Whisper"
+                        android:textColor="@color/m3_text_muted" />
+    
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAddDictEntry"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Adicionar ao dicionário"
+                        app:icon="@drawable/ic_add"
+                        app:iconGravity="textStart" />
+    
                     <TextView
                         style="@style/VoxIA.Label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Procurar automaticamente (uma vez por dia)" />
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchAutoUpdate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:contentDescription="Procurar atualizações automaticamente" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Dicionário -->
-        <com.google.android.material.card.MaterialCardView
-            style="@style/VoxIA.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_badge"
-                        android:contentDescription="@null"
-                        android:padding="9dp"
-                        android:src="@drawable/ic_book"
-                        app:tint="@color/m3_primary" />
-
+                        android:layout_marginTop="16dp"
+                        android:text="Palavras cadastradas" />
+    
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:id="@+id/layoutDictEntriesList"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/VoxIA.SectionTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Dicionário" />
-
-                        <TextView
-                            style="@style/VoxIA.Body"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:tag="help"
-                    android:text="Corrige palavras que o áudio erra (ex.: Sara → Sarah). Atalho: selecione a palavra no texto e toque no livro do teclado ou segure o balão." />
-                    </LinearLayout>
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical" />
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+    
+        </LinearLayout>
+    </ScrollView>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:hint="Como sai errado (ex.: hospital Sara)"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp">
+    <!-- Barra de abas (vai até a seção correspondente) -->
+    <LinearLayout
+        android:id="@+id/bottomTabs"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@drawable/bg_bottom_tabs"
+        android:orientation="horizontal"
+        android:paddingTop="6dp"
+        android:paddingBottom="8dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNewDictOriginal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+        <LinearLayout
+            android:id="@+id/tabHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="Como deve ficar (ex.: hospital Sarah)"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp">
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:padding="4dp"
+                android:src="@drawable/ic_home" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNewDictReplacement"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Início"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
 
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/cbNewDictVocabOnly"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Só vocabulário técnico para o Whisper"
-                    android:textColor="@color/m3_text_muted" />
+        <LinearLayout
+            android:id="@+id/tabKeyboard"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAddDictEntry"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Adicionar ao dicionário"
-                    app:icon="@drawable/ic_add"
-                    app:iconGravity="textStart" />
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:padding="4dp"
+                android:src="@drawable/ic_keyboard" />
 
-                <TextView
-                    style="@style/VoxIA.Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Palavras cadastradas" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Teclado"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/layoutDictEntriesList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        <LinearLayout
+            android:id="@+id/tabDictionary"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:padding="4dp"
+                android:src="@drawable/ic_book" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Dicionário"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:padding="4dp"
+                android:src="@drawable/ic_tune" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Ajustes"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
 
     </LinearLayout>
-</ScrollView>
+</LinearLayout>

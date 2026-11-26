@@ -962,7 +962,7 @@ class VoxIABubbleService : AccessibilityService() {
 
         /** Cores oferecidas para o balão parado (gravando é sempre vermelho; processando, âmbar). */
         val BUBBLE_COLORS = intArrayOf(
-            0xFFFF5A36.toInt(), // laranja (padrão)
+            0xFF4338CA.toInt(), // índigo (padrão)
             0xFF0EA5E9.toInt(), // azul
             0xFF10B981.toInt(), // verde
             0xFF8B5CF6.toInt(), // violeta

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.VoxIA" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
@@ -12,7 +12,7 @@
     </style>
 
     <!-- Só a tela de configurações; o teclado continua com o tema acima -->
-    <style name="Theme.VoxIA.Settings" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.VoxIA.Settings" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/m3_primary</item>
         <item name="colorOnPrimary">@color/m3_on_primary</item>
         <item name="colorPrimaryContainer">@color/m3_primary_container</item>
@@ -26,12 +26,12 @@
         <item name="android:colorBackground">@color/m3_bg</item>
         <item name="android:windowBackground">@color/m3_bg</item>
         <item name="android:statusBarColor">@color/m3_bg</item>
-        <item name="android:navigationBarColor">@color/m3_bg</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/m3_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <!-- Janelinha "adicionar ao dicionário", aberta por cima do app em uso -->
-    <style name="Theme.VoxIA.AddWord" parent="Theme.Material3.Dark.Dialog">
+    <style name="Theme.VoxIA.AddWord" parent="Theme.Material3.Light.Dialog">
         <item name="colorPrimary">@color/m3_primary</item>
         <item name="colorOnPrimary">@color/m3_on_primary</item>
         <item name="colorSurface">@color/m3_surface</item>
@@ -70,19 +70,21 @@
         <item name="strokeColor">@color/m3_outline</item>
     </style>
 
-    <!-- Marca e títulos de página: serifa itálica, como no estilo do VoxIA -->
+    <!-- Marca e títulos de página: sem serifa, negrito (protótipo do Claude Design) -->
     <style name="VoxIA.Brand" parent="">
         <item name="android:textColor">@color/m3_text</item>
         <item name="android:textSize">24sp</item>
-        <item name="android:fontFamily">serif</item>
-        <item name="android:textStyle">italic</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
     </style>
 
     <style name="VoxIA.Display" parent="">
         <item name="android:textColor">@color/m3_text</item>
-        <item name="android:textSize">34sp</item>
-        <item name="android:fontFamily">serif</item>
-        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
         <item name="android:lineSpacingMultiplier">0.95</item>
     </style>
 
@@ -91,7 +93,7 @@
         <item name="android:textColor">@color/m3_text_muted</item>
         <item name="android:textSize">11sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.14</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 </resources>
