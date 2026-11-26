@@ -1,4 +1,4 @@
-﻿package com.voxia.keyboard.ui
+package com.voxia.keyboard.ui
 
 import android.Manifest
 import android.content.Context
@@ -338,6 +338,7 @@ class SettingsActivity : AppCompatActivity() {
         tvStatusKeyboard = findViewById(R.id.tvStatusKeyboard)
         tvStatusBubble = findViewById(R.id.tvStatusBubble)
         tvStatusKey = findViewById(R.id.tvStatusKey)
+        setupTabs()
 
         etGroqApiKey = findViewById(R.id.etGroqApiKey)
         btnSaveGroqKey = findViewById(R.id.btnSaveGroqKey)
@@ -510,7 +511,37 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setPill(view: TextView, label: String, ok: Boolean) {
         view.text = if (ok) "● $label" else "○ $label"
-        view.setTextColor(ContextCompat.getColor(this, if (ok) R.color.m3_success else R.color.m3_text_muted))
+        view.setTextColor(ContextCompat.getColor(this, if (ok) R.color.live_green else R.color.hero_muted))
+    }
+
+    // Barra de abas: cada aba leva até a seção correspondente da página
+    private fun setupTabs() {
+        val scroll = findViewById<android.widget.ScrollView>(R.id.mainScroll)
+        val tabs = listOf(
+            R.id.tabHome to 0,
+            R.id.tabKeyboard to R.id.sectionKeyboard,
+            R.id.tabDictionary to R.id.sectionDictionary,
+            R.id.tabSettings to R.id.sectionPreferences
+        )
+        fun highlight(active: Int) {
+            for ((tabId, _) in tabs) {
+                val tab = findViewById<LinearLayout>(tabId)
+                val on = tabId == active
+                val color = ContextCompat.getColor(this, if (on) R.color.m3_primary else R.color.m3_text_muted)
+                val icon = tab.getChildAt(0) as android.widget.ImageView
+                icon.setColorFilter(color)
+                icon.setBackgroundResource(if (on) R.drawable.bg_tab_active else android.R.color.transparent)
+                (tab.getChildAt(1) as TextView).setTextColor(color)
+            }
+        }
+        for ((tabId, sectionId) in tabs) {
+            findViewById<LinearLayout>(tabId).setOnClickListener {
+                highlight(tabId)
+                val y = if (sectionId == 0) 0 else (findViewById<View>(sectionId).top - 16.dp()).coerceAtLeast(0)
+                scroll.smoothScrollTo(0, y)
+            }
+        }
+        highlight(R.id.tabHome)
     }
 
     private fun isKeyboardEnabled(): Boolean {
