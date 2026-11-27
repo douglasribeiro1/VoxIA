@@ -12,6 +12,8 @@ namespace VoxIA.Services
 
         public static event Action<string, string> OnProcessingCompleted;
         public static event Action<string> OnProcessingFailed;
+        /// <summary>O texto foi colado, mas sem a correção da IA (o argumento diz o motivo).</summary>
+        public static event Action<string> OnCorrectionWarning;
 
         public static void Start()
         {
@@ -91,6 +93,8 @@ namespace VoxIA.Services
                     ? markedRaw
                     : await TextCorrectionService.CorrectTextAsync(markedRaw, null, fieldContext);
 
+                string correctionIssue = TopicFormatter.IsOnlyMarkers(markedRaw) ? null : TextCorrectionService.LastIssue;
+
                 if (string.IsNullOrWhiteSpace(finalText))
                 {
                     finalText = markedRaw;
@@ -123,6 +127,8 @@ namespace VoxIA.Services
                 PendingAudioRepository.MarkCompleted(item.Id, rawText, finalText);
 
                 AudioFeedbackService.PlaySuccessBeep();
+                if (correctionIssue != null && OnCorrectionWarning != null)
+                    OnCorrectionWarning(correctionIssue);
                 if (OnProcessingCompleted != null)
                     OnProcessingCompleted(rawText, finalText);
 

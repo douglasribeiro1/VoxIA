@@ -95,6 +95,7 @@ namespace VoxIA
             RetryService.Start();
             RetryService.OnProcessingCompleted += OnProcessingSuccess;
             RetryService.OnProcessingFailed += OnProcessingFailure;
+            RetryService.OnCorrectionWarning += OnCorrectionWarning;
 
             if (SettingsService.Current.AutoStartWithWindows)
             {
@@ -453,6 +454,12 @@ namespace VoxIA
                 _hud.Hide();
             }
             UpdatePendingBadge();
+        }
+
+        private void OnCorrectionWarning(string reason)
+        {
+            ShowNotification("Texto colado sem a correção da IA",
+                "Foi usado o texto da transcrição, sem revisão nem formatação. Motivo: " + reason + ".");
         }
 
         private void OnProcessingFailure(string error)
