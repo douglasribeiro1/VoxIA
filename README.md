@@ -62,9 +62,7 @@ O VoxIA usa a Groq para transformar sua voz em texto. Para isso, você precisa d
 | Abrir as configurações | Dois cliques no ícone 🎙 da bandeja |
 | Mudar o atalho, iniciar com o Windows, histórico | Configurações |
 
-Comando de voz:
-- Android: "**abrir tópico** exame físico **fechar tópico**" cria um título em CAIXA ALTA.
-- Windows: os comandos de voz só valem se você os descrever no prompt **Personalizado** (ex.: "quando eu disser abrir tópico ... fechar tópico, transforme o trecho em título em maiúsculas").
+Comandos de voz (Windows, Android e Mac): só valem se você os descrever no prompt **Personalizado** (ex.: "quando eu disser abrir tópico ... fechar tópico, transforme o trecho em título em maiúsculas").
 
 ---
 
