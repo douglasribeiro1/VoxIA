@@ -62,7 +62,6 @@ namespace VoxIA.Services
             // Reorganizar o texto (modo Personalizado) gasta mais saída que só pontuar; o raciocínio do
             // gpt-oss também consome max_tokens. Se a resposta vier cortada, tenta de novo com mais espaço.
             int maxTokens = Math.Max(1024, Math.Min(8000, (rawText.Length * (mode == CorrectionMode.Custom ? 3 : 2)) + 1500));
-            double minRatio = mode == CorrectionMode.Custom ? 0.6 : 0.85;
 
             for (int attempt = 1; attempt <= MaxAttempts; attempt++)
             {
@@ -125,6 +124,9 @@ namespace VoxIA.Services
 
                         string finishReason = (firstChoice.ContainsKey("finish_reason") && firstChoice["finish_reason"] != null)
                             ? firstChoice["finish_reason"].ToString() : "";
+                        // Resposta cortada é detectada pela própria Groq (finish_reason = "length"). Não há
+                        // limite de tamanho mínimo: o texto corrigido pode ficar menor que o ditado, e o
+                        // Histórico guarda a transcrição original de qualquer forma.
                         if (finishReason == "length")
                         {
                             Logger.LogWarning(string.Format("LLM output was truncated (max_tokens={0}). Retrying with more room.", maxTokens));
@@ -152,12 +154,6 @@ namespace VoxIA.Services
                         {
                             Logger.LogWarning("LLM output repeated the document context. Using raw transcript.");
                             LastIssue = "a IA repetiu o texto que já estava no documento";
-                            return rawText;
-                        }
-                        if (rawText.Length >= 200 && corrected.Length < rawText.Length * minRatio)
-                        {
-                            Logger.LogWarning(string.Format("LLM output suspiciously shorter than input ({0} vs {1} chars). Using raw transcript to avoid losing content.", corrected.Length, rawText.Length));
-                            LastIssue = "a IA encurtou demais o texto";
                             return rawText;
                         }
                         if (mode == CorrectionMode.Paragraphs && corrected.Length > 500 && corrected.IndexOf('\n') < 0)
