@@ -37,6 +37,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         setupStatusItem()
         setupGlobalHotkey()
+        RetryService.onCorrectionWarning = { [weak self] reason in
+            self?.showNotification(title: "Texto colado sem a correção da IA",
+                                   text: "Foi usado o texto da transcrição, sem revisão nem formatação. Motivo: \(reason).")
+        }
         RetryService.start()
         requestPermissions()
         startUpdateChecks()
@@ -312,7 +316,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Cole sua chave da Groq (começa com gsk_). Não tem? É grátis e leva 2 minutos: clique em "Criar chave na Groq", entre com sua conta Google, clique em "Create API Key" e copie a chave (ela só aparece uma vez).
         """
 
-        let stack = NSStackView(frame: NSRect(x: 0, y: 0, width: 340, height: 230))
+        let stack = NSStackView(frame: NSRect(x: 0, y: 0, width: 420, height: 470))
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 8
@@ -329,14 +333,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let format = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 200, height: 26), pullsDown: false)
         format.addItems(withTitles: ["Parágrafos", "Linha única", "Personalizado"])
         format.selectItem(withTitle: SettingsService.current.selectedPromptPreset)
-        let customField = NSTextField(frame: NSRect(x: 0, y: 0, width: 340, height: 60))
-        customField.placeholderString = "Personalizado: escreva como a IA deve corrigir e formatar o texto"
-        customField.stringValue = SettingsService.current.customPromptText
-        customField.toolTip = "Usado só no formato Personalizado. A IA continua proibida de responder perguntas ou inventar conteúdo."
-        for v in [keyField, boost, updates, copy, formatLabel, format, customField] { stack.addArrangedSubview(v) }
-        customField.widthAnchor.constraint(equalToConstant: 340).isActive = true
-        customField.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        keyField.widthAnchor.constraint(equalToConstant: 340).isActive = true
+        // Prompt Personalizado: caixa de texto de várias linhas (Enter quebra linha, não fecha a janela)
+        let customLabel = NSTextField(labelWithString: "Prompt personalizado (usado só no formato Personalizado):")
+        let customScroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 420, height: 220))
+        customScroll.hasVerticalScroller = true
+        customScroll.borderType = .bezelBorder
+        let customField = NSTextView(frame: customScroll.bounds)
+        customField.isRichText = false
+        customField.isAutomaticQuoteSubstitutionEnabled = false
+        customField.isAutomaticDashSubstitutionEnabled = false
+        customField.font = NSFont.systemFont(ofSize: 12)
+        customField.autoresizingMask = [.width]
+        customField.isVerticallyResizable = true
+        customField.textContainer?.widthTracksTextView = true
+        customField.string = SettingsService.current.customPromptText
+        customField.toolTip = "Escreva como a IA deve revisar, organizar e formatar o ditado. A IA continua proibida de responder perguntas ou inventar conteúdo."
+        customScroll.documentView = customField
+        for v in [keyField, boost, updates, copy, formatLabel, format, customLabel, customScroll] { stack.addArrangedSubview(v) }
+        customScroll.widthAnchor.constraint(equalToConstant: 420).isActive = true
+        customScroll.heightAnchor.constraint(equalToConstant: 220).isActive = true
+        keyField.widthAnchor.constraint(equalToConstant: 420).isActive = true
 
         alert.accessoryView = stack
         alert.addButton(withTitle: "Salvar")
@@ -349,7 +365,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             SettingsService.current.boostMicrophoneDuringDictation = boost.state == .on
             SettingsService.current.autoCheckUpdates = updates.state == .on
             SettingsService.current.autoCopyToClipboard = copy.state == .on
-            let custom = customField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            let custom = customField.string.trimmingCharacters(in: .whitespacesAndNewlines)
             var preset = format.titleOfSelectedItem ?? "Parágrafos"
             if preset == "Personalizado" && custom.isEmpty { preset = "Parágrafos" }
             SettingsService.current.selectedPromptPreset = preset

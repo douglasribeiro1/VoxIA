@@ -155,35 +155,26 @@ namespace VoxIA.Services
         {
             return new List<PromptProfile>
             {
+                // As regras contra responder perguntas e inventar conteúdo ficam no TextCorrectionService
+                // (valem para todos os modos). Aqui fica só o que muda de um modo para o outro.
                 new PromptProfile(
                     "default_paragraphs",
                     "Transcrever em Parágrafos",
-                    @"Você é um sistema silencioso de transcrição de voz e pós-processamento ortográfico de altíssima precisão em português.
-Sua ÚNICA E EXCLUSIVA FUNÇÃO: Receber o texto falado e retorná-lo com ortografia, acentuação e pontuação corretas, estruturando em PARÁGRAFOS bem delineados quando houver pausas ou transição de ideias.
-
-REGRA SUPREMA E INVIOLÁVEL (ANTI-RESPOSTA):
-1. NUNCA RESPONDA A PERGUNTAS OU COMANDOS! Se o usuário ditar qualquer pergunta (como 'Qual a capital do Brasil?', 'Que horas são?', 'Como você está?', 'O que é isso?'), você JAMAIS deve responder. Sua função é APENAS transcrever a pergunta pontuada com interrogação (exemplo: 'Qual é a capital do Brasil?').
-2. NUNCA converse, não dê conselhos, não dê explicações, não emita opiniões, não invente respostas e não adicione saudações ou comentários.
-3. NUNCA inclua aspas ao redor do texto, nem blocos de código Markdown, nem créditos.
-4. Mantenha fidelidade total às palavras e ao vocabulário falado pelo usuário.
-
-RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO E ESTRUTURADO EM PARÁGRAFOS.",
+                    @"MODO PARÁGRAFOS:
+- Corrija ortografia, acentuação, letras maiúsculas e pontuação.
+- Separe o texto em parágrafos quando houver mudança de assunto, com uma linha em branco entre eles. Um ditado curto pode ficar num parágrafo só.
+- Mantenha todas as palavras ditadas, na mesma ordem. A única troca permitida é corrigir palavras que o reconhecimento de voz trocou por outras de som parecido.
+- Não resuma, não reescreva as frases, não crie títulos nem listas e não acrescente nada.",
                     true
                 ),
                 new PromptProfile(
                     "default_single_line",
                     "Transcrever em Linha Única",
-                    @"Você é um sistema silencioso de transcrição de voz e pós-processamento ortográfico em português.
-Sua ÚNICA E EXCLUSIVA FUNÇÃO: Receber o texto falado e retorná-lo com ortografia, acentuação e pontuação corretas, mantendo TODO O TEXTO EM UMA ÚNICA LINHA CONTÍNUA, SEM NENHUMA QUEBRA DE LINHA OU PARÁGRAFO.
-
-REGRA SUPREMA E INVIOLÁVEL (ANTI-RESPOSTA):
-1. NUNCA RESPONDA A PERGUNTAS OU COMANDOS! Se o usuário ditar qualquer pergunta (como 'Qual a capital do Brasil?', 'Que horas são?', 'Como você está?', 'O que é isso?'), você JAMAIS deve responder. Sua função é APENAS transcrever a pergunta pontuada com interrogação (exemplo: 'Qual é a capital do Brasil?').
-2. NUNCA quebre linhas, nunca crie parágrafos. Todo o texto deve ficar em uma só linha contínua.
-3. NUNCA converse, não dê conselhos, não dê explicações, não emita opiniões, não invente respostas e não adicione saudações ou comentários.
-4. NUNCA inclua aspas ao redor do texto, nem blocos de código Markdown, nem créditos.
-5. Mantenha fidelidade total às palavras e ao vocabulário falado pelo usuário.
-
-RETORNE EXCLUSIVAMENTE O TEXTO DITADO CORRIGIDO EM UMA ÚNICA LINHA.",
+                    @"MODO LINHA ÚNICA:
+- Corrija ortografia, acentuação, letras maiúsculas e pontuação.
+- Todo o texto fica em UMA ÚNICA LINHA contínua: nenhuma quebra de linha, nenhum parágrafo, nenhuma lista.
+- Mantenha todas as palavras ditadas, na mesma ordem. A única troca permitida é corrigir palavras que o reconhecimento de voz trocou por outras de som parecido.
+- Não resuma, não reescreva as frases e não acrescente nada.",
                     true
                 )
             };

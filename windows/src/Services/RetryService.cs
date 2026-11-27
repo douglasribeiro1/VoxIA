@@ -12,6 +12,8 @@ namespace VoxIA.Services
 
         public static event Action<string, string> OnProcessingCompleted;
         public static event Action<string> OnProcessingFailed;
+        /// <summary>O texto foi colado, mas sem a correção da IA (o argumento diz o motivo).</summary>
+        public static event Action<string> OnCorrectionWarning;
 
         public static void Start()
         {
@@ -72,37 +74,18 @@ namespace VoxIA.Services
 
                 // Step 2: Correct text with Groq LLM
                 PendingAudioRepository.UpdateStatus(item.Id, AudioQueueStatus.CORRECTING);
-                // Spoken "abrir tópico ... fechar tópico" commands become markers the LLM must not touch
-                var headings = new System.Collections.Generic.List<TopicHeading>();
-                string markedRaw = TopicFormatter.ExtractMarkers(rawText, headings);
-                if (headings.Count > 0)
-                {
-                    Logger.LogInfo(string.Format("Detected {0} spoken heading command(s).", headings.Count));
-                }
-                if (string.IsNullOrWhiteSpace(markedRaw))
-                {
-                    PendingAudioRepository.MarkCompleted(item.Id, rawText, "");
-                    if (OnProcessingCompleted != null)
-                        OnProcessingCompleted(rawText, "");
-                    return;
-                }
-
-                string finalText = TopicFormatter.IsOnlyMarkers(markedRaw)
-                    ? markedRaw
-                    : await TextCorrectionService.CorrectTextAsync(markedRaw, null, fieldContext);
+                // Comandos falados ("abrir tópico ... fechar tópico") não são mais tratados pelo app:
+                // vão para a IA como parte do ditado e só valem se o prompt Personalizado pedir.
+                string finalText = await TextCorrectionService.CorrectTextAsync(rawText, null, fieldContext);
+                string correctionIssue = TextCorrectionService.LastIssue;
 
                 if (string.IsNullOrWhiteSpace(finalText))
                 {
-                    finalText = markedRaw;
+                    finalText = rawText;
                 }
 
                 // Step 2.5: Deterministic Local Dictionary & Custom Vocabulary Replacements
                 finalText = DictionaryService.ApplyReplacements(finalText);
-
-                if (headings.Count > 0)
-                {
-                    finalText = TopicFormatter.Restore(finalText, headings, DictionaryService.ApplyReplacements(markedRaw), DictionaryService.ApplyReplacements);
-                }
 
                 // Step 2.6: Compatibilidade com sistemas legados (hífens Unicode, aspas curvas, espaços especiais -> ANSI)
                 finalText = TextSanitizer.NormalizeForLegacyApps(finalText);
@@ -123,6 +106,8 @@ namespace VoxIA.Services
                 PendingAudioRepository.MarkCompleted(item.Id, rawText, finalText);
 
                 AudioFeedbackService.PlaySuccessBeep();
+                if (correctionIssue != null && OnCorrectionWarning != null)
+                    OnCorrectionWarning(correctionIssue);
                 if (OnProcessingCompleted != null)
                     OnProcessingCompleted(rawText, finalText);
 

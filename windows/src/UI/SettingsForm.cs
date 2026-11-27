@@ -251,6 +251,76 @@ namespace VoxIA.UI
         }
 
         /// <summary>Começa um cartão com título; o conteúdo é adicionado depois e a altura é ajustada em EndCard.</summary>
+        /// <summary>Janela grande para escrever o prompt Personalizado com conforto (prompts longos, com seções).</summary>
+        private void OpenCustomPromptEditor()
+        {
+            using (Form dlg = new Form())
+            {
+                dlg.Text = "VoxIA - Prompt personalizado";
+                dlg.StartPosition = FormStartPosition.CenterParent;
+                dlg.Size = new Size(860, 680);
+                dlg.MinimumSize = new Size(560, 420);
+                dlg.BackColor = Theme.Background;
+                dlg.ShowInTaskbar = false;
+                dlg.MinimizeBox = false;
+
+                Label hint = new Label
+                {
+                    Text = "Escreva como a IA deve revisar, organizar e formatar o ditado (títulos, tópicos, estilo). " +
+                           "O VoxIA mantém por conta própria as travas para a IA nunca responder perguntas ditadas nem inventar conteúdo.",
+                    Dock = DockStyle.Top,
+                    Height = 52,
+                    Padding = new Padding(12, 10, 12, 0),
+                    ForeColor = Theme.TextMuted,
+                    Font = new Font(Theme.FontFamily, 9.5F)
+                };
+
+                TextBox editor = new TextBox
+                {
+                    Multiline = true,
+                    AcceptsReturn = true,
+                    AcceptsTab = true,
+                    ScrollBars = ScrollBars.Vertical,
+                    WordWrap = true,
+                    MaxLength = 0,
+                    Dock = DockStyle.Fill,
+                    BackColor = Theme.SurfaceAlt,
+                    ForeColor = Theme.Text,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Font = new Font(Theme.FontFamily, 10.5F),
+                    Text = (_txtCustomPrompt.Text ?? "").Replace("\r\n", "\n").Replace("\n", "\r\n")
+                };
+                Panel editorHost = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12, 6, 12, 6) };
+                editorHost.Controls.Add(editor);
+
+                Panel bottom = new Panel { Dock = DockStyle.Bottom, Height = 56 };
+                Button ok = new Button { Text = "Usar este prompt", Size = new Size(170, 36), DialogResult = DialogResult.OK };
+                Button cancel = new Button { Text = "Cancelar", Size = new Size(110, 36), DialogResult = DialogResult.Cancel };
+                Theme.StylePrimary(ok);
+                Theme.StyleSecondary(cancel);
+                bottom.Controls.Add(ok);
+                bottom.Controls.Add(cancel);
+                Action place = () =>
+                {
+                    ok.Location = new Point(bottom.Width - ok.Width - 12, 10);
+                    cancel.Location = new Point(ok.Left - cancel.Width - 8, 10);
+                };
+                bottom.Resize += (s, e) => place();
+                place();
+
+                dlg.Controls.Add(editorHost);
+                dlg.Controls.Add(bottom);
+                dlg.Controls.Add(hint);
+                dlg.AcceptButton = null; // Enter quebra linha no editor
+                dlg.CancelButton = cancel;
+
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    _txtCustomPrompt.Text = editor.Text;
+                }
+            }
+        }
+
         private static Panel BeginCard(int x, int y, int width, string title)
         {
             Panel card = Theme.CreateCard(new Rectangle(x, y, width, 0));
@@ -440,6 +510,7 @@ namespace VoxIA.UI
                 Location = new Point(16, 86),
                 Size = new Size(ColumnWidth - 32, 96),
                 Multiline = true,
+                AcceptsReturn = true,
                 ScrollBars = ScrollBars.Vertical,
                 BackColor = Theme.SurfaceAlt,
                 ForeColor = Theme.Text,
@@ -447,10 +518,15 @@ namespace VoxIA.UI
                 Font = new Font(Theme.FontFamily, 9.5F)
             };
             cardFormat.Controls.Add(_txtCustomPrompt);
+            Button btnBigEditor = new Button { Text = "Abrir editor maior", Location = new Point(16, 190), Size = new Size(170, 32) };
+            Theme.StyleSecondary(btnBigEditor);
+            btnBigEditor.Click += (s, e) => OpenCustomPromptEditor();
+            cardFormat.Controls.Add(btnBigEditor);
             Action syncCustom = () =>
             {
                 bool custom = _segFormat.SelectedIndex == 2;
                 _txtCustomPrompt.Enabled = custom;
+                btnBigEditor.Enabled = custom;
                 if (custom && string.IsNullOrWhiteSpace(_txtCustomPrompt.Text)) _txtCustomPrompt.Text = CustomPromptExample;
             };
             _segFormat.UserSelectionChanged += (s, e) => syncCustom();

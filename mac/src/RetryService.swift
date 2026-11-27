@@ -8,6 +8,8 @@ public enum RetryService {
     private static var timer: Timer?
     private static var isProcessing = false
     private static let lock = NSLock()
+    /// Chamado (na thread principal) quando o texto foi colado sem a correção da IA; recebe o motivo.
+    public static var onCorrectionWarning: ((String) -> Void)?
 
     public static func start() {
         DispatchQueue.main.async {
@@ -68,6 +70,7 @@ public enum RetryService {
         }
         PendingAudioRepository.updateStatus(id: item.id, status: .CORRECTING)
         let corrected = await TextCorrectionService.correct(raw) ?? raw
+        let correctionIssue = TextCorrectionService.lastIssue
         let finalText = DictionaryService.applyReplacements(corrected.isEmpty ? raw : corrected)
 
         await MainActor.run {
@@ -81,6 +84,9 @@ public enum RetryService {
         HistoryRepository.addRecord(rawText: raw, finalText: finalText, durationSec: item.durationSeconds,
                                     targetProcess: item.targetContext?.appName ?? "MacApp")
         PendingAudioRepository.markCompleted(id: item.id)
+        if let issue = correctionIssue {
+            await MainActor.run { onCorrectionWarning?(issue) }
+        }
         return true
     }
 
