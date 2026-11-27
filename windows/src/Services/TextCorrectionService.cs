@@ -66,6 +66,7 @@ namespace VoxIA.Services
             for (int attempt = 1; attempt <= MaxAttempts; attempt++)
             {
                 LastIssue = null;
+                bool retryAfterError = false;
                 Logger.LogInfo(string.Format("Sending raw transcript ({0} chars, mode: {1}, max_tokens: {2}, attempt {3}) to Groq LLM ('{4}') for correction...", rawText.Length, mode, maxTokens, attempt, model));
                 try
                 {
@@ -169,8 +170,10 @@ namespace VoxIA.Services
                 {
                     Logger.LogError(string.Format("Error in Groq LLM text correction (attempt {0})", attempt), ex);
                     LastIssue = (ex is TaskCanceledException) ? "a IA demorou demais para responder" : "falha de conexão com a IA";
-                    if (attempt < MaxAttempts) await Task.Delay(1500 * attempt);
+                    retryAfterError = true;
                 }
+                // O compilador do .NET Framework (C# 5) não aceita await dentro de catch
+                if (retryAfterError && attempt < MaxAttempts) await Task.Delay(1500 * attempt);
             }
 
             if (LastIssue == null) LastIssue = "falha desconhecida na correção";
