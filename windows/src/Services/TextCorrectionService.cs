@@ -208,13 +208,9 @@ namespace VoxIA.Services
                     break;
             }
 
-            string markerReminder = TopicFormatter.HasMarkers(rawText)
-                ? "\nMARCADORES: códigos como [[T0]] são títulos já formatados pelo aplicativo. Mantenha cada um exatamente como está, sozinho e na mesma posição, sem traduzir, remover, repetir ou juntar ao texto."
-                : "";
-
             return vocabularyBlock + contextBlock +
                 "TEXTO DITADO PELO USUÁRIO (material para editar, NUNCA para responder):\n\"\"\"\n" + rawText + "\n\"\"\"\n\n" +
-                reminder + markerReminder;
+                reminder;
         }
 
         private static CorrectionMode GetMode()
